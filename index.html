@@ -90,7 +90,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:col
 .btn.wide{width:100%}
 
 /* rest timer */
-.timer{position:fixed;left:50%;bottom:calc(156px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(140%);background:var(--gold);color:var(--bg);font-weight:800;padding:10px 18px;border-radius:999px;display:flex;gap:12px;align-items:center;z-index:8;transition:transform .4s cubic-bezier(.3,1.5,.5,1);box-shadow:0 10px 30px -10px #000}
+.timer{z-index:28!important;position:fixed;left:50%;bottom:calc(156px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(140%);background:var(--gold);color:var(--bg);font-weight:800;padding:10px 18px;border-radius:999px;display:flex;gap:12px;align-items:center;z-index:8;transition:transform .4s cubic-bezier(.3,1.5,.5,1);box-shadow:0 10px 30px -10px #000}
 .timer:not(.show){opacity:0;pointer-events:none;transform:translateX(-50%) translateY(260px)}
 .timer.show{transform:translateX(-50%) translateY(0)}
 .timer span{font-family:var(--display);font-variant-numeric:tabular-nums;min-width:52px}
@@ -252,7 +252,7 @@ details.how li{color:var(--fg)}
 .lad small{font-variant-numeric:tabular-nums}
 .ladS{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-top:6px}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:20}
-.toast{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-200%);background:var(--mint);color:var(--bg);font-weight:800;padding:12px 20px;border-radius:999px;z-index:21;transition:transform .5s cubic-bezier(.3,1.5,.5,1);white-space:nowrap}
+.toast{z-index:45!important;position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-200%);background:var(--mint);color:var(--bg);font-weight:800;padding:12px 20px;border-radius:999px;z-index:21;transition:transform .5s cubic-bezier(.3,1.5,.5,1);white-space:nowrap}
 .toast.show{transform:translate(-50%,0)}
 @media (prefers-reduced-motion:reduce){.blob{animation:none!important}}
 [hidden]{display:none!important}
@@ -338,6 +338,51 @@ details.how li{color:var(--fg)}
 [data-p]::after,[data-w]::after{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--pink) 55%,transparent);transform:scaleX(0);transform-origin:left;pointer-events:none}
 .holding::after{transform:scaleX(1);transition:transform .55s linear}
 .held{animation:shake .35s}
+
+.today{display:grid;gap:14px;background:linear-gradient(160deg,var(--surface2),var(--surface))}
+.tdTop{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.tdTop h2{font-size:21px}
+#dayChips{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;overflow:visible;padding:0}
+#dayChips .chip{padding:9px 4px;font-size:13.5px;text-align:center;white-space:normal;line-height:1.2;min-width:0}
+#dayChips .chip .dn{font-size:10.5px;margin-top:2px}
+#dayChips .chip.on{transform:none}
+.exPrev{list-style:none;margin:0;padding:0;display:grid}
+.exPrev li{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+.exPrev li:last-child{border-bottom:0}
+.exPrev .exr{color:var(--peach);font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums;font-size:13.5px}
+.exPrev li.ok .exn{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--mint)}
+.exPrev li.ok .exn::before{content:"✓ ";color:var(--mint);font-weight:900;text-decoration:none;display:inline-block}
+#startBtn{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:18px;padding:16px}
+#startBtn small{font-weight:600;font-size:12.5px;opacity:.92}
+#startBtn.done{background:var(--surface2);box-shadow:none;color:var(--mint);border:1px solid var(--mint)}
+.player{position:fixed;inset:0;z-index:25;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);animation:rise .3s}
+.player[hidden]{display:none!important}
+.pTop{display:flex;align-items:center;gap:12px;padding:12px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.pX{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface2);font-size:15px;flex:none;color:var(--fg)}
+.pT{flex:1;min-width:0}.pT small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pT b{font-family:var(--display);font-size:16px}
+.pPct{font-size:12.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pBar{height:6px;margin:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));background:var(--surface2);border-radius:999px;overflow:hidden}
+.pBar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mint),var(--gold));border-radius:999px;transition:width .4s}
+.pBody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px))}
+.wrapin{max-width:560px;margin:0 auto;display:grid;gap:12px}
+.player .ex{display:none}.player .ex.cur{display:grid;animation:rise .3s}
+.pNav{display:grid;grid-template-columns:1fr 2fr;gap:10px;padding:10px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));border-top:1px solid var(--line)}
+.pNav .btn{padding:15px;font-size:15px}.pNav .btn:disabled{opacity:.35}
+#pNext.ready{animation:glowp 1.6s ease-in-out infinite}
+body.noscroll{overflow:hidden}
+.form .toggle{display:flex!important;align-items:center;justify-content:space-between;color:var(--fg);font-size:15px;font-weight:600;letter-spacing:0;padding:12px 14px}
+#fBF{-webkit-appearance:none;appearance:none;width:50px;height:30px;border-radius:999px;background:var(--line);position:relative;flex:none;transform:none;cursor:pointer;transition:background .2s;border:0;padding:0;margin:0}
+#fBF::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.4)}
+#fBF:checked{background:var(--pink)}#fBF:checked::after{left:23px}
+.seasonChips{display:grid!important;grid-template-columns:repeat(4,1fr);gap:6px;overflow:visible!important}
+.seasonChips .chip{padding:8px 2px!important;font-size:18px!important;text-align:center;min-width:0;line-height:1.1}
+.seasonChips .chip .dn{display:block;font-size:11px;font-weight:700;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seasonChips .chip.on{transform:none}
+.topics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.topic{display:grid;gap:2px;text-align:left;border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:12px;color:var(--fg)}
+.topic span{font-size:22px}.topic b{font-size:14px;line-height:1.25}.topic small{color:var(--muted);font-size:12px}
+.topic:active{transform:scale(.97)}
+.topic:last-child:nth-child(odd){grid-column:1/-1}
 .linkbtn{border:0;background:none;padding:0;color:var(--muted);font-size:12px;text-decoration:underline}
 textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
 .ask{display:grid;gap:12px;border-color:var(--pink);background:linear-gradient(160deg,color-mix(in srgb,var(--pink) 18%,var(--surface)),var(--surface))}
@@ -406,24 +451,35 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b>📲 Install Hourglass as an app</b><button class="x" id="installX" aria-label="Hide">×</button></div>
     <ol><li>Open this page in <b>Safari</b>.</li><li>Tap the <b>Share</b> button (square with an arrow).</li><li>Scroll down, tap <b>Add to Home Screen</b>.</li><li>Name it <b>Hourglass</b>, tap <b>Add</b>.</li></ol>
   </div>
-  <div class="card hero">
-    <div class="ring"><svg width="96" height="96"><circle class="track" cx="48" cy="48" r="40"/><circle class="bar" id="todayRing" cx="48" cy="48" r="40" stroke-dasharray="251.3" stroke-dashoffset="251.3"/></svg><b id="todayPct">0%</b></div>
-    <div><div class="eyebrow" id="todayWeek">Week 1</div><h2 id="todayTitle">Glute Strength</h2><span class="phase" id="todayPhase">Foundation</span> <span class="phase blk" id="todayBlock">Learn block</span></div>
+  <div class="card today">
+    <div class="tdTop">
+      <div class="ring"><svg width="96" height="96"><circle class="track" cx="48" cy="48" r="40"/><circle class="bar" id="todayRing" cx="48" cy="48" r="40" stroke-dasharray="251.3" stroke-dashoffset="251.3"/></svg><b id="todayPct">0%</b></div>
+      <div><div class="eyebrow" id="todayWeek">Week 1</div><h2 id="todayTitle">Glute Strength</h2><span class="phase" id="todayPhase">Foundation</span> <span class="phase blk" id="todayBlock">Learn block</span></div>
+    </div>
+    <div class="chips" id="dayChips"></div>
+    <ol class="exPrev" id="exPrev"></ol>
+    <button class="btn wide" id="startBtn">Start workout</button>
+    <button class="linkbtn" id="unfinishBtn" hidden style="justify-self:center">Mark as not done</button>
   </div>
-  <button class="card lessonPing" id="lessonPing" hidden></button>
-  <div class="card quests"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div><div class="eyebrow">Workout-day quests</div><small class="muted" id="chestTxt"></small></div><button class="chest" id="chest" aria-label="Open reward chest">🎁</button></div><div id="qlist"></div></div>
   <details class="card pray" id="prayCard"><summary><span>🙏 Pray before you train</span></summary><p id="prayTxt"></p><button class="btn ghost wide" id="amenBtn">Amen 🙏</button></details>
-  <div class="chips" id="dayChips"></div>
-  <div id="exList" style="display:grid;gap:12px"></div>
-  <button class="btn wide" id="finishBtn">Finish workout</button>
-  <button class="linkbtn" id="unfinishBtn" hidden style="justify-self:center">Mark as not done</button>
-  <p class="muted" style="font-size:13px;margin:0">Tap a circle after each set (tap it again to clear it); a rest timer starts on its own. New move? Watch the figure, open "How to do it", or tap the video button first.</p>
+  <div class="card quests"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div><div class="eyebrow">Workout-day quests</div><small class="muted" id="chestTxt"></small></div><button class="chest" id="chest" aria-label="Open reward chest">🎁</button></div><div id="qlist"></div></div>
+  <button class="card lessonPing" id="lessonPing" hidden></button>
+  <div class="player" id="player" hidden role="dialog" aria-label="Workout">
+    <div class="pTop"><button class="pX" id="pClose" aria-label="Close workout">✕</button><div class="pT"><small id="pSub"></small><b id="pCount"></b></div><span class="pPct" id="pPct"></span></div>
+    <div class="pBar"><i id="pBarFill"></i></div>
+    <div class="pBody" id="pBody"><div class="wrapin">
+      <div id="exList" style="display:grid;gap:12px"></div>
+      <button class="btn wide" id="finishBtn" hidden>Finish workout</button>
+      <p class="muted" style="font-size:13px;margin:0;text-align:center">Tap a circle after each set. Tap it again to clear it. The rest timer starts on its own.</p>
+    </div></div>
+    <div class="pNav"><button class="btn ghost" id="pPrev">‹ Back</button><button class="btn" id="pNext">Next exercise ›</button></div>
+  </div>
 </section>
 
 <!-- PLAN -->
 <section class="view" id="v-plan">
   <div class="card" style="display:grid;gap:14px">
-    <div class="eyebrow">Her year · 52 weeks</div>
+    <div class="eyebrow">Your year · 52 weeks</div>
     <div class="yearbar big"><i id="yearFill"></i></div>
     <div class="seasonChips" id="seasonChips"></div>
     <div class="stepper"><button id="wkDown" aria-label="Previous week">−</button><b id="wkLabel">Week 1</b><button id="wkUp" aria-label="Next week">+</button></div>
@@ -447,12 +503,12 @@ input[type=search]{-webkit-appearance:none;appearance:none}
 <!-- FUEL -->
 <section class="view" id="v-fuel">
   <div class="card" style="display:grid;gap:12px">
-    <div class="eyebrow">Her numbers</div>
+    <div class="eyebrow">Your numbers</div>
     <div class="form">
       <label>Weight (lb)<input id="fWeight" type="number" inputmode="decimal" value="150"></label>
       <label>Height (in)<input id="fHeight" type="number" inputmode="decimal" value="64"></label>
       <label>Age<input id="fAge" type="number" inputmode="numeric" value="25"></label>
-      <label>Daily activity<select id="fAct"><option value="1.375">Light (mostly home)</option><option value="1.55" selected>Moderate (on feet + baby)</option><option value="1.7">High (very active)</option></select></label>
+      <label>Daily activity<select id="fAct"><option value="1.375">Mostly home</option><option value="1.55" selected>On my feet</option><option value="1.7">Very active</option></select></label>
       <label class="full toggle">Breastfeeding<input id="fBF" type="checkbox"></label>
       <div class="full"><div class="eyebrow" style="margin-bottom:6px">Goal right now</div>
         <div class="seg" id="goalSeg"><button data-g="lean">Lean down</button><button data-g="recomp" class="on">Recomp</button><button data-g="build">Build</button></div></div>
@@ -494,7 +550,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
 <!-- PROGRESS -->
 <section class="view" id="v-progress">
   <div class="card hg-wrap">
-    <svg class="hg" viewBox="0 0 120 200" width="120" height="200" aria-label="Silhouette shaped by her waist-to-hip ratio">
+    <svg class="hg" viewBox="0 0 120 200" width="120" height="200" aria-label="Silhouette shaped by your waist-to-hip ratio">
       <defs><linearGradient id="hgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4f8b"/><stop offset="1" stop-color="#ff8f6b"/></linearGradient></defs>
       <path id="hgPath" fill="url(#hgGrad)" d=""/>
     </svg>
@@ -521,7 +577,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <div style="overflow-x:auto"><table><thead><tr><th>Date</th><th>Wt</th><th>Waist</th><th>Hips</th><th></th></tr></thead><tbody id="logRows"></tbody></table></div>
   </div>
   <div class="card" style="display:grid;gap:10px">
-    <div class="eyebrow">Keep her progress safe</div>
+    <div class="eyebrow">Keep your progress safe</div>
     <div class="muted" style="font-size:13.5px" id="syncState">Progress is saved inside the app on this phone. Copy a backup code every few weeks and keep it in Notes.</div>
     <div class="row"><button class="btn ghost" id="bkCopy">Copy backup code</button><button class="btn ghost" id="bkShow">Restore from code</button></div>
     <div id="bkBox" hidden style="display:grid;gap:8px"><textarea id="bkText" rows="3" placeholder="Paste a backup code here"></textarea><button class="btn" id="bkRestore">Restore progress</button></div>
@@ -631,7 +687,7 @@ function renderMotive(){
   $('#motive').innerHTML=`<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b class="hi">${S.name?`Hey ${esc(S.name)}`:'Hey gorgeous'} 👋</b><span class="pill">Day ${Math.min(d,365)} of 365</span></div>
     <div class="yearbar"><i style="width:${pct}%"></i></div>
     <div class="verse"><span class="vlab">📖 Verse of the day</span><p>${VERSES[(d-1)%VERSES.length][0]}</p><div class="vrow"><small>${VERSES[(d-1)%VERSES.length][1]} (BSB)</small><a class="esv" href="https://www.biblegateway.com/passage/?search=${encodeURIComponent(VERSES[(d-1)%VERSES.length][1].replace(/–/g,'-'))}&version=CSB" target="_blank" rel="noopener noreferrer">Read in CSB ↗</a></div></div>
-    <p class="quote sm">“${QUOTES[(d-1)%QUOTES.length]}”</p>${S.why?`<p class="why">💗 Her why: ${esc(S.why)}</p>`:''}`;
+    <p class="quote sm">“${QUOTES[(d-1)%QUOTES.length]}”</p>${S.why?`<p class="why">💗 Your why: ${esc(S.why)}</p>`:''}`;
 }
 function renderToday(){
   const s=seasonOf(S.week), D=DAYS[S.day];
@@ -653,10 +709,28 @@ function renderToday(){
       <div class="sets">${Array.from({length:n},(_,j)=>`<button class="set ${j<got?'on':''}" data-e="${i}" data-s="${j}" aria-label="Set ${j+1}">${j+1}</button>`).join('')}</div></div>`}).join('');
   buildFigs();
   updRing();
-  $('#finishBtn').textContent=S.done.includes(sid())?'Workout done ✓':'Finish workout · counts toward her level';{const lf=S.doneDates[S.doneDates.length-1],ub=$('#unfinishBtn');ub.hidden=!(lf&&lf.d===today()&&S.done.includes(lf.id));if(!ub.hidden){const w=+lf.id.slice(1,lf.id.indexOf('d')),d=+lf.id.slice(lf.id.indexOf('d')+1);ub.textContent=`Mark Week ${w} · Day ${DAYS[d].k} as not done`}}
+  $('#finishBtn').textContent=S.done.includes(sid())?'Workout done ✓':'Finish workout';{const lf=S.doneDates[S.doneDates.length-1],ub=$('#unfinishBtn');ub.hidden=!(lf&&lf.d===today()&&S.done.includes(lf.id));if(!ub.hidden){const w=+lf.id.slice(1,lf.id.indexOf('d')),d=+lf.id.slice(lf.id.indexOf('d')+1);ub.textContent=`Mark Week ${w} · Day ${DAYS[d].k} as not done`}}
+  renderExPrev();if(playerOpen())showEx(pIdx);
   renderLessonPing();
   $('#prayTxt').textContent=PRAYERS[S.day%PRAYERS.length];
 }
+let pIdx=0;
+const playerOpen=()=>!$('#player').hidden;
+function renderExPrev(){const s=seasonOf(S.week),st=S.sets[sid()]||{},L=activeEx();let tot=0,got=0,secs=0;
+  $('#exPrev').innerHTML=L.map(({e,i})=>{const n=setsFor(e,S.week),g=Math.min(st[i]||0,n);tot+=n;got+=g;secs+=e.tag==='Cardio'?parseInt(e.reps[s])*60:n*(40+e.rest);
+    return `<li class="${g>=n?'ok':''}"><span class="exn">${e.n}</span><span class="exr">${n} × ${e.reps[s]}</span></li>`}).join('');
+  const done=S.done.includes(sid()),mins=Math.max(10,Math.round(secs/300)*5);
+  $('#startBtn').innerHTML=done?'Workout done ✓<small>Tap to review</small>':got?`Continue workout<small>${got} of ${tot} sets done</small>`:`Start workout<small>About ${mins} minutes · ${L.length} exercises</small>`;
+  $('#startBtn').classList.toggle('done',done)}
+function openPlayer(){const st=S.sets[sid()]||{},L=activeEx();const k=L.findIndex(({e,i})=>(st[i]||0)<setsFor(e,S.week));pIdx=k<0?0:k;
+  $('#player').hidden=false;document.body.classList.add('noscroll');renderToday();showEx(pIdx);sfx('pop')}
+function closePlayer(){$('#player').hidden=true;document.body.classList.remove('noscroll');stopTimer();renderToday();flushOv()}
+function showEx(k){const cards=$$('#exList .ex');if(!cards.length)return;pIdx=Math.max(0,Math.min(cards.length-1,k));cards.forEach((c,j)=>c.classList.toggle('cur',j===pIdx));$('#pBody').scrollTop=0;playerSync()}
+function playerSync(){if(!playerOpen())return;const L=activeEx(),st=S.sets[sid()]||{};let tot=0,got=0;L.forEach(({e,i})=>{const n=setsFor(e,S.week);tot+=n;got+=Math.min(st[i]||0,n)});
+  $('#pCount').textContent=`Exercise ${pIdx+1} of ${L.length}`;$('#pSub').textContent=`Week ${S.week} · Day ${DAYS[S.day].k} · ${DAYS[S.day].t}`;
+  $('#pBarFill').style.width=(tot?got/tot*100:0)+'%';$('#pPct').textContent=`${got}/${tot} sets`;
+  const last=pIdx===L.length-1,cur=L[pIdx],curDone=cur&&(st[cur.i]||0)>=setsFor(cur.e,S.week),done=S.done.includes(sid());
+  const nb=$('#pNext');nb.textContent=last?(done?'Close':'Finish workout'):'Next exercise ›';nb.classList.toggle('ready',!!curDone||(last&&got>=Math.ceil(tot*.75)&&!done));$('#pPrev').disabled=pIdx===0}
 function updRing(){
   const st=S.sets[sid()]||{};let tot=0,got=0;
   activeEx().forEach(({e,i})=>{const n=setsFor(e,S.week);tot+=n;got+=Math.min(st[i]||0,n)});
@@ -672,7 +746,7 @@ $('#exList').addEventListener('click',e=>{
   const card=b.closest('.ex'),n=card.querySelectorAll('.set').length;
   card.querySelectorAll('.set').forEach((x,j)=>x.classList.toggle('on',j<S.sets[k][i]));
   card.classList.toggle('complete',S.sets[k][i]>=n);
-  updRing();
+  updRing();playerSync();renderExPrev();
   const ex=DAYS[S.day].ex[i];
   if(S.sets[k][i]>cur&&ex.rest&&S.sets[k][i]<n)startTimer(ex.rest);
   const ak=k+'-'+i;
@@ -718,7 +792,7 @@ function renderPlan(){
   const doneWeeks=new Set(S.done.map(x=>+x.slice(1,x.indexOf('d'))));
   $('#yearFill').style.width=(S.done.length/208*100)+'%';
   $('#wkLabel').textContent=`Week ${S.week}`;
-  $('#seasonChips').innerHTML=SEASONS.map((s,i)=>`<button class="chip ${i===vs?'on':''}" data-s="${i}">${s.i} ${s.n}</button>`).join('');
+  $('#seasonChips').innerHTML=SEASONS.map((s,i)=>`<button class="chip ${i===vs?'on':''}" data-s="${i}">${s.i}<span class="dn">${s.n}</span></button>`).join('');
   $('#weeks').innerHTML=Array.from({length:13},(_,k)=>{const w=vs*13+k+1;
     return `<button class="wk ${w===S.week?'cur':''} ${isRecovery(w)?'rec':''}" data-w="${w}">${isRecovery(w)?'🌙':wkIn(w)}<span class="dots">${[0,1,2,3].map(d=>`<i class="${S.done.includes(`w${w}d${d}`)?'f':''}"></i>`).join('')}</span></button>`}).join('');
   const cs=seasonOf(S.week);
@@ -787,7 +861,7 @@ function renderProgress(){
   if(last){const r=last.wa/last.h;$('#whr').textContent=r.toFixed(2);$('#hgPath').setAttribute('d',hgPath(r));
     const dW=last.wa-first.wa,dH=last.h-first.h;
     $('#whrNote').innerHTML=`Waist ${dW<=0?'down':'up'} ${Math.abs(dW).toFixed(2)}" and hips ${dH>=0?'up':'down'} ${Math.abs(dH).toFixed(2)}" since ${first.date}. Lower ratio = more hourglass.`;
-  }else{$('#whr').textContent='–';$('#hgPath').setAttribute('d',hgPath(.75));$('#whrNote').textContent='Log her first check-in to see her shape.'}
+  }else{$('#whr').textContent='–';$('#hgPath').setAttribute('d',hgPath(.75));$('#whrNote').textContent='Log your first check-in to see your shape.'}
   if(L.length<2)$('#chart').innerHTML='<p class="muted" style="font-size:13px">Two check-ins draw the trend line.</p>';
   else{
     const W=340,H=170,pl=34,pr=10,pt=10,pb=26,vals=L.flatMap(x=>[x.wa,x.h]),lo=Math.floor(Math.min(...vals)-1),hi=Math.ceil(Math.max(...vals)+1);
@@ -811,7 +885,10 @@ $('#logRows').addEventListener('click',e=>{const b=e.target.closest('[data-del]'
 const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))),dec=t=>JSON.parse(decodeURIComponent(escape(atob(t.trim()))));
 $('#bkCopy').onclick=()=>{const code=enc(S);navigator.clipboard.writeText(code).then(()=>toast('Backup code copied 📋')).catch(()=>{$('#bkBox').hidden=false;$('#bkText').value=code;$('#bkText').select();toast('Select and copy the code')})};
 $('#amenBtn').onclick=()=>{$('#prayCard').open=false;toast('Amen 🙏 Let\'s go');sfx('ding')};
-$('#snackUndo').onclick=doUndo;document.addEventListener('pointerdown',e=>{if(e.target.closest('#snackUndo'))pendSnap=null},true);
+$('#snackUndo').onclick=doUndo;
+$('#startBtn').onclick=openPlayer;$('#pClose').onclick=closePlayer;$('#pPrev').onclick=()=>{showEx(pIdx-1);sfx('pop')};
+$('#pNext').onclick=()=>{const L=activeEx();if(pIdx<L.length-1){showEx(pIdx+1);sfx('pop');return}if(S.done.includes(sid())){closePlayer();return}const b=S.done.length;$('#finishBtn').click();if(S.done.length>b)closePlayer()};
+window.hgBack=()=>{const o=$('#ov');if(o&&!o.hidden){nextOv();return 1}if(playerOpen()){closePlayer();return 1}return 0};document.addEventListener('pointerdown',e=>{if(e.target.closest('#snackUndo'))pendSnap=null},true);
 $('#rsShow').onclick=()=>{$('#rsBox').hidden=false};$('#rsNo').onclick=()=>{$('#rsBox').hidden=true};
 $('#rsYes').onclick=async()=>{try{localStorage.removeItem(KEY)}catch(e){}await idbClear();
   try{if(typeof CLOUD!=='undefined'&&CLOUD)await CLOUD.set({json:'{}',ts:Date.now()})}catch(e){}
@@ -820,12 +897,14 @@ $('#bkShow').onclick=()=>{$('#bkBox').hidden=!$('#bkBox').hidden};
 $('#bkRestore').onclick=()=>{try{const o=dec($('#bkText').value);if(!o||!Array.isArray(o.done))throw 0;S=Object.assign(S,o);save();rerenderAll();toast('Progress restored ✨');$('#bkBox').hidden=true}catch(e){toast('That code did not work. Copy it again in full.')}};
 
 // ===== Learn: lessons
+let showAllLes=false;
+document.addEventListener('click',e=>{if(e.target.closest('#lesAll')){showAllLes=true;renderLearn()}});
 function renderLearn(){
   const n=Object.keys(S.lessons).length;$('#lessonCount').textContent=`${n}/52`;
   const ls=S.lessonSeason??seasonOf(S.week);
-  $('#lessonSeasons').innerHTML=SEASONS.map((s,i)=>`<button class="chip ${i===ls?'on':''}" data-s="${i}">${s.i} ${s.n}</button>`).join('');
-  $('#lessonList').innerHTML=LESSONS.slice(ls*13,ls*13+13).map((l,k)=>{const i=ls*13+k,open=i<S.week,res=S.lessons[i];
-    return `<button class="les ${open?'':'lock'} ${res?'done':''}" data-l="${i}" ${open?'':'disabled'}><span class="ln">${res?'✓':open?i+1:'🔒'}</span><span><b>${l[0]}</b><small>${res?(res==='r'?'Aced the quiz':'Read'):open?'+40 XP':`Unlocks week ${i+1}`}</small></span></button>`}).join('');
+  $('#lessonSeasons').innerHTML=SEASONS.map((s,i)=>`<button class="chip ${i===ls?'on':''}" data-s="${i}">${s.i}<span class="dn">${s.n}</span></button>`).join('');
+  $('#lessonList').innerHTML=LESSONS.slice(ls*13,ls*13+13).map((l,k)=>[l,k]).filter(([l,k])=>showAllLes||ls*13+k<=S.week).map(([l,k])=>{const i=ls*13+k,open=i<S.week,res=S.lessons[i];
+    return `<button class="les ${open?'':'lock'} ${res?'done':''}" data-l="${i}" ${open?'':'disabled'}><span class="ln">${res?'✓':open?i+1:'🔒'}</span><span><b>${l[0]}</b><small>${res?(res==='r'?'Aced the quiz':'Read'):open?'+40 pts':`Unlocks week ${i+1}`}</small></span></button>`}).join('')+(showAllLes||ls*13+13<=S.week?'':`<button class="linkbtn" id="lesAll" style="justify-self:start">Show all 13 lessons this season</button>`);
 }
 $('#lessonSeasons').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b){S.lessonSeason=+b.dataset.s;renderLearn()}});
 $('#lessonList').addEventListener('click',e=>{const b=e.target.closest('.les');if(b&&!b.disabled)openLesson(+b.dataset.l)});
@@ -848,11 +927,14 @@ function openLesson(i){
 let faqCat=-1;
 function renderFaq(){
   const q=$('#faqQ').value.trim().toLowerCase();
-  $('#faqCats').innerHTML=`<button class="qc ${faqCat<0?'on':''}" data-c="-1">All</button>`+FAQ.map((c,i)=>`<button class="qc ${faqCat===i?'on':''}" data-c="${i}">${c.i} ${c.c}</button>`).join('');
+  const tiles=!q&&faqCat<0;$('#faqCats').hidden=tiles;
+  if(tiles){$('#faqList').innerHTML=`<div class="topics">${FAQ.map((c,i)=>`<button class="topic" data-c="${i}"><span>${c.i}</span><b>${c.c}</b><small>${c.q.length} answers</small></button>`).join('')}</div>`;return}
+  $('#faqCats').innerHTML=`<button class="qc" data-c="-1">← All topics</button>`+FAQ.map((c,i)=>`<button class="qc ${faqCat===i?'on':''}" data-c="${i}">${c.i} ${c.c}</button>`).join('');
   const out=[];FAQ.forEach((c,ci)=>{if(faqCat>=0&&ci!==faqCat&&!q)return;c.q.forEach(([qq,a])=>{if(!q||(qq+' '+a).toLowerCase().includes(q))out.push({c,qq,a})})});
   $('#faqList').innerHTML=out.length?out.map(o=>`<details><summary><span>${o.c.i} ${o.qq}</span></summary><p>${o.a}</p></details>`).join(''):`<p class="muted">No match yet. Try a shorter word, like "sore" or "protein".</p>`;
 }
 $('#faqQ').addEventListener('input',renderFaq);
+$('#faqList').addEventListener('click',e=>{const t=e.target.closest('.topic');if(t){faqCat=+t.dataset.c;renderFaq();$('#faqCats').scrollIntoView({behavior:'smooth',block:'start'});sfx('pop')}});
 const POPULAR=['How do I know it is working?','Is it normal to feel this in my thighs?','What should I eat before and after a workout?','I am exhausted today. What should I do?','How long until my butt looks bigger?','Can bodyweight workouts really grow glutes?','I am really sore. Should I skip?','How do I lose the postpartum pouch?'];
 $('#faqPop').innerHTML=POPULAR.map(q=>`<button class="qc" type="button">${q}</button>`).join('');
 $('#faqPop').addEventListener('click',e=>{const b=e.target.closest('.qc');if(!b)return;faqCat=-1;$('#faqQ').value=b.textContent;renderFaq();const d=$('#faqList details');if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'center'})}sfx('pop')});
@@ -1089,7 +1171,7 @@ const FAQ=[
   ['Why should I trust this plan?','It follows the same principles coaches use with every glute client: train glutes 3–4 times a week, hit all three glute muscles, make the work a little harder over time, eat enough protein, and recover. Nothing is a gimmick. It just stacks those basics week after week.'],
   ['I am not sore. Is it working?','Yes. Soreness mostly comes from new movements and fades as the body adapts. Better signs are reps going up, moves feeling easier, and the tape changing.'],
   ['Will I get bulky?','No. Building noticeable muscle takes years of heavy training and lots of food. What happens instead: rounder glutes, a firmer look, and better posture.'],
-  ['Why only 4 workouts a week?','Muscle grows during recovery. Four focused sessions plus walks give her enough work to grow and enough rest to rebuild, and it fits life with a baby.'],
+  ['Why only 4 workouts a week?','Muscle grows during recovery. Four focused sessions plus walks give you enough work to grow and enough rest to rebuild, and it fits life with a baby.'],
   ['Why does it take a whole year?','Glutes are a large muscle group and grow gradually. A year allows four full seasons: learning, building, strength, and sculpting. Each one stacks on the last, and habits built over a year tend to stick for good.']]},
  {c:'Glutes & shape',i:'🍑',q:[
   ["Is it normal to feel this in my thighs?", "A little, yes. Squats, lunges and step-ups work the thighs too. If the thighs are doing most of the work, push through the heels, lean the chest slightly forward on lunges and split squats, and squeeze the glute hard at the top of every rep."],
@@ -1099,7 +1181,7 @@ const FAQ=[
   ['I feel it in my thighs, not my glutes.','Push through the heels, slow down, and squeeze the glute at the top of every rep. On lunges and split squats, lean the chest slightly forward. On bridges, move the feet a little farther from the butt.'],
   ['Can I grow glutes and lose fat at the same time?','Yes, especially as a beginner or a returning mom. This is called recomposition. Keep protein high and calories near maintenance or a small deficit.'],
   ['What about hip dips?','Hip dips are mostly bone structure, and everyone has some. Growing the upper-side glutes with side kicks, leg raises and band work can soften how they look.'],
-  ['Does genetics matter?','Genetics shape where fat sits and the outline of the hips, but every body can build glute muscle. Compare her to her own day one, not to anyone else.'],
+  ['Does genetics matter?','Genetics shape where fat sits and the outline of the hips, but every body can build glute muscle. Compare yourself to your own day one, not to anyone else.'],
   ['Why train back and shoulders for a glute goal?','The hourglass is a contrast. A slightly wider upper back and shoulders, plus rounder glutes, make the waist look smaller from both ends.']]},
  {c:'Waist & belly',i:'⌛',q:[
   ["Why is my belly bigger at night?", "Food, water and gas, not fat. Everyone's belly is bigger at night. Measure your waist in the morning before eating for the honest number."],
@@ -1108,31 +1190,31 @@ const FAQ=[
   ['How do I lose the postpartum pouch?','Patience plus three things: steady fat loss, deep-core training to help the abdominal wall heal, and good posture. Some loose skin can remain and is normal; a pelvic floor or women\'s health physical therapist can check the core.'],
   ['What is a stomach vacuum?','Breathe all the air out, then pull the belly button toward the spine and hold. It trains the deep corset muscle that holds the belly in.'],
   ['Why no side bends with weights?','Heavy oblique work like weighted side bends can thicken the sides of the waist. The plan uses planks and side planks instead, which build strength without bulk.'],
-  ['Should I use a waist trainer?','It will not burn fat or reshape the waist long term, and wearing one tight for long periods can weaken the core muscles. Any postpartum binder should be cleared with her doctor.']]},
+  ['Should I use a waist trainer?','It will not burn fat or reshape the waist long term, and wearing one tight for long periods can weaken the core muscles. Any postpartum binder should be cleared with your doctor.']]},
  {c:'Postpartum & mom life',i:'👶',q:[
   ["How do I find time with a baby?", "Pick one daily anchor, like the first nap of the day, and treat it like an appointment. A workout takes 25–35 minutes. On chaotic days, do half and call it a win."],
   ["Is it OK to work out on my period?", "Yes. Many women feel fine training. On low-energy or crampy days, do fewer sets or a walk. Gentle movement often helps cramps."],
   ['When can I start after giving birth?','Most doctors clear exercise at the postpartum checkup, often around 6 weeks, and later after a C-section or a hard delivery. Get that clearance first, then start with Season 1 Week 1.'],
   ['How do I check for ab separation?','Lie on your back, knees bent, lift your head slightly, and press your fingers along the midline above and below the belly button. A gap wider than about two fingers, or a dome when you lift, means see a pelvic floor physical therapist and skip planks and knee raises until cleared.'],
   ['I leak a little during workouts.','Common, but not something to push through. Exhale on effort, ease off jumping or heavy work, and book a pelvic floor physical therapist. Most women improve a lot.'],
-  ['I had a C-section. Anything different?','Wait for her doctor\'s OK, start gently, and avoid anything that pulls on the scar or causes pain. Bridges, walks and breathing work are usually good first steps.'],
+  ['I had a C-section. Anything different?','Wait for your doctor\'s OK, start gently, and avoid anything that pulls on the scar or causes pain. Bridges, walks and breathing work are usually good first steps.'],
   ['How do I work out with a baby around?','Use nap time, keep workouts at home, and make the baby part of it: bridges with baby on the hips, stroller walks, a play mat next to the workout. Even 15 minutes counts.'],
   ['I barely slept. Train or rest?','Do a lighter version: fewer sets or just a walk. Keep the habit alive without draining what little energy is left.']]},
  {c:'Nutrition',i:'🥩',q:[
   ["What if I don't eat much meat?", "Eggs, Greek yogurt, cottage cheese, protein shakes, tofu, lentils, beans and edamame all count. Pair beans or lentils with rice for a complete protein."],
   ["Is it bad to eat late at night?", "The total for the day matters more than the clock. If late snacks push you over your calories, swap them for a high-protein one like Greek yogurt or cottage cheese."],
   ["What do I eat on rest days?", "Same protein, slightly fewer carbs. Muscles do their rebuilding on rest days, so protein matters just as much."],
-  ['How much protein do I need?','About 0.7–1 gram per pound of body weight a day. The Fuel tab calculates her exact number. Spread it across meals: 25–40 grams each.'],
+  ['How much protein do I need?','About 0.7–1 gram per pound of body weight a day. The Fuel tab calculates your exact number. Spread it across meals: 25–40 grams each.'],
   ['Do I have to count calories?','Not forever. Use the Fuel numbers for a few weeks to learn portions, then switch to simple habits: protein at every meal, a fist of carbs, half the plate vegetables or fruit.'],
   ['What should I eat before and after a workout?','Something light 1–2 hours before, like yogurt or toast with peanut butter. Within a couple of hours after, a meal with protein and carbs, like chicken and rice or eggs and toast.'],
   ['Are cheat meals OK?','Yes. One meal never ruins progress. Aim for about 80–90% whole foods and enjoy the rest without guilt.'],
-  ['Do I need supplements?','No. Protein powder is a convenient way to hit protein. Anything else, especially while breastfeeding, should be cleared with her doctor first.'],
+  ['Do I need supplements?','No. Protein powder is a convenient way to hit protein. Anything else, especially while breastfeeding, should be cleared with your doctor first.'],
   ['What are easy high-protein snacks?','Greek yogurt, cottage cheese, string cheese, hard-boiled eggs, tuna pouches, jerky, protein shakes, edamame.']]},
  {c:'Breastfeeding',i:'🍼',q:[
   ['Will working out hurt my milk supply?','Moderate exercise does not reduce supply. The things that can hurt supply are under-eating and dehydration, so keep calories and water up.'],
-  ['Can I lose weight while breastfeeding?','Yes, slowly. Around 1 lb a week or less is generally considered safe. The app keeps her calories at 1,800 or higher when breastfeeding is checked.'],
-  ['Is protein powder OK while breastfeeding?','Generally yes for basic whey or plant protein without added herbs or stimulants. Pick a third-party tested brand and check with her doctor.'],
-  ['How much water while breastfeeding?','More than usual. A glass every time she feeds the baby is an easy rule, and the app raises her water goal when breastfeeding is checked.']]},
+  ['Can I lose weight while breastfeeding?','Yes, slowly. Around 1 lb a week or less is generally considered safe. The app keeps your calories at 1,800 or higher when breastfeeding is checked.'],
+  ['Is protein powder OK while breastfeeding?','Generally yes for basic whey or plant protein without added herbs or stimulants. Pick a third-party tested brand and check with your doctor.'],
+  ['How much water while breastfeeding?','More than usual. A glass every time you feed the baby is an easy rule, and the app raises your water goal when breastfeeding is checked.']]},
  {c:'Soreness & recovery',i:'🛁',q:[
   ["How do I tell good burn from bad pain?", "Good: a burn or tiredness in the muscle that fades after the set, or soreness for 1–2 days. Bad: sharp, stabbing, pinching or joint pain, pain that gets worse, or pain that changes how you move. Stop and get bad pain checked."],
   ["My wrists hurt in push-ups or planks.", "Spread the fingers wide and press through the whole hand. Do push-ups on a higher surface like the counter. For planks, stay on the forearms. If pain stays, see a doctor."],
@@ -1154,9 +1236,9 @@ const FAQ=[
   ["What if I miss a whole week?", "Go back to the week you missed on the Year tab and pick up from there. Nothing is lost."],
   ['How does the year work?','52 weeks in 4 seasons: Foundation, Build, Strength, Sculpt. Each season makes the same moves harder. Every 13th week is a lighter recovery week.'],
   ['What is the "season version"?','The way she does that exercise this season. Season 1 is bodyweight; later seasons add pauses, single-leg moves, bands and dumbbells.'],
-  ['How do levels work?','Levels come only from finished workouts, so her level always matches her real progress: 20 levels across the 208 workouts of the year, about one every 10 to 11 workouts, five per season. Hourglass Queen takes 200 workouts. A workout counts once at least 3 out of 4 of its sets are done, and up to 2 count per day.'],
+  ['How do levels work?','Levels come only from finished workouts, so your level always matches your real progress: 20 levels across the 208 workouts of the year, about one every 10 to 11 workouts, five per season. Hourglass Queen takes 200 workouts. A workout counts once at least 3 out of 4 of its sets are done, and up to 2 count per day.'],
   ['What are shiny finds?','Collectibles that drop by surprise: about 1 in 10 sets, every finished workout, every chest, some lessons, and golden peaches that sometimes fly across the Train screen. There are 41 to collect in 4 rarities, plus rare shiny versions. Duplicates give bonus points.'],
-  ['What are points for?','Points come from sets, quests, lessons, check-ins and mystery cards. They are a bonus score for fun and never change her level.'],
+  ['What are points for?','Points come from sets, quests, lessons, check-ins and mystery cards. They are a bonus score for fun and never change your level.'],
   ['How do I move to the next week?','Use the Plan tab: tap the next week or the + button after finishing that week\'s 4 workouts.'],
   ['How do I keep my progress safe?','Progress saves inside the app on your phone. Copy a backup code from the Progress tab every few weeks and keep it in Notes. If you switch phones, paste it into Restore.'],
   ['How do I put it on my iPhone home screen?','Open the link in Safari, tap the Share button (square with an arrow), scroll down, tap "Add to Home Screen", name it Hourglass, and tap Add.']]},
@@ -1165,7 +1247,7 @@ const FAQ=[
   ["I am exhausted today. What should I do?", "Do the minimum: one glute move and a 10-minute walk, or just the stroller walk. If you slept terribly, rest is the smart choice and you will train better tomorrow. One missed day changes nothing; missing a month does."],
   ["How do I stay consistent for a whole year?", "Same time each day, clothes laid out, and a minimum version for bad days. Track the weekly streak, open the new lesson each week, and look at photos every month. Results build on consistency, not perfect weeks."],
   ['I have zero motivation today.','Do the minimum: one exercise, two sets. Most days, starting turns into finishing. On the days it does not, she still kept the habit alive.'],
-  ['I keep comparing myself to others online.','Many online photos are posed, edited or filtered. The only fair comparison is her own day-one photo.'],
+  ['I keep comparing myself to others online.','Many online photos are posed, edited or filtered. The only fair comparison is your own day-one photo.'],
   ['I fell off for weeks.','Start where you left off, at the week before if it feels hard. Nothing is lost; the body remembers training faster than it learned it.'],
   ['How can my partner help?','Cover a feed or nap so she can train, join stroller walks, cook protein-heavy meals, and notice the effort, not just the results.']]}
 ];
@@ -1253,7 +1335,7 @@ function nextOv(){const ov=$('#ov'),f=Q.shift();if(!f){ov.hidden=true;ovOpen=fal
 $('#ov').addEventListener('click',e=>{if(e.target.closest('[data-close]'))nextOv()});
 
 function showLevelUp(L){if(BATCH||busy()){PEND.push({e:'🍑',t:`Level ${L+1}: ${titleOf(L)}`,s:PERKS[Math.min(L,19)],lv:1});if(busy()){toast(`Level up! ${titleOf(L)} 🎉`);sfx('level')}return}
-  enqueue(ov=>{ov.innerHTML=`<div class="ovc"><span class="big">🍑</span><div class="eyebrow">Level ${L+1}</div><h2 class="lvlup">LEVEL UP!</h2><p>${S.name?esc(S.name)+' is':'She\'s'} now a <b>${titleOf(L)}</b></p><p class="muted">${PERKS[Math.min(L,19)]}</p><button class="btn wide" data-close>Let's go</button></div>`;sfx('level');buzz([60,40,120]);confetti()})}
+  enqueue(ov=>{ov.innerHTML=`<div class="ovc"><span class="big">🍑</span><div class="eyebrow">Level ${L+1}</div><h2 class="lvlup">LEVEL UP!</h2><p>You're now a <b>${titleOf(L)}</b></p><p class="muted">${PERKS[Math.min(L,19)]}</p><button class="btn wide" data-close>Let's go</button></div>`;sfx('level');buzz([60,40,120]);confetti()})}
 
 const wd=w=>[0,1,2,3].some(d=>S.done.includes(`w${w}d${d}`));
 const realLog=()=>S.log.filter(x=>!x.ex).sort((a,b)=>a.date.localeCompare(b.date));
@@ -1312,7 +1394,8 @@ function renderGame(){
   if(S.lvlSeen>L)S.lvlSeen=L;
   if(L>S.lvlSeen){for(let i=S.lvlSeen+1;i<=L;i++)showLevelUp(i);S.lvlSeen=L;save()}
   const wid=S.daily.wid||sid(),wd=+wid.slice(wid.indexOf('d')+1),ww=+wid.slice(1,wid.indexOf('d')),fin=S.done.includes(wid);
-  const q=[{i:'🏋️',t:`Finish Week ${ww} · Day ${DAYS[wd].k} workout`,v:fin?1:Math.min(.95,S.daily.sets/Math.max(1,DAYS[wd].ex.reduce((a,e)=>a+setsFor(e,ww),0))),x:fin?'Workout done ✓':`${S.daily.sets} set${S.daily.sets===1?'':'s'} so far`,add:''},
+  const qs=S.sets[wid]||{},qSets=DAYS[wd].ex.reduce((a,e,i)=>a+Math.min(qs[i]||0,setsFor(e,ww)),0);
+  const q=[{i:'🏋️',t:`Finish Week ${ww} · Day ${DAYS[wd].k} workout`,v:fin?1:Math.min(.95,qSets/Math.max(1,DAYS[wd].ex.reduce((a,e)=>a+setsFor(e,ww),0))),x:fin?'Workout done ✓':`${qSets} set${qSets===1?'':'s'} so far`,add:''},
            {i:'🥩',t:'Hit the protein goal',v:Math.min(1,S.tank.p/(S.pTarget||128)),x:`${S.tank.p}/${S.pTarget||128} g · tap to add, hold to take away`,
             add:[10,25,40].map(n=>`<button class="qa" data-p="${n}">+${n}g</button>`).join('')},
            {i:'💧',t:'Drink the water goal',v:Math.min(1,S.tank.w/(S.wTarget||96)),x:`${S.tank.w}/${S.wTarget||96} oz · tap to add, hold to take away`,
@@ -1330,7 +1413,7 @@ $('#chest').onclick=e=>{if(!$('#chest').classList.contains('ready'))return;ACT='
 $('#sndBtn').onclick=()=>{S.sound=!S.sound;$('#sndBtn').textContent=S.sound?'🔊':'🔇';save();sfx('ding')};
 $('#lvlBtn').onclick=()=>enqueue(ov=>{const {L,w}=levelOf();
   ov.innerHTML=`<div class="ovc"><div class="eyebrow">The glow-up ladder</div><h2>Levels = workouts finished</h2>
-   <p class="muted">${w} of 208 workouts done. Each level is earned by real training, so her title always matches how far into the year she is.</p>
+   <p class="muted">${w} of 208 workouts done. Each level is earned by real training, so your title always matches how far into the year you are.</p>
    <div class="ladder">${TITLES.map((t,i)=>`${i%5===0?`<div class="ladS">${SEASONS[i/5].i} Season ${i/5+1}: ${SEASONS[i/5].n}</div>`:''}<div class="lad ${i<L?'past':i===L?'now':''}"><span>${i+1}</span><b>${t}</b><small>${LV[i]} workouts</small></div>`).join('')}</div>
    <p class="muted" style="font-size:12.5px">🍑 Bonus points: ${S.xp.toLocaleString()}. Points come from sets, quests, lessons and mystery cards. They are the fun score; levels only move with workouts.</p>
    <button class="btn wide" data-close>Back to it</button></div>`},true);
@@ -1421,7 +1504,7 @@ function setFX(e,big){
 let goldT=null,goldLast=0;
 function maybeGolden(){
   clearTimeout(goldT);if(Date.now()-goldLast<6*6e4)return;
-  goldT=setTimeout(()=>{if(!$('#v-today').classList.contains('on')||ovOpen||document.hidden||Math.random()>.45)return;
+  goldT=setTimeout(()=>{if(!$('#v-today').classList.contains('on')||playerOpen()||ovOpen||document.hidden||Math.random()>.45)return;
     goldLast=Date.now();const g=document.createElement('button');g.className='goldpeach';g.innerHTML='<span class="goldf">🍑</span>';g.setAttribute('aria-label','Catch the golden peach');
     g.style.top=(140+Math.random()*(innerHeight-360))+'px';document.body.appendChild(g);sfx('flip');
     g.onclick=e=>{const pts=[50,75,100,150][Math.random()*4|0];g.classList.add('caught');toast(`Golden peach caught! +${pts} pts 🍑✨`);confetti();sfx('chest');buzz([40,30,90]);
@@ -1450,7 +1533,7 @@ boot();
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='17';
+const APP_VERSION='18';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
