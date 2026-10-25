@@ -250,7 +250,7 @@ details.how li{color:var(--fg)}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:20}
 .toast{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-200%);background:var(--mint);color:var(--bg);font-weight:800;padding:12px 20px;border-radius:999px;z-index:21;transition:transform .5s cubic-bezier(.3,1.5,.5,1);white-space:nowrap}
 .toast.show{transform:translate(-50%,0)}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){.blob{animation:none!important}}
 [hidden]{display:none!important}
 .motive{display:grid;gap:8px;background:linear-gradient(135deg,color-mix(in srgb,var(--pink) 22%,var(--surface)),var(--surface))}
 .hi{font-family:var(--display);font-size:16px}
@@ -743,7 +743,6 @@ $$('.dock button').forEach(b=>b.onclick=()=>{
 });
 let tT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2000)}
 function confetti(){
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const c=$('#confetti'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
   const cols=['#ff4f8b','#ff8f6b','#ffd166','#5ee6b5','#fbeff4'];
   const P=Array.from({length:120},()=>({x:c.width/2,y:c.height*.4,vx:(Math.random()-.5)*14,vy:Math.random()*-14-4,s:Math.random()*7+4,r:Math.random()*6,c:cols[Math.random()*5|0],pe:Math.random()<.15}));
@@ -1045,7 +1044,7 @@ const QUOTES=['Strong moms raise strong kids.','Every rep is a vote for the woma
 
 
 // ===== Animated exercise figures
-const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const REDUCE=false; // exercise demos always move: they teach the form
 const STAND='H:100,26 N:100,40 P:100,72 K1:101,96 A1:100,120 K2:99,96 A2:100,120 E1:102,56 W1:104,70 E2:98,56 W2:96,70';
 const FRONT='H:100,26 N:100,40 P:100,72 K1:95,96 A1:93,120 K2:105,96 A2:107,120 E1:90,56 W1:88,72 E2:110,56 W2:112,72 T1:89,121 T2:111,121';
 function pose(s,base){const o=base?JSON.parse(JSON.stringify(base)):{B:0};(s||'').trim().split(/\s+/).forEach(t=>{const m=t.match(/^([A-Z]\d?):(-?[\d.]+)(?:,(-?[\d.]+))?$/);if(m)o[m[1]]=m[3]!==undefined?[+m[2],+m[3]]:+m[2]});return o}
