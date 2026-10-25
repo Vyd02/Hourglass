@@ -523,7 +523,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     </div>
   </div>
   <div class="card" style="display:grid;gap:14px">
-    <div class="row" style="justify-content:space-between"><div><div class="eyebrow">This workout day's tank</div><small class="muted" style="font-size:12px">Tap to add · hold to take away</small></div><button class="linkbtn" id="resetDay">Reset day</button></div>
+    <div class="row" style="justify-content:space-between"><div><div class="eyebrow">Today's protein & water</div><small class="muted" style="font-size:12px">Tap to add · hold to take away</small></div><button class="linkbtn" id="resetDay">Reset day</button></div>
     <div><div class="row" style="justify-content:space-between"><b>Protein</b><span id="pTxt" class="muted"></span></div>
       <div class="counter"><div class="meter"><i id="pBar" style="background:linear-gradient(90deg,var(--pink),var(--peach))"></i></div>
       <div class="qbtns"><button data-p="10">+10</button><button data-p="25">+25</button><button data-p="40">+40</button></div></div></div>
@@ -649,8 +649,8 @@ if(!S.start)S.start=today();
 S.log=(S.log||[]).filter(x=>!x.ex); // no example data, ever
 // Quests run per WORKOUT DAY: a round starts with a workout and ends when she opens the chest
 // (or when she starts a new workout after finishing the last one).
-function newRound(wid){S.daily={wid:wid||null,sets:0,claimed:0};S.tank={p:0,w:0}}
-function dayRoll(){if(!('wid' in S.daily))newRound()}
+function newRound(wid){S.daily={wid:wid||null,sets:0,claimed:0,prayed:0,walked:0}}
+function dayRoll(){if(!('wid' in S.daily))newRound();if(S.tank.d!==today())S.tank={d:today(),p:0,w:0}}
 dayRoll();
 // ===== Undo: every tap that changes something can be taken back, one tap at a time
 let UNDO=[],pendSnap=null,undoing=false;
@@ -884,7 +884,7 @@ $('#logRows').addEventListener('click',e=>{const b=e.target.closest('[data-del]'
 // backup
 const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))),dec=t=>JSON.parse(decodeURIComponent(escape(atob(t.trim()))));
 $('#bkCopy').onclick=()=>{const code=enc(S);navigator.clipboard.writeText(code).then(()=>toast('Backup code copied 📋')).catch(()=>{$('#bkBox').hidden=false;$('#bkText').value=code;$('#bkText').select();toast('Select and copy the code')})};
-$('#amenBtn').onclick=()=>{$('#prayCard').open=false;toast('Amen 🙏 Let\'s go');sfx('ding')};
+$('#amenBtn').onclick=e=>{$('#prayCard').open=false;if(!S.daily.prayed){S.daily.prayed=1;gainXP(20,e)}toast('Amen 🙏 Let\'s go');sfx('ding')};
 $('#snackUndo').onclick=doUndo;
 $('#startBtn').onclick=openPlayer;$('#pClose').onclick=closePlayer;$('#pPrev').onclick=()=>{showEx(pIdx-1);sfx('pop')};
 $('#pNext').onclick=()=>{const L=activeEx();if(pIdx<L.length-1){showEx(pIdx+1);sfx('pop');return}if(S.done.includes(sid())){closePlayer();return}const b=S.done.length;$('#finishBtn').click();if(S.done.length>b)closePlayer()};
@@ -1396,19 +1396,17 @@ function renderGame(){
   const wid=S.daily.wid||sid(),wd=+wid.slice(wid.indexOf('d')+1),ww=+wid.slice(1,wid.indexOf('d')),fin=S.done.includes(wid);
   const qs=S.sets[wid]||{},qSets=DAYS[wd].ex.reduce((a,e,i)=>a+Math.min(qs[i]||0,setsFor(e,ww)),0);
   const q=[{i:'🏋️',t:`Finish Week ${ww} · Day ${DAYS[wd].k} workout`,v:fin?1:Math.min(.95,qSets/Math.max(1,DAYS[wd].ex.reduce((a,e)=>a+setsFor(e,ww),0))),x:fin?'Workout done ✓':`${qSets} set${qSets===1?'':'s'} so far`,add:''},
-           {i:'🥩',t:'Hit the protein goal',v:Math.min(1,S.tank.p/(S.pTarget||128)),x:`${S.tank.p}/${S.pTarget||128} g · tap to add, hold to take away`,
-            add:[10,25,40].map(n=>`<button class="qa" data-p="${n}">+${n}g</button>`).join('')},
-           {i:'💧',t:'Drink the water goal',v:Math.min(1,S.tank.w/(S.wTarget||96)),x:`${S.tank.w}/${S.wTarget||96} oz · tap to add, hold to take away`,
-            add:[8,16,32,40].map(n=>`<button class="qa" data-w="${n}">+${n}oz</button>`).join('')}];
+           {i:'🙏',t:'Pray before you train',v:S.daily.prayed?1:0,x:S.daily.prayed?'Amen ✓':'A short prayer, then tap Amen',add:S.daily.prayed?'':'<button class="qa" data-pray="1">Pray now</button>'},
+           {i:'🚶‍♀️',t:'Take a 20-minute walk',v:S.daily.walked?1:0,x:S.daily.walked?'Walked ✓':'Stroller walks count',add:S.daily.walked?'':'<button class="qa" data-walk="1">I walked 20 min</button>'}];
   $('#qlist').innerHTML=q.map(o=>`<div class="qrow"><span class="qic">${o.i}</span><div><b>${o.t}</b><div class="qbar"><i style="width:${o.v*100}%"></i></div><small class="muted">${o.x}</small>${o.add?`<div class="qadd">${o.add}</div>`:''}</div><span class="qck ${o.v>=1?'on':''}">${o.v>=1?'✓':''}</span></div>`).join('');
   const all=q.every(o=>o.v>=1),ch=$('#chest');
   ch.className='chest '+(S.daily.claimed?'claimed':all?'ready':'');ch.textContent=S.daily.claimed?'✨':'🎁';
-  $('#chestTxt').textContent=all?'Tap the chest to finish this workout day!':'Finish the workout, protein and water to open the chest';
+  $('#chestTxt').textContent=all?'Tap the chest to finish this workout day!':'Finish all 3 to open the chest';
   $('#badges').innerHTML=BADGES.map(b=>{const got=S.badges.includes(b.id);return `<div class="bdg ${got?'got':'lock'}" title="${b.d}"><span class="e">${got?b.e:'🔒'}</span>${got?b.n:b.d}</div>`}).join('');
   $('#badgeCount').textContent=`${S.badges.length}/${BADGES.length}`;
   checkBadges();
 }
-$('#qlist').addEventListener('click',e=>{const b=e.target.closest('.qa');if(!b)return;if(b.dataset.un)tankUndo(b.dataset.un);else tankAdd(b,e)});
+$('#qlist').addEventListener('click',e=>{const b=e.target.closest('.qa');if(!b)return;if(b.dataset.walk){ACT='';S.daily.walked=1;sfx('ding');gainXP(30,e)}else if(b.dataset.pray){const pc=$('#prayCard');pc.open=true;pc.scrollIntoView({behavior:'smooth',block:'center'})}});
 $('#chest').onclick=e=>{if(!$('#chest').classList.contains('ready'))return;ACT='Chest opened';S.stats.chests++;sfx('chest');buzz([40,30,80]);confetti();newRound();rollDrop('chest');toast('Workout day complete! New quests unlocked ✨');gainXP(75,e)};
 $('#sndBtn').onclick=()=>{S.sound=!S.sound;$('#sndBtn').textContent=S.sound?'🔊':'🔇';save();sfx('ding')};
 $('#lvlBtn').onclick=()=>enqueue(ov=>{const {L,w}=levelOf();
@@ -1533,7 +1531,7 @@ boot();
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='18';
+const APP_VERSION='19';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
