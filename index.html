@@ -351,7 +351,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <div><div class="eyebrow" id="todayWeek">Week 1</div><h2 id="todayTitle">Glute Strength</h2><span class="phase" id="todayPhase">Foundation</span> <span class="phase blk" id="todayBlock">Learn block</span></div>
   </div>
   <button class="card lessonPing" id="lessonPing" hidden></button>
-  <div class="card quests"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div><div class="eyebrow">Daily quests</div><small class="muted" id="chestTxt"></small></div><button class="chest" id="chest" aria-label="Open reward chest">🎁</button></div><div id="qlist"></div></div>
+  <div class="card quests"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div><div class="eyebrow">Workout-day quests</div><small class="muted" id="chestTxt"></small></div><button class="chest" id="chest" aria-label="Open reward chest">🎁</button></div><div id="qlist"></div></div>
   <div class="chips" id="dayChips"></div>
   <div id="exList" style="display:grid;gap:12px"></div>
   <button class="btn wide" id="finishBtn">Finish workout</button>
@@ -405,7 +405,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     </div>
   </div>
   <div class="card" style="display:grid;gap:14px">
-    <div class="row" style="justify-content:space-between"><div class="eyebrow">Today's tank</div><button class="linkbtn" id="resetDay">Reset day</button></div>
+    <div class="row" style="justify-content:space-between"><div class="eyebrow">This workout day's tank</div><button class="linkbtn" id="resetDay">Reset day</button></div>
     <div><div class="row" style="justify-content:space-between"><b>Protein</b><span id="pTxt" class="muted"></span></div>
       <div class="counter"><div class="meter"><i id="pBar" style="background:linear-gradient(90deg,var(--pink),var(--peach))"></i></div>
       <div class="qbtns"><button data-p="10">+10</button><button data-p="25">+25</button><button data-p="40">+40</button></div></div></div>
@@ -522,7 +522,10 @@ let S={week:1,day:0,sets:{},done:[],log:sample,fuel:{w:150,h:64,a:25,act:'1.55',
   name:'',why:'',pp:'',start:'',lessons:{},ts:0,installHide:0,viewSeason:null,lessonSeason:null,history:[]};
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(S,s)}catch(e){}
 if(!S.start)S.start=today();
-function dayRoll(){if(S.tank.d!==today())S.tank={d:today(),p:0,w:0};if(S.daily.d!==today())S.daily={d:today(),sets:0,walk:0,claimed:0}}
+// Quests run per WORKOUT DAY: a round starts with a workout and ends when she opens the chest
+// (or when she starts a new workout after finishing the last one).
+function newRound(wid){S.daily={wid:wid||null,sets:0,claimed:0};S.tank={p:0,w:0}}
+function dayRoll(){if(!('wid' in S.daily))newRound()}
 dayRoll();
 const save=()=>{S.ts=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};cloudPush();if(window.gameReady)renderGame()};
 
@@ -583,7 +586,7 @@ $('#exList').addEventListener('click',e=>{
   const ex=DAYS[S.day].ex[i];
   if(S.sets[k][i]>cur&&ex.rest&&S.sets[k][i]<n)startTimer(ex.rest);
   const ak=k+'-'+i;
-  if(S.sets[k][i]>(S.awarded[ak]||0)){const gain=S.sets[k][i]-(S.awarded[ak]||0);S.awarded[ak]=S.sets[k][i];S.daily.sets+=gain;S.stats.sets+=gain;sfx('pop');buzz(15);
+  if(S.sets[k][i]>(S.awarded[ak]||0)){const gain=S.sets[k][i]-(S.awarded[ak]||0);S.awarded[ak]=S.sets[k][i];if(!S.daily.wid)S.daily.wid=k;else if(S.daily.wid!==k&&S.done.includes(S.daily.wid)){newRound(k);toast('New workout day, new quests ✨')}S.daily.sets+=gain;S.stats.sets+=gain;sfx('pop');buzz(15);
     if(S.sets[k][i]>=n){toast(`${ex.n} done 💪`);sfx('ding');gainXP(10*gain+25,e)}else gainXP(10*gain,e)}
   else save();
 });
@@ -1144,7 +1147,7 @@ const BADGES=[
  {id:'s4',e:'⏳',n:'Graduate',d:'Train in week 52',t:()=>wd(52)},
  {id:'p7',e:'🥩',n:'Protein Pro',d:'Hit protein 7 days',t:()=>S.stats.pDays>=7},
  {id:'h7',e:'💧',n:'Hydro Honey',d:'Hit water 7 days',t:()=>S.stats.wDays>=7},
- {id:'c5',e:'🎁',n:'Quest Queen',d:'Clear daily quests 5 times',t:()=>S.stats.chests>=5},
+ {id:'c5',e:'🎁',n:'Quest Queen',d:'Open 5 workout-day chests',t:()=>S.stats.chests>=5},
  {id:'l5',e:'📚',n:'Scholar',d:'Finish 5 lessons',t:()=>Object.keys(S.lessons).length>=5},
  {id:'l52',e:'🎓',n:'Professor',d:'Finish all 52 lessons',t:()=>Object.keys(S.lessons).length>=52},
  {id:'log1',e:'📏',n:'Measured Up',d:'Save a real check-in',t:()=>realLog().length>=1},
@@ -1178,9 +1181,8 @@ function renderGame(){
   $('#streakN').textContent=weekStreak();
   if(S.lvlSeen>L)S.lvlSeen=L;
   if(L>S.lvlSeen){for(let i=S.lvlSeen+1;i<=L;i++)showLevelUp(i);S.lvlSeen=L;save()}
-  const moved=S.daily.sets>=8||S.daily.walk;
-  const q=[{i:'🏋️',t:'Move: 8 sets or a 20-min walk',v:moved?1:Math.min(1,S.daily.sets/8),x:S.daily.sets>=8?`${S.daily.sets} sets done today`:S.daily.walk?'Walked 20+ min':`${S.daily.sets}/8 sets today`,
-            add:moved?'':`<button class="qa" data-walk="1">🚶‍♀️ I walked 20 min</button>`},
+  const wid=S.daily.wid||sid(),wd=+wid.slice(wid.indexOf('d')+1),ww=+wid.slice(1,wid.indexOf('d')),fin=S.done.includes(wid);
+  const q=[{i:'🏋️',t:`Finish Week ${ww} · Day ${DAYS[wd].k} workout`,v:fin?1:Math.min(.95,S.daily.sets/Math.max(1,DAYS[wd].ex.reduce((a,e)=>a+setsFor(e,ww),0))),x:fin?'Workout done ✓':`${S.daily.sets} sets so far`,add:''},
            {i:'🥩',t:'Hit the protein goal',v:Math.min(1,S.tank.p/(S.pTarget||128)),x:`${S.tank.p}/${S.pTarget||128} g`,
             add:[10,25,40].map(n=>`<button class="qa" data-p="${n}">+${n}g</button>`).join('')},
            {i:'💧',t:'Drink the water goal',v:Math.min(1,S.tank.w/(S.wTarget||96)),x:`${S.tank.w}/${S.wTarget||96} oz`,
@@ -1188,13 +1190,13 @@ function renderGame(){
   $('#qlist').innerHTML=q.map(o=>`<div class="qrow"><span class="qic">${o.i}</span><div><b>${o.t}</b><div class="qbar"><i style="width:${o.v*100}%"></i></div><small class="muted">${o.x}</small>${o.add?`<div class="qadd">${o.add}</div>`:''}</div><span class="qck ${o.v>=1?'on':''}">${o.v>=1?'✓':''}</span></div>`).join('');
   const all=q.every(o=>o.v>=1),ch=$('#chest');
   ch.className='chest '+(S.daily.claimed?'claimed':all?'ready':'');ch.textContent=S.daily.claimed?'✨':'🎁';
-  $('#chestTxt').textContent=(S.daily.claimed?'Chest claimed!':all?'Tap the chest!':'Clear all 3 to open the chest')+' · New quests in '+untilMidnight();
+  $('#chestTxt').textContent=all?'Tap the chest to finish this workout day!':'Finish the workout, protein and water to open the chest';
   $('#badges').innerHTML=BADGES.map(b=>{const got=S.badges.includes(b.id);return `<div class="bdg ${got?'got':'lock'}" title="${b.d}"><span class="e">${got?b.e:'🔒'}</span>${got?b.n:b.d}</div>`}).join('');
   $('#badgeCount').textContent=`${S.badges.length}/${BADGES.length}`;
   checkBadges();
 }
-$('#qlist').addEventListener('click',e=>{const b=e.target.closest('.qa');if(!b)return;if(b.dataset.walk){S.daily.walk=1;sfx('ding');gainXP(30,e)}else tankAdd(b,e)});
-$('#chest').onclick=e=>{if(!$('#chest').classList.contains('ready'))return;S.daily.claimed=1;S.stats.chests++;sfx('chest');buzz([40,30,80]);confetti();toast('Chest opened! +75 pts');gainXP(75,e)};
+$('#qlist').addEventListener('click',e=>{const b=e.target.closest('.qa');if(b)tankAdd(b,e)});
+$('#chest').onclick=e=>{if(!$('#chest').classList.contains('ready'))return;S.stats.chests++;sfx('chest');buzz([40,30,80]);confetti();newRound();toast('Workout day complete! New quests unlocked ✨');gainXP(75,e)};
 $('#sndBtn').onclick=()=>{S.sound=!S.sound;$('#sndBtn').textContent=S.sound?'🔊':'🔇';save();sfx('ding')};
 $('#lvlBtn').onclick=()=>enqueue(ov=>{const {L,w}=levelOf();
   ov.innerHTML=`<div class="ovc"><div class="eyebrow">The glow-up ladder</div><h2>Levels = workouts finished</h2>
@@ -1218,12 +1220,7 @@ function onboard(){enqueue(ov=>{
     renderMotive();confetti();sfx('win');gainXP(100,e);nextOv()};
 },true)}
 
-function untilMidnight(){const n=new Date(),m=new Date(n);m.setHours(24,0,0,0);const mins=Math.max(1,Math.ceil((m-n)/6e4));return mins>=60?`${Math.floor(mins/60)}h ${mins%60}m`:`${mins}m`}
-// The app can stay open in the background overnight, so check for a new day whenever it comes back and once a minute.
-function newDayCheck(){if(S.daily.d!==today()||S.tank.d!==today()){dayRoll();save();rerenderAll();toast('New day, new quests ✨');sfx('ding')}else if(window.gameReady)renderGame()}
-setInterval(newDayCheck,60000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)newDayCheck()});
-window.addEventListener('pageshow',newDayCheck);window.addEventListener('focus',newDayCheck);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&window.gameReady)renderGame()});
 function rerenderAll(){loadFuelInputs();calcFuel();renderMotive();renderToday();renderPlan();renderProgress();renderLearn();renderFaq();if(SAMPLE)renderChat();$('#sndBtn').textContent=S.sound?'🔊':'🔇';renderGame()}
 window.gameReady=true;
 rerenderAll();
