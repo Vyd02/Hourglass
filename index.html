@@ -280,6 +280,8 @@ details.how li{color:var(--fg)}
 .ph .n{font-size:26px!important}
 .rsbox{background:color-mix(in srgb,var(--pink) 12%,var(--surface2));border:1px solid var(--pink);border-radius:14px;padding:12px}
 .btn.danger{background:var(--pink);box-shadow:none}
+.undo{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--peach);background:color-mix(in srgb,var(--peach) 20%,var(--surface2));color:var(--fg);font-weight:900;font-size:18px;line-height:1;display:grid;place-items:center;padding:0}
+.undo.pulse{animation:pop .4s}
 .linkbtn{border:0;background:none;padding:0;color:var(--muted);font-size:12px;text-decoration:underline}
 textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
 .ask{display:grid;gap:12px;border-color:var(--pink);background:linear-gradient(160deg,color-mix(in srgb,var(--pink) 18%,var(--surface)),var(--surface))}
@@ -338,7 +340,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <svg id="avatar" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 13c-9-4-19 2-19 14 0 10 9 17 19 17s19-7 19-17c0-12-10-18-19-14z" fill="url(#peachG)"/><path d="M24 14c-2 8-2 18 0 29" stroke="#c4466a" stroke-width="1.6" fill="none" opacity=".55"/><path d="M24 13c2-6 8-8 13-7-2 5-7 8-13 7z" fill="#5ee6b5"/><circle cx="16" cy="24" r="2.5" fill="#fff" opacity=".5"/></svg>
     <div class="lvltx"><b id="lvlTitle">Peach Seed</b><small id="lvlNum">Level 1</small><div class="xpbar"><i id="xpFill"></i></div></div>
   </button>
-  <div class="hdr-r"><div class="streak" title="Weeks in a row with 3+ workouts"><span class="flame">🔥</span><span id="streakN">0</span><small>wk</small></div><button class="sbtn" id="sndBtn" aria-label="Toggle sound">🔊</button></div>
+  <div class="hdr-r"><button class="undo" id="undoBtn" hidden aria-label="Undo last change">↩</button><div class="streak" title="Weeks in a row with 3+ workouts"><span class="flame">🔥</span><span id="streakN">0</span><small>wk</small></div><button class="sbtn" id="sndBtn" aria-label="Toggle sound">🔊</button></div>
 </header>
 
 <!-- TRAIN -->
@@ -531,7 +533,16 @@ if(!S.start)S.start=today();
 function newRound(wid){S.daily={wid:wid||null,sets:0,claimed:0};S.tank={p:0,w:0}}
 function dayRoll(){if(!('wid' in S.daily))newRound()}
 dayRoll();
-const save=()=>{S.ts=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};cloudPush();if(window.gameReady)renderGame()};
+// ===== Undo: every tap that changes something can be taken back, one tap at a time
+let UNDO=[],pendSnap=null,undoing=false;
+document.addEventListener('pointerdown',e=>{if(e.target.closest('#undoBtn'))return;pendSnap=JSON.stringify(S)},true);
+document.addEventListener('keydown',e=>{if(!pendSnap)pendSnap=JSON.stringify(S)},true);
+function trackUndo(){if(undoing||!pendSnap)return;const before=pendSnap;pendSnap=null;
+  if(before!==JSON.stringify(S)){UNDO.push(before);if(UNDO.length>50)UNDO.shift();const u=document.getElementById('undoBtn');if(u){u.hidden=false;u.classList.remove('pulse');void u.offsetWidth;u.classList.add('pulse')}}}
+function doUndo(){const prev=UNDO.pop();pendSnap=null;if(!prev)return;
+  undoing=true;S=JSON.parse(prev);Q.length=0;$('#ov').hidden=true;ovOpen=false;stopTimer();save();undoing=false;
+  rerenderAll();$('#undoBtn').hidden=!UNDO.length;toast('Undone ↩');sfx('flip')}
+const save=()=>{trackUndo();S.ts=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};cloudPush();if(window.gameReady)renderGame()};
 
 // ===== season helpers
 const seasonOf=w=>Math.min(3,Math.floor((w-1)/13));
@@ -699,6 +710,7 @@ $('#logRows').addEventListener('click',e=>{const b=e.target.closest('[data-del]'
 // backup
 const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))),dec=t=>JSON.parse(decodeURIComponent(escape(atob(t.trim()))));
 $('#bkCopy').onclick=()=>{const code=enc(S);navigator.clipboard.writeText(code).then(()=>toast('Backup code copied 📋')).catch(()=>{$('#bkBox').hidden=false;$('#bkText').value=code;$('#bkText').select();toast('Select and copy the code')})};
+$('#undoBtn').onclick=doUndo;
 $('#rsShow').onclick=()=>{$('#rsBox').hidden=false};$('#rsNo').onclick=()=>{$('#rsBox').hidden=true};
 $('#rsYes').onclick=async()=>{try{localStorage.removeItem(KEY)}catch(e){}
   try{if(typeof CLOUD!=='undefined'&&CLOUD)await CLOUD.set({json:'{}',ts:Date.now()})}catch(e){}
@@ -1184,7 +1196,7 @@ function renderGame(){
   dayRoll();
   const {L,r,n}=levelOf();
   $('#lvlTitle').textContent=titleOf(L);
-  $('#lvlNum').textContent=n?`Level ${L+1} · ${n-r} workout${n-r===1?'':'s'} to level ${L+2}`:`Level 20 · Year complete 👑`;
+  $('#lvlNum').textContent=n?`Level ${L+1} · ${n-r} to level ${L+2}`:`Level 20 · Year complete 👑`;
   $('#xpFill').style.width=(n?r/n*100:100)+'%';$('#avatar').style.setProperty('--s',(.8+Math.min(L,20)*.02).toFixed(3));
   $('#streakN').textContent=weekStreak();
   if(S.lvlSeen>L)S.lvlSeen=L;
