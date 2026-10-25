@@ -334,6 +334,10 @@ details.how li{color:var(--fg)}
 .unl{display:grid;gap:8px;margin:6px 0 4px;text-align:left}
 .unr{display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:center;background:var(--surface2);border:1px solid color-mix(in srgb,var(--gold) 40%,var(--line));border-radius:14px;padding:8px 12px;animation:rise .4s both}
 .unr span{font-size:28px;text-align:center}.unr b{display:block;font-size:14.5px}.unr small{color:var(--muted);font-size:12.5px}
+[data-p],[data-w]{position:relative;overflow:hidden;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+[data-p]::after,[data-w]::after{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--pink) 55%,transparent);transform:scaleX(0);transform-origin:left;pointer-events:none}
+.holding::after{transform:scaleX(1);transition:transform .55s linear}
+.held{animation:shake .35s}
 .linkbtn{border:0;background:none;padding:0;color:var(--muted);font-size:12px;text-decoration:underline}
 textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
 .ask{display:grid;gap:12px;border-color:var(--pink);background:linear-gradient(160deg,color-mix(in srgb,var(--pink) 18%,var(--surface)),var(--surface))}
@@ -463,7 +467,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     </div>
   </div>
   <div class="card" style="display:grid;gap:14px">
-    <div class="row" style="justify-content:space-between"><div class="eyebrow">This workout day's tank</div><button class="linkbtn" id="resetDay">Reset day</button></div>
+    <div class="row" style="justify-content:space-between"><div><div class="eyebrow">This workout day's tank</div><small class="muted" style="font-size:12px">Tap to add · hold to take away</small></div><button class="linkbtn" id="resetDay">Reset day</button></div>
     <div><div class="row" style="justify-content:space-between"><b>Protein</b><span id="pTxt" class="muted"></span></div>
       <div class="counter"><div class="meter"><i id="pBar" style="background:linear-gradient(90deg,var(--pink),var(--peach))"></i></div>
       <div class="qbtns"><button data-p="10">+10</button><button data-p="25">+25</button><button data-p="40">+40</button></div></div></div>
@@ -597,7 +601,7 @@ let UNDO=[],pendSnap=null,undoing=false;
 document.addEventListener('pointerdown',e=>{if(e.target.closest('#snackUndo'))return;pendSnap=JSON.stringify(S)},true);
 document.addEventListener('keydown',e=>{if(!pendSnap)pendSnap=JSON.stringify(S)},true);
 let ACT='',snackT;
-function showSnack(t){const sn=$('#snack');if(!sn)return;$('#snackTxt').textContent=t;sn.classList.add('show');clearTimeout(snackT);snackT=setTimeout(()=>sn.classList.remove('show'),5000)}
+function showSnack(t){return;const sn=$('#snack');if(!sn)return;$('#snackTxt').textContent=t;sn.classList.add('show');clearTimeout(snackT);snackT=setTimeout(()=>sn.classList.remove('show'),5000)}
 function trackUndo(){if(undoing||!pendSnap)return;const before=pendSnap;pendSnap=null;
   if(before!==JSON.stringify(S)){let b0={};try{b0=JSON.parse(before)}catch(e){}
     if(!b0.onboarded&&S.onboarded){ACT='';return} // setup can never be undone
@@ -756,6 +760,18 @@ function tankUndo(kind){const h=kind==='p'?(S.tank.hp=S.tank.hp||[]):(S.tank.hw=
   if(kind==='p'){S.tank.p=Math.max(0,S.tank.p-n);if(S.tank.ph&&S.tank.p<S.pTarget){S.tank.ph=0;S.stats.pDays=Math.max(0,S.stats.pDays-1);S.xp=Math.max(0,S.xp-50)}}
   else{S.tank.w=Math.max(0,S.tank.w-n);if(S.tank.wh&&S.tank.w<S.wTarget){S.tank.wh=0;S.stats.wDays=Math.max(0,S.stats.wDays-1);S.xp=Math.max(0,S.xp-30)}}
   sfx('flip');save();renderTank()}
+function tankSub(kind,n,b){dayRoll();
+  if(kind==='p'){if(!S.tank.p)return;S.tank.p=Math.max(0,S.tank.p-n);if(S.tank.ph&&S.tank.p<S.pTarget){S.tank.ph=0;S.stats.pDays=Math.max(0,S.stats.pDays-1);S.xp=Math.max(0,S.xp-50)}}
+  else{if(!S.tank.w)return;S.tank.w=Math.max(0,S.tank.w-n);if(S.tank.wh&&S.tank.w<S.wTarget){S.tank.wh=0;S.stats.wDays=Math.max(0,S.stats.wDays-1);S.xp=Math.max(0,S.xp-30)}}
+  sfx('flip');buzz([20,40,20]);toast(kind==='p'?`−${n}g protein`:`−${n} oz water`);save();renderTank()}
+let holdT=null,holdBtn=null,holdFired=false;
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-p],[data-w]');if(!b)return;holdFired=false;holdBtn=b;b.classList.add('holding');
+  holdT=setTimeout(()=>{holdFired=true;b.classList.remove('holding');b.classList.add('held');setTimeout(()=>b.classList.remove('held'),350);
+    pendSnap=null;b.dataset.p?tankSub('p',+b.dataset.p,b):tankSub('w',+b.dataset.w,b)},550)});
+const holdEnd=()=>{clearTimeout(holdT);if(holdBtn)holdBtn.classList.remove('holding');holdBtn=null};
+['pointerup','pointercancel','pointerleave'].forEach(t=>document.addEventListener(t,holdEnd,true));
+document.addEventListener('click',e=>{if(holdFired&&e.target.closest('[data-p],[data-w]')){holdFired=false;e.stopPropagation();e.preventDefault()}},true);
+document.addEventListener('contextmenu',e=>{if(e.target.closest('[data-p],[data-w]'))e.preventDefault()});
 function tankAdd(b,e){dayRoll();ACT=b.dataset.p?`Added ${b.dataset.p}g protein`:`Added ${b.dataset.w} oz water`;
   if(b.dataset.p){(S.tank.hp=S.tank.hp||[]).push(+b.dataset.p);const before=S.tank.p;S.tank.p+=+b.dataset.p;if(before<S.pTarget&&S.tank.p>=S.pTarget&&!S.tank.ph){S.tank.ph=1;S.stats.pDays++;confetti();sfx('ding');toast('Protein goal hit 🥩');gainXP(50,e)}}
   if(b.dataset.w){(S.tank.hw=S.tank.hw||[]).push(+b.dataset.w);const before=S.tank.w;S.tank.w+=+b.dataset.w;if(before<S.wTarget&&S.tank.w>=S.wTarget&&!S.tank.wh){S.tank.wh=1;S.stats.wDays++;sfx('ding');toast('Fully hydrated 💧');gainXP(30,e)}}
@@ -1296,10 +1312,10 @@ function renderGame(){
   if(S.lvlSeen>L)S.lvlSeen=L;
   if(L>S.lvlSeen){for(let i=S.lvlSeen+1;i<=L;i++)showLevelUp(i);S.lvlSeen=L;save()}
   const wid=S.daily.wid||sid(),wd=+wid.slice(wid.indexOf('d')+1),ww=+wid.slice(1,wid.indexOf('d')),fin=S.done.includes(wid);
-  const q=[{i:'🏋️',t:`Finish Week ${ww} · Day ${DAYS[wd].k} workout`,v:fin?1:Math.min(.95,S.daily.sets/Math.max(1,DAYS[wd].ex.reduce((a,e)=>a+setsFor(e,ww),0))),x:fin?'Workout done ✓':`${S.daily.sets} sets so far`,add:''},
-           {i:'🥩',t:'Hit the protein goal',v:Math.min(1,S.tank.p/(S.pTarget||128)),x:`${S.tank.p}/${S.pTarget||128} g`,
+  const q=[{i:'🏋️',t:`Finish Week ${ww} · Day ${DAYS[wd].k} workout`,v:fin?1:Math.min(.95,S.daily.sets/Math.max(1,DAYS[wd].ex.reduce((a,e)=>a+setsFor(e,ww),0))),x:fin?'Workout done ✓':`${S.daily.sets} set${S.daily.sets===1?'':'s'} so far`,add:''},
+           {i:'🥩',t:'Hit the protein goal',v:Math.min(1,S.tank.p/(S.pTarget||128)),x:`${S.tank.p}/${S.pTarget||128} g · tap to add, hold to take away`,
             add:[10,25,40].map(n=>`<button class="qa" data-p="${n}">+${n}g</button>`).join('')},
-           {i:'💧',t:'Drink the water goal',v:Math.min(1,S.tank.w/(S.wTarget||96)),x:`${S.tank.w}/${S.wTarget||96} oz`,
+           {i:'💧',t:'Drink the water goal',v:Math.min(1,S.tank.w/(S.wTarget||96)),x:`${S.tank.w}/${S.wTarget||96} oz · tap to add, hold to take away`,
             add:[8,16,32,40].map(n=>`<button class="qa" data-w="${n}">+${n}oz</button>`).join('')}];
   $('#qlist').innerHTML=q.map(o=>`<div class="qrow"><span class="qic">${o.i}</span><div><b>${o.t}</b><div class="qbar"><i style="width:${o.v*100}%"></i></div><small class="muted">${o.x}</small>${o.add?`<div class="qadd">${o.add}</div>`:''}</div><span class="qck ${o.v>=1?'on':''}">${o.v>=1?'✓':''}</span></div>`).join('');
   const all=q.every(o=>o.v>=1),ch=$('#chest');
@@ -1434,7 +1450,7 @@ boot();
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='16';
+const APP_VERSION='17';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
