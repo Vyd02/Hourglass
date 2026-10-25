@@ -91,6 +91,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:col
 
 /* rest timer */
 .timer{position:fixed;left:50%;bottom:calc(156px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(140%);background:var(--gold);color:var(--bg);font-weight:800;padding:10px 18px;border-radius:999px;display:flex;gap:12px;align-items:center;z-index:8;transition:transform .4s cubic-bezier(.3,1.5,.5,1);box-shadow:0 10px 30px -10px #000}
+.timer:not(.show){opacity:0;pointer-events:none;transform:translateX(-50%) translateY(260px)}
 .timer.show{transform:translateX(-50%) translateY(0)}
 .timer span{font-family:var(--display);font-variant-numeric:tabular-nums;min-width:52px}
 .timer button{border:0;background:var(--bg);color:var(--gold);border-radius:999px;padding:4px 10px;font-weight:700;font-size:12px}
@@ -320,6 +321,14 @@ details.how li{color:var(--fg)}
 .findLegend{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
 .findLegend b{font-weight:800}
 
+.verse{background:color-mix(in srgb,var(--gold) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-radius:14px;padding:10px 12px;display:grid;gap:4px}
+.verse .vlab{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.verse p{margin:0;font-size:15.5px;line-height:1.45;font-weight:600;text-wrap:pretty}
+.verse small{color:var(--muted);font-size:12px;font-weight:700}
+.quote.sm{font-size:14px;color:var(--muted);font-weight:600}
+.pray{padding:14px 16px;border-color:color-mix(in srgb,var(--gold) 45%,var(--line))}
+.pray summary{font-size:15px}
+.pray p{font-size:15px;line-height:1.55;color:var(--fg);font-style:italic}
 .linkbtn{border:0;background:none;padding:0;color:var(--muted);font-size:12px;text-decoration:underline}
 textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
 .ask{display:grid;gap:12px;border-color:var(--pink);background:linear-gradient(160deg,color-mix(in srgb,var(--pink) 18%,var(--surface)),var(--surface))}
@@ -394,6 +403,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
   </div>
   <button class="card lessonPing" id="lessonPing" hidden></button>
   <div class="card quests"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div><div class="eyebrow">Workout-day quests</div><small class="muted" id="chestTxt"></small></div><button class="chest" id="chest" aria-label="Open reward chest">🎁</button></div><div id="qlist"></div></div>
+  <details class="card pray" id="prayCard"><summary><span>🙏 Pray before you train</span></summary><p id="prayTxt"></p><button class="btn ghost wide" id="amenBtn">Amen 🙏</button></details>
   <div class="chips" id="dayChips"></div>
   <div id="exList" style="display:grid;gap:12px"></div>
   <button class="btn wide" id="finishBtn">Finish workout</button>
@@ -482,7 +492,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <div><div class="eyebrow">Waist-to-hip ratio</div><div class="whr" id="whr">–</div><div class="muted" style="font-size:13px" id="whrNote"></div></div>
   </div>
   <div class="card" style="display:grid;gap:12px"><div class="row" style="justify-content:space-between"><div class="eyebrow">Trophy case</div><b id="badgeCount" class="gold"></b></div><div class="badges" id="badges"></div></div>
-  <div class="card" style="display:grid;gap:12px"><div class="row" style="justify-content:space-between"><div><div class="eyebrow">Shiny finds</div><h3 style="font-size:16px">Collect all 36</h3></div><b id="findCount" class="gold"></b></div>
+  <div class="card" style="display:grid;gap:12px"><div class="row" style="justify-content:space-between"><div><div class="eyebrow">Shiny finds</div><h3 style="font-size:16px" id="findTitle">Collect them all</h3></div><b id="findCount" class="gold"></b></div>
     <div class="findLegend"><span><b style="color:#c3a9c4">●</b> Common</span><span><b style="color:#4cc9f0">●</b> Rare</span><span><b style="color:#c77dff">●</b> Epic</span><span><b style="color:#ffd166">●</b> Legendary</span><span>✨ = shiny version</span></div>
     <div class="finds" id="finds"></div><p class="muted" style="font-size:12.5px;margin:0">Finds drop from sets, workouts, chests, lessons, and golden peaches that sometimes fly across the Train screen. Catch them!</p></div>
   <div class="card" style="display:grid;gap:12px">
@@ -604,7 +614,8 @@ function renderMotive(){
   const d=dayNum(),pct=Math.min(100,d/365*100);
   $('#motive').innerHTML=`<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b class="hi">${S.name?`Hey ${esc(S.name)}`:'Hey gorgeous'} 👋</b><span class="pill">Day ${Math.min(d,365)} of 365</span></div>
     <div class="yearbar"><i style="width:${pct}%"></i></div>
-    <p class="quote">“${QUOTES[(d-1)%QUOTES.length]}”</p>${S.why?`<p class="why">💗 Her why: ${esc(S.why)}</p>`:''}`;
+    <div class="verse"><span class="vlab">📖 Verse of the day</span><p>${VERSES[(d-1)%VERSES.length][0]}</p><small>${VERSES[(d-1)%VERSES.length][1]} (KJV)</small></div>
+    <p class="quote sm">“${QUOTES[(d-1)%QUOTES.length]}”</p>${S.why?`<p class="why">💗 Her why: ${esc(S.why)}</p>`:''}`;
 }
 function renderToday(){
   const s=seasonOf(S.week), D=DAYS[S.day];
@@ -628,6 +639,7 @@ function renderToday(){
   updRing();
   $('#finishBtn').textContent=S.done.includes(sid())?'Workout done ✓':'Finish workout · counts toward her level';{const lf=S.doneDates[S.doneDates.length-1],ub=$('#unfinishBtn');ub.hidden=!(lf&&lf.d===today()&&S.done.includes(lf.id));if(!ub.hidden){const w=+lf.id.slice(1,lf.id.indexOf('d')),d=+lf.id.slice(lf.id.indexOf('d')+1);ub.textContent=`↩ Undo finishing Week ${w} · Day ${DAYS[d].k}`}}
   renderLessonPing();
+  $('#prayTxt').textContent=PRAYERS[S.day%PRAYERS.length];
 }
 function updRing(){
   const st=S.sets[sid()]||{};let tot=0,got=0;
@@ -768,6 +780,7 @@ $('#logRows').addEventListener('click',e=>{const b=e.target.closest('[data-del]'
 // backup
 const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))),dec=t=>JSON.parse(decodeURIComponent(escape(atob(t.trim()))));
 $('#bkCopy').onclick=()=>{const code=enc(S);navigator.clipboard.writeText(code).then(()=>toast('Backup code copied 📋')).catch(()=>{$('#bkBox').hidden=false;$('#bkText').value=code;$('#bkText').select();toast('Select and copy the code')})};
+$('#amenBtn').onclick=()=>{$('#prayCard').open=false;toast('Amen 🙏 Let\'s go');sfx('ding')};
 $('#undoBtn').onclick=doUndo;$('#snackUndo').onclick=doUndo;document.addEventListener('pointerdown',e=>{if(e.target.closest('#snackUndo'))pendSnap=null},true);
 $('#rsShow').onclick=()=>{$('#rsBox').hidden=false};$('#rsNo').onclick=()=>{$('#rsBox').hidden=true};
 $('#rsYes').onclick=async()=>{try{localStorage.removeItem(KEY)}catch(e){}
@@ -1112,11 +1125,12 @@ const FAQ=[
   ['How does the year work?','52 weeks in 4 seasons: Foundation, Build, Strength, Sculpt. Each season makes the same moves harder. Every 13th week is a lighter recovery week.'],
   ['What is the "season version"?','The way she does that exercise this season. Season 1 is bodyweight; later seasons add pauses, single-leg moves, bands and dumbbells.'],
   ['How do levels work?','Levels come only from finished workouts, so her level always matches her real progress: 20 levels across the 208 workouts of the year, about one every 10 to 11 workouts, five per season. Hourglass Queen takes 200 workouts. A workout counts once at least 3 out of 4 of its sets are done, and up to 2 count per day.'],
-  ['What are shiny finds?','Collectibles that drop by surprise: about 1 in 10 sets, every finished workout, every chest, some lessons, and golden peaches that sometimes fly across the Train screen. There are 36 to collect in 4 rarities, plus rare shiny versions. Duplicates give bonus points.'],
+  ['What are shiny finds?','Collectibles that drop by surprise: about 1 in 10 sets, every finished workout, every chest, some lessons, and golden peaches that sometimes fly across the Train screen. There are 41 to collect in 4 rarities, plus rare shiny versions. Duplicates give bonus points.'],
   ['What are points for?','Points come from sets, quests, lessons, check-ins and mystery cards. They are a bonus score for fun and never change her level.'],
   ['How do I move to the next week?','Use the Plan tab: tap the next week or the + button after finishing that week\'s 4 workouts.'],
   ['How do I keep my progress safe?','Progress saves inside the app on your phone. Copy a backup code from the Progress tab every few weeks and keep it in Notes. If you switch phones, paste it into Restore.'],
   ['How do I put it on my iPhone home screen?','Open the link in Safari, tap the Share button (square with an arrow), scroll down, tap "Add to Home Screen", name it Hourglass, and tap Add.']]},
+ {c:'Faith & fitness',i:'✝️',q:[["Is it vain to want a nicer body?", "Caring for your body is good stewardship. Scripture calls the body a temple (1 Corinthians 6:19). The heart behind it matters: train to be strong, healthy and confident for your family, and keep your worth rooted in God, not the mirror (1 Samuel 16:7)."], ["How do I keep God first while working out?", "Start each workout with the short prayer on the Train tab, read the verse of the day, and thank Him when you finish. Some women listen to worship music or a sermon during stroller walks."], ["Can I rest on Sunday?", "Yes. The weekly rhythm already leaves Sunday as a rest day, so it can be a true day of rest and worship. Swap any day you like."], ["How can I pray during a workout?", "Keep it simple: a word of thanks between sets, a verse during planks, or praying for someone by name on each rep of a set. Rest timers are a perfect moment."], ["What if I compare myself to other women?", "Comparison steals joy. You are fearfully and wonderfully made (Psalm 139:14). Compare only to your own day one, and thank God for each small step."], ["Does the Bible say anything about exercise?", "Paul used running and training as pictures of faith (1 Corinthians 9:24–27) and wrote that bodily exercise profits a little, while godliness profits in all things (1 Timothy 4:8). Train the body, and keep the soul first."]]},
  {c:'Motivation & mindset',i:'💗',q:[
   ["I am exhausted today. What should I do?", "Do the minimum: one glute move and a 10-minute walk, or just the stroller walk. If you slept terribly, rest is the smart choice and you will train better tomorrow. One missed day changes nothing; missing a month does."],
   ["How do I stay consistent for a whole year?", "Same time each day, clothes laid out, and a minimum version for bad days. Track the weekly streak, open the new lesson each week, and look at photos every month. Results build on consistency, not perfect weeks."],
@@ -1126,6 +1140,8 @@ const FAQ=[
   ['How can my partner help?','Cover a feed or nap so she can train, join stroller walks, cook protein-heavy meals, and notice the effort, not just the results.']]}
 ];
 
+const VERSES=[["I can do all things through Christ which strengtheneth me.", "Philippians 4:13"], ["She girdeth her loins with strength, and strengtheneth her arms.", "Proverbs 31:17"], ["Strength and honour are her clothing; and she shall rejoice in time to come.", "Proverbs 31:25"], ["I will praise thee; for I am fearfully and wonderfully made: marvellous are thy works.", "Psalm 139:14"], ["But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.", "Isaiah 40:31"], ["And let us not be weary in well doing: for in due season we shall reap, if we faint not.", "Galatians 6:9"], ["Be strong and of a good courage; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest.", "Joshua 1:9"], ["The joy of the LORD is your strength.", "Nehemiah 8:10"], ["God is our refuge and strength, a very present help in trouble.", "Psalm 46:1"], ["Come unto me, all ye that labour and are heavy laden, and I will give you rest.", "Matthew 11:28"], ["My grace is sufficient for thee: for my strength is made perfect in weakness.", "2 Corinthians 12:9"], ["And whatsoever ye do, do it heartily, as to the Lord, and not unto men.", "Colossians 3:23"], ["This is the day which the LORD hath made; we will rejoice and be glad in it.", "Psalm 118:24"], ["His compassions fail not. They are new every morning: great is thy faithfulness.", "Lamentations 3:22–23"], ["Know ye not that your body is the temple of the Holy Ghost which is in you, which ye have of God?", "1 Corinthians 6:19"], ["The LORD is my strength and my shield; my heart trusted in him, and I am helped.", "Psalm 28:7"], ["Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee.", "Isaiah 41:10"], ["Let us run with patience the race that is set before us.", "Hebrews 12:1"], ["Lo, children are an heritage of the LORD: and the fruit of the womb is his reward.", "Psalm 127:3"], ["Commit thy works unto the LORD, and thy thoughts shall be established.", "Proverbs 16:3"], ["He which hath begun a good work in you will perform it until the day of Jesus Christ.", "Philippians 1:6"], ["My flesh and my heart faileth: but God is the strength of my heart, and my portion for ever.", "Psalm 73:26"], ["To every thing there is a season, and a time to every purpose under the heaven.", "Ecclesiastes 3:1"], ["The LORD thy God in the midst of thee is mighty; he will save, he will rejoice over thee with joy.", "Zephaniah 3:17"], ["Trust in the LORD with all thine heart; and lean not unto thine own understanding.", "Proverbs 3:5"], ["Man looketh on the outward appearance, but the LORD looketh on the heart.", "1 Samuel 16:7"], ["So run, that ye may obtain.", "1 Corinthians 9:24"], ["He giveth power to the faint; and to them that have no might he increaseth strength.", "Isaiah 40:29"]];
+const PRAYERS=["Lord, thank You for this body and for the strength to move it today. Help me train with good form, a grateful heart, and patience with myself. Let everything I do be for Your glory. In Jesus' name, amen.", "Father, I'm tired some days, but You are my strength. Give me energy for this workout and for my family. Help me finish what I start. In Jesus' name, amen.", "Jesus, thank You that I am fearfully and wonderfully made. Guard my heart from comparison, and help me see myself the way You see me. Bless this time. Amen.", "God, thank You for my baby and for every season of life. Renew my strength like the eagle's. Help me rest when I need rest and push when I need to push. In Jesus' name, amen."];
 const QUOTES=['Strong moms raise strong kids.','Every rep is a vote for the woman you are becoming.','Slow progress is still progress.','You do not need perfect. You need consistent.','Ten minutes beats zero minutes.','The glutes you want are built on the days you do not feel like it.','Rest is part of the plan, not a break from it.','You carried a baby. You can carry this.','Small steps every day add up to a different body by next year.','Show up for future you. She is counting on you.','Sore today, strong tomorrow.','Your only competition is last month\'s you.','Done is better than perfect.','A good workout is the one you finished.','Discipline is remembering what you want.','Protein, water, steps, sleep. Repeat.','Your body is not a before picture. It is a work in progress.','Strong is the new shape.','Progress hides in the tape measure, not the scale.','Every season, you level up.','Consistency is the cheat code.','Motherhood made you tough. Use it.','Squeeze like you mean it.','You are not starting over. You are starting stronger.','Champions train on tired days too.','Curves are earned, one bridge at a time.','Be proud of the reps nobody saw.','The year will pass anyway. Make it count.','Celebrate small wins. They are big wins in disguise.','Breathe, brace, squeeze, repeat.'];
 
 
@@ -1243,7 +1259,7 @@ function openLoot(){enqueue(ov=>{
   let picked=-1;
   ov.querySelectorAll('.lc').forEach(c=>c.onclick=()=>{if(picked>=0)return;picked=+c.dataset.i;c.classList.add('flip');sfx('flip');buzz(30);
     setTimeout(()=>{ov.querySelectorAll('.lc').forEach(o=>{if(o!==c)o.classList.add('flip','dim')});
-      $('#lootTip').textContent=TIPS[Math.random()*TIPS.length|0];const g=$('#lootGo');g.hidden=false;g.textContent=`Collect +${vals[picked]} pts`;
+      {const v=VERSES[Math.random()*VERSES.length|0];$('#lootTip').textContent=Math.random()<.5?`“${v[0]}” ${v[1]}`:TIPS[Math.random()*TIPS.length|0]}const g=$('#lootGo');g.hidden=false;g.textContent=`Collect +${vals[picked]} pts`;
       if(vals[picked]>=100){confetti();sfx('win')}},500);
     $('#lootGo').onclick=e=>{gainXP(vals[picked],e);nextOv()}});
 },true)}
@@ -1288,7 +1304,7 @@ $('#lvlBtn').onclick=()=>enqueue(ov=>{const {L,w}=levelOf();
 
 // first-run welcome
 function onboard(){enqueue(ov=>{
-  const whys=['Feel strong for my baby','Love my curves','Feel confident in my clothes','More energy every day'];
+  const whys=['Honor God with my body','Feel strong for my baby','Love my curves','Feel confident in my clothes','More energy every day'];
   ov.innerHTML=`<div class="ovc"><span class="big">🍑</span><h2 class="lvlup">Your glow-up year starts now</h2><p class="muted">52 weeks. 4 seasons. Built for home, with a baby around.</p>
    <label class="obl">What should Coach call you?<input id="obName" autocomplete="given-name" placeholder="Your first name"></label>
    <label class="obl">How long since baby arrived?<select id="obPP"><option value="">Choose one</option><option>Under 6 weeks</option><option>6–12 weeks</option><option>3–6 months</option><option>6–12 months</option><option>Over a year</option></select></label>
@@ -1324,9 +1340,10 @@ const FINDS=[
  ['volcano','🌋','E','Volcano Pump','Erupts during frog pumps.'],['peacock','🦚','E','Peacock Strut','Walks like the program is working.'],
  ['urn','🏺','E','Ancient Hourglass','Found in the ruins of a 1,000-year leg day.'],
  ['star','🌟','L','Star Peach','Fell from the sky after a perfect week.'],['gold','🍑','L','Golden Peach','The rarest fruit in the orchard.'],
- ['comet','☄️','L','Comet Curve','Seen once a season. Leaves a trail.'],['trophy','🏆','L','The Shelf Trophy','Awarded to the shelf of legends.']];
+ ['comet','☄️','L','Comet Curve','Seen once a season. Leaves a trail.'],['trophy','🏆','L','The Shelf Trophy','Awarded to the shelf of legends.'],
+ ["dove", "🕊️", "R", "Peace Dove", "Lands softly after a hard set."],["bread", "🍞", "C", "Daily Bread", "Fuel for today, received with thanks."],["shield", "🛡️", "E", "Shield of Faith", "Ephesians 6:16. Unbreakable."],["lamp", "🪔", "E", "Lamp to My Feet", "Psalm 119:105 lights every step-up."],["dawn", "🌅", "L", "New Mercies", "New every morning. Lamentations 3:23."]];
 const ODDS={set:{C:70,R:25,E:4.5,L:.5},workout:{C:45,R:40,E:13,L:2},chest:{C:0,R:65,E:30,L:5},lesson:{C:60,R:35,E:5,L:0},golden:{C:20,R:50,E:25,L:5}};
-const HYPE=['SLAY 💅','she ate 🍽️','no crumbs left','glutes said thank you','main character energy','UNSTOPPABLE','peachy keen 🍑','that set was CLEAN','booty: loading… ▓▓▓░','hourglass mode: ON','built different','iconic behavior','she’s cooking 🔥','certified clean rep','the curve is curving','understood the assignment','ate that up','rent free in her glutes'];
+const HYPE=['SLAY 💅','she ate 🍽️','no crumbs left','glutes said thank you','main character energy','UNSTOPPABLE','peachy keen 🍑','that set was CLEAN','booty: loading… ▓▓▓░','hourglass mode: ON','built different','iconic behavior','she’s cooking 🔥','certified clean rep','the curve is curving','understood the assignment','strong in the Lord 💪','fearfully & wonderfully made','the joy of the Lord = strength','ate that up','rent free in her glutes'];
 function rollRarity(src){const o=ODDS[src],t=Math.random()*100;let a=0;for(const k of ['L','E','R','C']){a+=o[k];if(t<a)return k}return 'C'}
 function rollDrop(src,chance=1){
   if(Math.random()>chance)return;
@@ -1347,7 +1364,7 @@ function rollDrop(src,chance=1){
 }
 function renderFinds(){
   const el=$('#finds');if(!el)return;S.finds=S.finds||{};
-  $('#findCount').textContent=`${Object.keys(S.finds).length}/${FINDS.length}`;
+  $('#findCount').textContent=`${Object.keys(S.finds).length}/${FINDS.length}`;$('#findTitle').textContent=`Collect all ${FINDS.length}`;
   el.innerHTML=FINDS.map(f=>{const h=S.finds[f[0]];return `<button class="fnd r${f[2]} ${h?'got':''} ${h&&h.shiny?'shiny':''}" data-f="${f[0]}" style="--rc:${RAR[f[2]].c}" aria-label="${h?f[3]:'Not found yet'}"><span class="${f[0]==='gold'&&h?'goldf':''}">${h?f[1]:'?'}</span>${h&&h.n>1?`<i>×${h.n}</i>`:''}</button>`}).join('');
 }
 document.addEventListener('click',e=>{const b=e.target.closest('.fnd');if(!b)return;const f=FINDS.find(x=>x[0]===b.dataset.f),h=(S.finds||{})[f[0]];
