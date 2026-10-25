@@ -1,0 +1,1223 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hourglass">
+<meta name="theme-color" content="#1a0f1f">
+<meta name="description" content="A year-long home glute and waist program for moms.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Hourglass Coach</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one-column phone app, sticky header, five views behind a floating bottom dock. Single dark "plum night" look by choice. */
+:root{
+  --bg:#1a0f1f; --surface:#26172d; --surface2:#331f3b; --line:#4a3153;
+  --fg:#fbeff4; --muted:#c3a9c4; --peach:#ff8f6b; --pink:#ff4f8b; --mint:#5ee6b5; --gold:#ffd166;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:15px;line-height:1.5;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:110px;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:560px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.blob{position:fixed;width:340px;height:340px;border-radius:50%;filter:blur(70px);opacity:.35;z-index:-1;pointer-events:none;animation:drift 18s ease-in-out infinite alternate}
+.b1{background:var(--pink);top:-120px;right:-120px}.b2{background:var(--peach);bottom:-140px;left:-140px;animation-delay:-6s}
+@keyframes drift{to{transform:translate(40px,60px) scale(1.15)}}
+
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);padding-block:14px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:38px;height:38px;flex:none}
+.logo path{fill:var(--peach)}
+.brand h1{font-size:17px;letter-spacing:.01em}
+.brand small{display:block;color:var(--muted);font-size:12px;font-family:var(--body)}
+.streak{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--line);padding:6px 12px;border-radius:999px;font-weight:700;font-variant-numeric:tabular-nums}
+.flame{display:inline-block;animation:flick 1.2s ease-in-out infinite}
+@keyframes flick{50%{transform:scale(1.18) rotate(-6deg)}}
+
+.view{display:none;animation:rise .45s cubic-bezier(.2,.8,.2,1)}
+.view.on{display:grid;gap:16px}
+@keyframes rise{from{opacity:.2;transform:translateY(14px)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.muted{color:var(--muted)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* hero */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;background:linear-gradient(135deg,var(--surface2),var(--surface));}
+.ring{width:96px;height:96px;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:10}
+.ring .track{stroke:var(--line)}
+.ring .bar{stroke:url(#grad);stroke-linecap:round;transition:stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-size:20px}
+.hero h2{font-size:20px}
+.phase{display:inline-block;margin-top:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;background:color-mix(in srgb,var(--mint) 18%,transparent);color:var(--mint)}
+
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:14px;font-weight:600;transition:transform .2s,background .2s}
+.chip.on{background:var(--pink);border-color:var(--pink);color:#fff;transform:translateY(-2px)}
+.chip .dn{display:block;font-size:11px;opacity:.8;font-weight:500}
+.chip.done::after{content:" ✓";color:var(--mint)}
+.chip.on.done::after{color:#fff}
+
+.ex{display:grid;gap:10px;animation:rise .5s both}
+.ex-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.ex h3{font-size:15px;line-height:1.3}
+.target{font-family:var(--display);font-size:13px;color:var(--peach);white-space:nowrap}
+.cue{font-size:13.5px;color:var(--muted)}
+.swap{font-size:12.5px;color:var(--gold)}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--surface2);color:var(--muted);margin-right:4px}
+.sets{display:flex;gap:8px;flex-wrap:wrap}
+.set{width:44px;height:44px;border-radius:50%;border:2px dashed var(--line);background:transparent;font-weight:700;font-variant-numeric:tabular-nums;transition:all .25s}
+.set.on{border:2px solid var(--mint);background:var(--mint);color:var(--bg);animation:pop .4s}
+@keyframes pop{40%{transform:scale(1.3)}}
+.ex.complete{border-color:var(--mint)}
+
+.btn{border:0;border-radius:16px;padding:14px 18px;font-weight:700;background:linear-gradient(135deg,var(--pink),var(--peach));color:#fff;box-shadow:0 8px 24px -8px var(--pink);transition:transform .15s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--surface2);box-shadow:none;border:1px solid var(--line);color:var(--fg)}
+.btn.wide{width:100%}
+
+/* rest timer */
+.timer{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(140%);background:var(--gold);color:var(--bg);font-weight:800;padding:10px 18px;border-radius:999px;display:flex;gap:12px;align-items:center;z-index:8;transition:transform .4s cubic-bezier(.3,1.5,.5,1);box-shadow:0 10px 30px -10px #000}
+.timer.show{transform:translateX(-50%) translateY(0)}
+.timer span{font-family:var(--display);font-variant-numeric:tabular-nums;min-width:52px}
+.timer button{border:0;background:var(--bg);color:var(--gold);border-radius:999px;padding:4px 10px;font-weight:700;font-size:12px}
+
+/* dock */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:9;padding:8px max(12px,env(safe-area-inset-left,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-right,0px));display:flex;justify-content:center;pointer-events:none}
+.dock{pointer-events:auto;display:flex;gap:2px;background:color-mix(in srgb,var(--surface2) 92%,transparent);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:24px;padding:6px;width:100%;max-width:440px}
+.dock button{flex:1;border:0;background:transparent;border-radius:18px;padding:8px 2px;display:grid;justify-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--muted);transition:all .25s}
+.dock svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+.dock button.on{color:var(--fg);background:var(--surface)}
+.dock button.on svg{transform:translateY(-3px) scale(1.12);stroke:var(--peach)}
+
+/* plan */
+.weeks{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.wk{aspect-ratio:1;max-width:100%;border-radius:14px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;font-family:var(--display);font-size:14px;position:relative;transition:transform .2s}
+.wk.cur{border-color:var(--pink);background:color-mix(in srgb,var(--pink) 25%,var(--surface));transform:scale(1.06)}
+.wk .dots{position:absolute;bottom:6px;display:flex;gap:2px}
+.wk .dots i{width:5px;height:5px;border-radius:50%;background:var(--line)}
+.wk .dots i.f{background:var(--mint)}
+.phases{display:grid;gap:10px}
+.ph{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
+.ph .n{font-family:var(--display);font-size:22px;color:var(--peach);width:42px}
+.ph h3{font-size:14px}
+.stepper{display:flex;align-items:center;gap:12px}
+.stepper button{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface2);font-size:20px;font-weight:700}
+.stepper b{font-family:var(--display);font-size:18px;min-width:90px;text-align:center}
+
+/* fuel */
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form label{display:grid;gap:4px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.04em}
+.form .full{grid-column:1/-1}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:11px 12px;font:inherit;font-size:16px}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--fg);font-weight:600;letter-spacing:0}
+.toggle input{width:auto;accent-color:var(--pink);transform:scale(1.4)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg button{border:1px solid var(--line);background:var(--surface2);border-radius:12px;padding:9px 4px;font-weight:600;font-size:13px}
+.seg button.on{background:var(--peach);border-color:var(--peach);color:var(--bg)}
+.kcal{font-family:var(--display);font-size:44px;line-height:1;color:var(--peach);font-variant-numeric:tabular-nums}
+.macros{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mac{display:grid;justify-items:center;gap:6px;text-align:center}
+.mac .ring{width:78px;height:78px}
+.mac .ring b{font-size:15px}
+.mac small{font-size:12px;color:var(--muted)}
+.counter{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.meter{height:14px;border-radius:999px;background:var(--surface2);overflow:hidden}
+.meter i{display:block;height:100%;width:0;border-radius:999px;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.qbtns{display:flex;gap:6px}
+.qbtns button{border:1px solid var(--line);background:var(--surface2);border-radius:10px;padding:6px 10px;font-weight:700;font-size:13px}
+.foods{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.food{background:var(--surface2);border-radius:14px;padding:10px 12px;font-size:13px}
+.food b{display:block;font-size:14px}
+.food span{color:var(--mint);font-weight:700}
+
+/* progress */
+.hg-wrap{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center}
+.hg path{transition:d .9s cubic-bezier(.3,1.3,.5,1)}
+.whr{font-family:var(--display);font-size:36px;color:var(--mint);font-variant-numeric:tabular-nums}
+.chart{overflow-x:auto}
+.chart svg{display:block;width:100%;height:auto}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+td,th{text-align:left;padding:7px 4px;border-bottom:1px solid var(--line)}
+th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ex-flag{font-size:10px;font-weight:700;background:var(--gold);color:var(--bg);border-radius:5px;padding:1px 5px;margin-left:4px}
+.del{border:0;background:none;color:var(--muted);font-size:16px}
+
+/* coach */
+details{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px;transition:background .2s}
+details[open]{background:var(--surface2)}
+summary{font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:10px}
+summary::after{content:"+";font-family:var(--display);color:var(--peach);transition:transform .3s}
+details[open] summary::after{transform:rotate(45deg)}
+details p,details li{color:var(--muted);font-size:14px}
+details ul{padding-left:18px;margin:8px 0 0}
+.alert{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,var(--surface))}
+
+.figwrap{position:relative}
+.fig{width:100%;max-width:100%;height:auto;display:block;background:var(--surface2);border-radius:14px}
+.fig .floor{stroke:var(--line);stroke-width:2}
+.fig .bone{stroke:var(--fg);stroke-width:5.5;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.fig .far{stroke:var(--muted);opacity:.55}
+.fig .head{fill:var(--fg)}
+.fig .glow{fill:var(--pink)}
+.fig .prop{fill:var(--line)}
+.fig .prop2{fill:var(--muted);opacity:.5}
+.fig .barp{stroke:var(--gold);stroke-width:4;stroke-linecap:round}
+.fig .band{stroke:var(--gold);stroke-width:2;stroke-dasharray:4 3}
+.fig .stroll{stroke:var(--muted);stroke-width:3;fill:none;stroke-linecap:round}
+.fig .stroll .pf{fill:var(--line)}
+.vchip{position:absolute;top:8px;left:8px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--surface);padding:2px 8px;border-radius:6px}
+details.how{background:var(--surface2);border:0;padding:10px 14px;border-radius:14px}
+details.how ol{padding-left:20px;margin:8px 0 0;display:grid;gap:4px}
+details.how li{color:var(--fg)}
+.avoid{margin:8px 0 0;font-size:13.5px}
+.avoid b{color:var(--pink)}
+.vid{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;color:var(--fg);font-weight:700;border:1px solid var(--line);border-radius:14px;padding:10px 14px;background:var(--surface2)}
+.vid span{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--pink);color:#fff;font-size:11px}
+.lvl{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;text-align:left;min-width:0}
+#avatar{width:44px;height:44px;flex:none;transform:scale(var(--s,.85));filter:drop-shadow(0 4px 10px rgba(255,79,139,.45))}
+#avatar.jelly{animation:jelly .6s}
+@keyframes jelly{30%{transform:scale(calc(var(--s,.85)*1.25),calc(var(--s,.85)*.8))}50%{transform:scale(calc(var(--s,.85)*.85),calc(var(--s,.85)*1.15))}75%{transform:scale(calc(var(--s,.85)*1.06))}}
+.lvltx{min-width:0}.lvltx b{display:block;font-family:var(--display);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lvltx small{display:block;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+.xpbar{height:8px;width:140px;max-width:38vw;border-radius:999px;background:var(--surface2);overflow:hidden;margin-top:4px}
+.xpbar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--pink),var(--gold));box-shadow:0 0 12px var(--pink);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+.hdr-r{display:flex;gap:8px;align-items:center;flex:none}
+.streak small{font-size:10px;color:var(--muted)}
+.sbtn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface2);font-size:15px}
+.gold{color:var(--gold)}
+.fx{position:fixed;z-index:30;pointer-events:none;font-family:var(--display);font-weight:900;font-size:15px;color:var(--gold);text-shadow:0 2px 10px #000;animation:fx .95s ease-out forwards}
+@keyframes fx{to{transform:translateY(-70px) scale(1.4);opacity:0}}
+.quests{display:grid;gap:4px;background:linear-gradient(160deg,var(--surface2),var(--surface))}
+.qrow{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:7px 0}
+.qrow b{font-size:14px}.qic{font-size:20px}
+.qbar{height:6px;border-radius:999px;background:var(--bg);overflow:hidden;margin:4px 0 2px}
+.qbar i{display:block;height:100%;background:var(--mint);border-radius:999px;transition:width .6s}
+.qck{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-weight:900;color:var(--bg);font-size:13px}
+.qck.on{background:var(--mint);border-color:var(--mint);animation:pop .4s}
+.walkbtn{padding:10px;font-size:13px;margin-top:4px}
+.chest{font-size:30px;border:0;background:none;filter:grayscale(1);opacity:.45;padding:0}
+.chest.ready{filter:none;opacity:1;animation:wiggle 1s infinite}
+.chest.claimed{filter:none;opacity:1}
+@keyframes wiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-15deg) scale(1.2)}40%{transform:rotate(12deg) scale(1.2)}60%{transform:rotate(-6deg)}}
+.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.bdg{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:10px 4px;text-align:center;font-size:10.5px;font-weight:600;line-height:1.25;min-width:0}
+.bdg .e{font-size:26px;display:block;margin-bottom:4px}
+.bdg.lock{color:var(--muted)}.bdg.lock .e{opacity:.4}
+.bdg.got{border-color:var(--gold);box-shadow:0 0 18px -8px var(--gold)}
+#ov{position:fixed;inset:0;z-index:40;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(8px);display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+#ov[hidden]{display:none!important}
+.ovc{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:24px;text-align:center;width:min(360px,100%);max-height:90vh;overflow:auto;animation:zoom .5s cubic-bezier(.3,1.6,.5,1);display:grid;gap:6px}
+.ovc p{margin:4px 0}
+@keyframes zoom{from{transform:scale(.5);opacity:0}}
+.big{font-size:72px;line-height:1.1;display:block;animation:spinIn .8s cubic-bezier(.3,1.6,.5,1)}
+@keyframes spinIn{from{transform:rotate(-200deg) scale(0)}}
+.ovc h2{font-size:22px;margin:4px 0}
+.lvlup{font-size:30px!important;background:linear-gradient(90deg,var(--pink),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.loot{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0;perspective:700px}
+.lc{aspect-ratio:3/4;max-width:100%;border:0;background:none;padding:0;position:relative;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.3,1.3,.5,1)}
+.lc:not(.flip){animation:floaty 2s ease-in-out infinite}
+.lc:nth-child(2){animation-delay:-.7s}.lc:nth-child(3){animation-delay:-1.4s}
+@keyframes floaty{50%{transform:translateY(-7px) rotate(-2deg)}}
+.lc.flip{transform:rotateY(180deg)}
+.lc>div{position:absolute;inset:0;border-radius:16px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:grid;place-content:center;font-family:var(--display)}
+.lc .fr{background:linear-gradient(135deg,var(--pink),var(--peach));font-size:32px;box-shadow:0 10px 24px -10px var(--pink)}
+.lc .bk{background:var(--surface2);border:2px solid var(--gold);transform:rotateY(180deg);color:var(--gold);font-size:20px}
+.lc .bk small{display:block;font-size:11px;font-family:var(--body)}
+.lc.dim .bk{border-color:var(--line);color:var(--muted)}
+.ladder{display:grid;gap:6px;margin:10px 0;text-align:left}
+.lad{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:8px 10px;border-radius:12px;background:var(--surface2);color:var(--muted);font-size:13px}
+.lad span{font-family:var(--display);font-size:12px}
+.lad.past{color:var(--fg)}.lad.past span{color:var(--mint)}
+.lad.now{background:linear-gradient(90deg,var(--pink),var(--peach));color:#fff}
+.lad small{font-variant-numeric:tabular-nums}
+.ladS{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-top:6px}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:20}
+.toast{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-200%);background:var(--mint);color:var(--bg);font-weight:800;padding:12px 20px;border-radius:999px;z-index:21;transition:transform .5s cubic-bezier(.3,1.5,.5,1);white-space:nowrap}
+.toast.show{transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+[hidden]{display:none!important}
+.motive{display:grid;gap:8px;background:linear-gradient(135deg,color-mix(in srgb,var(--pink) 22%,var(--surface)),var(--surface))}
+.hi{font-family:var(--display);font-size:16px}
+.pill{font-size:12px;font-weight:700;background:var(--bg);color:var(--gold);padding:4px 10px;border-radius:999px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.yearbar{height:8px;border-radius:999px;background:var(--bg);overflow:hidden}
+.yearbar.big{height:12px}
+.yearbar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--mint),var(--gold),var(--pink));transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.quote{margin:4px 0 0;font-size:17px;font-weight:600;line-height:1.35;text-wrap:balance}
+.why{margin:0;font-size:13.5px;color:var(--muted)}
+.install{border-color:var(--gold);display:grid;gap:4px}
+.install ol,.install2 ol{margin:6px 0 0;padding-left:20px;display:grid;gap:4px;font-size:14px}
+.x{border:0;background:none;color:var(--muted);font-size:22px;line-height:1;padding:0 4px}
+.phase.blk{background:color-mix(in srgb,var(--gold) 16%,transparent);color:var(--gold)}
+.lessonPing{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;text-align:left;width:100%;border-color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,var(--surface));font:inherit;color:var(--fg);animation:glowp 2.4s ease-in-out infinite}
+.lessonPing b{display:block;font-size:15px}.lpI{font-size:26px}.lpGo{font-weight:800;color:var(--gold);white-space:nowrap}
+@keyframes glowp{50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 25%,transparent)}}
+.sv{font-size:13.5px;background:color-mix(in srgb,var(--mint) 12%,transparent);border-radius:10px;padding:7px 10px}
+.sv b{color:var(--mint)}
+.seasonChips,.qchips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.seasonChips .chip{padding:7px 12px;font-size:13px}
+.weeks{grid-template-columns:repeat(7,1fr)!important}
+.wk.rec{background:color-mix(in srgb,var(--gold) 12%,var(--surface))}
+.ph.now{border-color:var(--peach)}.ph.past{opacity:.7}
+.ph .n{font-size:26px!important}
+.linkbtn{border:0;background:none;padding:0;color:var(--muted);font-size:12px;text-decoration:underline}
+textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
+.ask{display:grid;gap:12px;border-color:var(--pink);background:linear-gradient(160deg,color-mix(in srgb,var(--pink) 18%,var(--surface)),var(--surface))}
+.ask h3{font-size:16px}
+.coachAv{font-size:30px;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);flex:none;animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-4px) rotate(-6deg)}}
+.chat{display:grid;gap:8px;max-height:360px;overflow-y:auto}
+.chat:empty{display:none}
+.bub{padding:10px 13px;border-radius:16px;font-size:14.5px;line-height:1.45;white-space:pre-wrap;max-width:92%;animation:rise .3s}
+.bub.me{justify-self:end;background:var(--pink);color:#fff;border-bottom-right-radius:4px}
+.bub.co{justify-self:start;background:var(--surface2);border-bottom-left-radius:4px}
+.bub.typing{color:var(--muted);font-style:italic}
+.qc{flex:none;border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:7px 12px;font-size:12.5px;font-weight:600;white-space:nowrap}
+.wrapc{flex-wrap:wrap;overflow:visible}
+.qc.on{background:var(--peach);border-color:var(--peach);color:var(--bg)}
+.askRow{display:grid;grid-template-columns:1fr auto;gap:8px}
+.askRow .btn{padding:10px 18px}
+.btn:disabled{opacity:.5}
+.proof{display:grid;gap:10px;border-color:var(--mint)}
+.proof h3{font-size:18px}
+.proofs{display:grid;gap:10px}
+.proofs>div{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start}
+.proofs span{font-size:22px;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--surface2)}
+.proofs p{margin:0;font-size:14px;color:var(--muted)}.proofs b{color:var(--fg)}
+.lessons{display:grid;gap:6px}
+.les{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:9px 12px;color:var(--fg)}
+.les b{display:block;font-size:14px}.les small{color:var(--muted);font-size:12px}
+.les .ln{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--bg);font-family:var(--display);font-size:13px}
+.les.done .ln{background:var(--mint);color:var(--bg)}
+.les.lock{opacity:.5}
+.lesson{text-align:left}.lesson h2{font-size:21px}
+.lbody{font-size:15px;line-height:1.55}
+.quiz{display:grid;gap:8px;background:var(--surface2);border-radius:16px;padding:12px;margin-top:6px}
+.quiz p{margin:0;font-size:14.5px}
+.qopt{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;text-align:left;font-weight:600;transition:all .25s}
+.qopt.right{background:var(--mint);border-color:var(--mint);color:var(--bg);animation:pop .4s}
+.qopt.wrong{background:var(--pink);border-color:var(--pink);color:#fff;animation:shake .4s}
+.qopt.faded{opacity:.45}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.faq{display:grid;gap:8px}
+.faq details{padding:12px 14px;border-radius:14px}
+.faq summary{font-size:14.5px}
+.faq p{margin:8px 0 0;line-height:1.55}
+.obl{display:grid;gap:6px;text-align:left;font-size:13px;font-weight:700;color:var(--muted);margin-top:6px}
+.obl .qchips{flex-wrap:wrap;overflow:visible}
+.warnp{background:color-mix(in srgb,var(--gold) 15%,transparent);color:var(--gold);border-radius:12px;padding:10px;font-size:13px;text-align:left}
+input[type=search]{-webkit-appearance:none;appearance:none}
+</style>
+</head><body>
+<div class="blob b1"></div><div class="blob b2"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff4f8b"/><stop offset="1" stop-color="#ffd166"/></linearGradient><radialGradient id="peachG" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#ffc2a1"/><stop offset=".6" stop-color="#ff8f6b"/><stop offset="1" stop-color="#ff4f8b"/></radialGradient></defs></svg>
+
+<div class="wrap">
+<header>
+  <button class="lvl" id="lvlBtn" aria-label="See all levels">
+    <svg id="avatar" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 13c-9-4-19 2-19 14 0 10 9 17 19 17s19-7 19-17c0-12-10-18-19-14z" fill="url(#peachG)"/><path d="M24 14c-2 8-2 18 0 29" stroke="#c4466a" stroke-width="1.6" fill="none" opacity=".55"/><path d="M24 13c2-6 8-8 13-7-2 5-7 8-13 7z" fill="#5ee6b5"/><circle cx="16" cy="24" r="2.5" fill="#fff" opacity=".5"/></svg>
+    <div class="lvltx"><b id="lvlTitle">Peach Seed</b><small id="lvlNum">Level 1</small><div class="xpbar"><i id="xpFill"></i></div></div>
+  </button>
+  <div class="hdr-r"><div class="streak" title="Weeks in a row with 3+ workouts"><span class="flame">🔥</span><span id="streakN">0</span><small>wk</small></div><button class="sbtn" id="sndBtn" aria-label="Toggle sound">🔊</button></div>
+</header>
+
+<!-- TRAIN -->
+<section class="view on" id="v-today">
+  <div class="card motive" id="motive"></div>
+  <div class="card install" id="installCard" hidden>
+    <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b>📲 Install Hourglass as an app</b><button class="x" id="installX" aria-label="Hide">×</button></div>
+    <ol><li>Open this page in <b>Safari</b>.</li><li>Tap the <b>Share</b> button (square with an arrow).</li><li>Scroll down, tap <b>Add to Home Screen</b>.</li><li>Name it <b>Hourglass</b>, tap <b>Add</b>.</li></ol>
+  </div>
+  <div class="card hero">
+    <div class="ring"><svg width="96" height="96"><circle class="track" cx="48" cy="48" r="40"/><circle class="bar" id="todayRing" cx="48" cy="48" r="40" stroke-dasharray="251.3" stroke-dashoffset="251.3"/></svg><b id="todayPct">0%</b></div>
+    <div><div class="eyebrow" id="todayWeek">Week 1</div><h2 id="todayTitle">Glute Strength</h2><span class="phase" id="todayPhase">Foundation</span> <span class="phase blk" id="todayBlock">Learn block</span></div>
+  </div>
+  <button class="card lessonPing" id="lessonPing" hidden></button>
+  <div class="card quests"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div><div class="eyebrow">Daily quests</div><small class="muted" id="chestTxt"></small></div><button class="chest" id="chest" aria-label="Open reward chest">🎁</button></div><div id="qlist"></div></div>
+  <div class="chips" id="dayChips"></div>
+  <div id="exList" style="display:grid;gap:12px"></div>
+  <button class="btn wide" id="finishBtn">Finish workout</button>
+  <p class="muted" style="font-size:13px;margin:0">Tap a circle after each set; a rest timer starts on its own. New move? Watch the figure, open "How to do it", or tap the video button first.</p>
+</section>
+
+<!-- PLAN -->
+<section class="view" id="v-plan">
+  <div class="card" style="display:grid;gap:14px">
+    <div class="eyebrow">Her year · 52 weeks</div>
+    <div class="yearbar big"><i id="yearFill"></i></div>
+    <div class="seasonChips" id="seasonChips"></div>
+    <div class="stepper"><button id="wkDown" aria-label="Previous week">−</button><b id="wkLabel">Week 1</b><button id="wkUp" aria-label="Next week">+</button></div>
+    <div class="weeks" id="weeks"></div>
+    <p class="muted" style="margin:0;font-size:13px">Green dots are finished workouts. 🌙 marks a recovery week. Tap a week to jump to it.</p>
+  </div>
+  <div class="phases" id="phases"></div>
+  <div class="card"><div class="eyebrow">Weekly rhythm</div>
+    <table><tbody>
+      <tr><td><b>Mon</b></td><td>A · Glute Strength</td></tr>
+      <tr><td><b>Tue</b></td><td>B · Upper Frame + Core</td></tr>
+      <tr><td><b>Wed</b></td><td class="muted">Rest or stroller walk</td></tr>
+      <tr><td><b>Thu</b></td><td>C · Glute Volume</td></tr>
+      <tr><td><b>Sat</b></td><td>D · Pump + Walk</td></tr>
+      <tr><td><b>Fri / Sun</b></td><td class="muted">Rest, 8k+ steps</td></tr>
+    </tbody></table>
+    <p class="muted" style="font-size:13px;margin:8px 0 0">Any days work. Just leave a day between A and C when possible.</p>
+  </div>
+</section>
+
+<!-- FUEL -->
+<section class="view" id="v-fuel">
+  <div class="card" style="display:grid;gap:12px">
+    <div class="eyebrow">Her numbers</div>
+    <div class="form">
+      <label>Weight (lb)<input id="fWeight" type="number" inputmode="decimal" value="150"></label>
+      <label>Height (in)<input id="fHeight" type="number" inputmode="decimal" value="64"></label>
+      <label>Age<input id="fAge" type="number" inputmode="numeric" value="25"></label>
+      <label>Daily activity<select id="fAct"><option value="1.375">Light (mostly home)</option><option value="1.55" selected>Moderate (on feet + baby)</option><option value="1.7">High (very active)</option></select></label>
+      <label class="full toggle">Breastfeeding<input id="fBF" type="checkbox"></label>
+      <div class="full"><div class="eyebrow" style="margin-bottom:6px">Goal right now</div>
+        <div class="seg" id="goalSeg"><button data-g="lean">Lean down</button><button data-g="recomp" class="on">Recomp</button><button data-g="build">Build</button></div></div>
+    </div>
+  </div>
+  <div class="card" style="display:grid;gap:16px">
+    <div><div class="eyebrow">Daily target</div><div class="kcal" id="kcal">0</div><div class="muted" id="kcalNote" style="font-size:13px"></div></div>
+    <div class="macros">
+      <div class="mac"><div class="ring"><svg width="78" height="78"><circle class="track" cx="39" cy="39" r="32"/><circle class="bar mr" cx="39" cy="39" r="32" stroke-dasharray="201" stroke-dashoffset="201" style="stroke:var(--pink)"/></svg><b id="mP">0g</b></div><small>Protein</small></div>
+      <div class="mac"><div class="ring"><svg width="78" height="78"><circle class="track" cx="39" cy="39" r="32"/><circle class="bar mr" cx="39" cy="39" r="32" stroke-dasharray="201" stroke-dashoffset="201" style="stroke:var(--gold)"/></svg><b id="mC">0g</b></div><small>Carbs</small></div>
+      <div class="mac"><div class="ring"><svg width="78" height="78"><circle class="track" cx="39" cy="39" r="32"/><circle class="bar mr" cx="39" cy="39" r="32" stroke-dasharray="201" stroke-dashoffset="201" style="stroke:var(--mint)"/></svg><b id="mF">0g</b></div><small>Fat</small></div>
+    </div>
+  </div>
+  <div class="card" style="display:grid;gap:14px">
+    <div class="row" style="justify-content:space-between"><div class="eyebrow">Today's tank</div><button class="linkbtn" id="resetDay">Reset day</button></div>
+    <div><div class="row" style="justify-content:space-between"><b>Protein</b><span id="pTxt" class="muted"></span></div>
+      <div class="counter"><div class="meter"><i id="pBar" style="background:linear-gradient(90deg,var(--pink),var(--peach))"></i></div>
+      <div class="qbtns"><button data-p="10">+10</button><button data-p="25">+25</button><button data-p="40">+40</button></div></div></div>
+    <div><div class="row" style="justify-content:space-between"><b>Water</b><span id="wTxt" class="muted"></span></div>
+      <div class="counter"><div class="meter"><i id="wBar" style="background:linear-gradient(90deg,#4cc9f0,var(--mint))"></i></div>
+      <div class="qbtns"><button data-w="8">+8oz</button><button data-w="16">+16</button><button data-w="32">+32</button></div></div></div>
+  </div>
+  <div class="card" style="display:grid;gap:10px">
+    <div class="eyebrow">Easy protein hits</div>
+    <div class="foods">
+      <div class="food"><b>Greek yogurt cup</b><span>15–18g</span> · add berries</div>
+      <div class="food"><b>Chicken breast, 5 oz</b><span>40g</span> · rotisserie works</div>
+      <div class="food"><b>3 eggs + ½ cup whites</b><span>31g</span> · breakfast</div>
+      <div class="food"><b>Whey shake</b><span>25g</span> · after workouts</div>
+      <div class="food"><b>Cottage cheese, 1 cup</b><span>25g</span> · night snack</div>
+      <div class="food"><b>Lean ground beef, 4 oz</b><span>24g</span> · tacos, bowls</div>
+      <div class="food"><b>Tuna pouch</b><span>17g</span> · on rice cakes</div>
+      <div class="food"><b>Shrimp, 4 oz</b><span>24g</span> · garlic stir-fry</div>
+    </div>
+    <p class="muted" style="font-size:13px;margin:0">Build each meal around protein, add a fist of carbs (rice, potatoes, oats) on workout days, and fill half the plate with veggies or fruit.</p>
+  </div>
+</section>
+
+<!-- PROGRESS -->
+<section class="view" id="v-progress">
+  <div class="card hg-wrap">
+    <svg class="hg" viewBox="0 0 120 200" width="120" height="200" aria-label="Silhouette shaped by her waist-to-hip ratio">
+      <defs><linearGradient id="hgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4f8b"/><stop offset="1" stop-color="#ff8f6b"/></linearGradient></defs>
+      <path id="hgPath" fill="url(#hgGrad)" d=""/>
+    </svg>
+    <div><div class="eyebrow">Waist-to-hip ratio</div><div class="whr" id="whr">–</div><div class="muted" style="font-size:13px" id="whrNote"></div></div>
+  </div>
+  <div class="card" style="display:grid;gap:12px"><div class="row" style="justify-content:space-between"><div class="eyebrow">Trophy case</div><b id="badgeCount" class="gold"></b></div><div class="badges" id="badges"></div></div>
+  <div class="card" style="display:grid;gap:12px">
+    <div class="eyebrow">Weekly check-in (same morning each week)</div>
+    <div class="form">
+      <label>Date<input id="lDate" type="date"></label>
+      <label>Weight (lb)<input id="lW" type="number" inputmode="decimal" placeholder="150"></label>
+      <label>Waist (in)<input id="lWa" type="number" inputmode="decimal" step="0.25" placeholder="at navel"></label>
+      <label>Hips (in)<input id="lH" type="number" inputmode="decimal" step="0.25" placeholder="widest point"></label>
+    </div>
+    <button class="btn" id="addLog">Save check-in · +75 pts</button>
+  </div>
+  <div class="card" style="display:grid;gap:10px">
+    <div class="row" style="justify-content:space-between"><div class="eyebrow">Trend</div>
+      <div class="legend"><span><i style="background:var(--peach)"></i>Hips</span><span><i style="background:var(--mint)"></i>Waist</span></div></div>
+    <div class="chart" id="chart"></div>
+    <div style="overflow-x:auto"><table><thead><tr><th>Date</th><th>Wt</th><th>Waist</th><th>Hips</th><th></th></tr></thead><tbody id="logRows"></tbody></table></div>
+  </div>
+  <div class="card" style="display:grid;gap:10px">
+    <div class="eyebrow">Keep her progress safe</div>
+    <div class="muted" style="font-size:13.5px" id="syncState">Progress is saved inside the app on this phone. Copy a backup code every few weeks and keep it in Notes.</div>
+    <div class="row"><button class="btn ghost" id="bkCopy">Copy backup code</button><button class="btn ghost" id="bkShow">Restore from code</button></div>
+    <div id="bkBox" hidden style="display:grid;gap:8px"><textarea id="bkText" rows="3" placeholder="Paste a backup code here"></textarea><button class="btn" id="bkRestore">Restore progress</button></div>
+  </div>
+</section>
+
+<!-- COACH -->
+<section class="view" id="v-coach">
+  <div class="card proof">
+    <div class="eyebrow">Does this really work?</div>
+    <h3>Yes. Here is why.</h3>
+    <div class="proofs">
+      <div><span>🔬</span><p><b>Light weight still builds muscle.</b> Studies comparing light and heavy loads found that sets taken close to failure build similar muscle. Bodyweight, bands and slow reps qualify.</p></div>
+      <div><span>📈</span><p><b>Beginners grow fastest.</b> The first year of training is when the body responds most. Starting now is perfect timing.</p></div>
+      <div><span>🍑</span><p><b>Every glute muscle gets hit.</b> Bridges, squats, hinges and lunges for the big glute; kicks and raises for the upper-side curve.</p></div>
+      <div><span>🪜</span><p><b>It gets harder on purpose.</b> Four seasons step up from bodyweight to tempo, single-leg, bands and dumbbells, so the glutes always have a reason to grow.</p></div>
+      <div><span>⌛</span><p><b>The waist is built from both ends.</b> Fat loss and deep-core work tighten the middle while glutes and shoulders widen the frame around it.</p></div>
+    </div>
+  </div>
+  <div class="card" style="display:grid;gap:10px">
+    <div class="row" style="justify-content:space-between"><div><div class="eyebrow">Glute School</div><h3>One lesson a week</h3></div><b class="gold" id="lessonCount"></b></div>
+    <div class="seasonChips" id="lessonSeasons"></div>
+    <div id="lessonList" class="lessons"></div>
+  </div>
+  <div class="card" style="display:grid;gap:10px">
+    <div class="eyebrow">Every question, answered</div>
+    <div class="eyebrow" style="color:var(--gold)">Popular questions</div>
+    <div class="qchips wrapc" id="faqPop"></div>
+    <input id="faqQ" type="search" placeholder="Search: sore, protein, belly, milk…">
+    <div class="qchips" id="faqCats"></div>
+    <div id="faqList" class="faq"></div>
+  </div>
+  <div class="card install2">
+    <div class="eyebrow">iPhone home screen</div>
+    <ol><li>Open this page in <b>Safari</b>.</li><li>Tap <b>Share</b> (square with an arrow).</li><li>Tap <b>Add to Home Screen</b>.</li><li>Name it <b>Hourglass</b>, tap <b>Add</b>.</li></ol>
+  </div>
+</section>
+</div>
+
+<div class="timer" id="timer" role="status"><span id="tLeft">1:30</span>Rest<button id="tAdd">+30s</button><button id="tSkip">Skip</button></div>
+<div class="toast" id="toast"></div>
+<div id="ov" hidden></div>
+<canvas id="confetti"></canvas>
+
+<nav><div class="dock" role="tablist">
+  <button class="on" data-v="today"><svg viewBox="0 0 24 24"><path d="M6 4v16M18 4v16M3 8v8M21 8v8M6 12h12"/></svg>Train</button>
+  <button data-v="plan"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Year</button>
+  <button data-v="fuel"><svg viewBox="0 0 24 24"><path d="M12 21c-4 0-7-3-7-7 0-5 4-8 7-11 3 3 7 6 7 11 0 4-3 7-7 7z"/></svg>Fuel</button>
+  <button data-v="progress"><svg viewBox="0 0 24 24"><path d="M3 20l6-7 4 4 8-10"/><path d="M15 7h6v6"/></svg>Progress</button>
+  <button data-v="coach"><svg viewBox="0 0 24 24"><path d="M4 19V6a2 2 0 0 1 2-2h12v13H6a2 2 0 0 0-2 2zm0 0a2 2 0 0 0 2 2h12"/><path d="M9 8h6"/></svg>Learn</button>
+</div></nav>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const KEY='hourglass-coach-v1';
+const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const esc=t=>String(t||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sample=[
+  {date:'2026-09-05',w:152,wa:31.5,h:39,ex:1},{date:'2026-09-19',w:151,wa:31,h:39.25,ex:1},
+  {date:'2026-10-03',w:150.5,wa:30.5,h:39.5,ex:1},{date:'2026-10-17',w:150,wa:30.25,h:39.75,ex:1}];
+let S={week:1,day:0,sets:{},done:[],log:sample,fuel:{w:150,h:64,a:25,act:'1.55',bf:false,g:'recomp'},tank:{d:today(),p:0,w:0},
+  xp:0,lvlSeen:0,badges:[],stats:{sets:0,pDays:0,wDays:0,chests:0},daily:{d:today(),sets:0,walk:0,claimed:0},doneDates:[],awarded:{},sound:true,
+  name:'',why:'',pp:'',start:'',lessons:{},ts:0,installHide:0,viewSeason:null,lessonSeason:null,history:[]};
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(S,s)}catch(e){}
+if(!S.start)S.start=today();
+function dayRoll(){if(S.tank.d!==today())S.tank={d:today(),p:0,w:0};if(S.daily.d!==today())S.daily={d:today(),sets:0,walk:0,claimed:0}}
+dayRoll();
+const save=()=>{S.ts=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};cloudPush();if(window.gameReady)renderGame()};
+
+// ===== season helpers
+const seasonOf=w=>Math.min(3,Math.floor((w-1)/13));
+const wkIn=w=>(w-1)%13+1;
+const isRecovery=w=>wkIn(w)===13;
+const blockOf=w=>{const k=wkIn(w);return k===13?'🌙 Recovery week':k<=4?'Learn block':k<=8?'Push block':'Peak block'};
+const setsFor=(e,w)=>{const n=e.sets[seasonOf(w)];return n?Math.max(1,n-(isRecovery(w)?1:0)):0};
+const sid=()=>`w${S.week}d${S.day}`;
+const activeEx=()=>DAYS[S.day].ex.map((e,i)=>({e,i})).filter(o=>setsFor(o.e,S.week)>0);
+const dayNum=()=>Math.max(1,Math.round((new Date(today())-new Date(S.start))/864e5)+1);
+
+// ===== Train
+function renderMotive(){
+  const d=dayNum(),pct=Math.min(100,d/365*100);
+  $('#motive').innerHTML=`<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b class="hi">${S.name?`Hey ${esc(S.name)}`:'Hey gorgeous'} 👋</b><span class="pill">Day ${Math.min(d,365)} of 365</span></div>
+    <div class="yearbar"><i style="width:${pct}%"></i></div>
+    <p class="quote">“${QUOTES[(d-1)%QUOTES.length]}”</p>${S.why?`<p class="why">💗 Her why: ${esc(S.why)}</p>`:''}`;
+}
+function renderToday(){
+  const s=seasonOf(S.week), D=DAYS[S.day];
+  $('#todayWeek').textContent=`Season ${s+1} · Wk ${wkIn(S.week)}/13 · Day ${D.k}`;
+  $('#todayTitle').textContent=D.t;
+  $('#todayPhase').textContent=`${SEASONS[s].i} ${SEASONS[s].n}`;
+  $('#todayBlock').textContent=blockOf(S.week);
+  $('#dayChips').innerHTML=DAYS.map((d,i)=>`<button class="chip ${i===S.day?'on':''} ${S.done.includes(`w${S.week}d${i}`)?'done':''}" data-d="${i}">Day ${d.k}<span class="dn">${d.t}</span></button>`).join('');
+  const st=S.sets[sid()]||{};
+  $('#exList').innerHTML=activeEx().map(({e,i},k)=>{
+    const n=setsFor(e,S.week), got=st[i]||0;
+    return `<div class="card ex ${got>=n?'complete':''}" style="animation-delay:${k*60}ms">
+      <div class="figwrap"><svg class="fig" viewBox="0 -6 200 132" data-x="${i}" role="img" aria-label="Animated demo of ${e.n}"></svg><span class="vchip">${e.anim.view||'Side view'}</span></div>
+      <div class="ex-top"><h3>${e.n}</h3><span class="target">${n} × ${e.reps[s]}</span></div>
+      <div class="sv"><b>Season ${s+1} version:</b> ${e.sv[s]}</div>
+      <div><span class="tag">${e.tag}</span>${e.rest?`<span class="tag">Rest ${e.rest}s</span>`:''}</div>
+      <details class="how"><summary>How to do it</summary><ol>${e.steps.map(x=>`<li>${x}</li>`).join('')}</ol><p class="avoid"><b>Avoid:</b> ${e.avoid}</p></details>
+      <a class="vid" href="https://www.youtube.com/results?search_query=${encodeURIComponent(e.yt)}" target="_blank" rel="noopener noreferrer"><span>▶</span> Watch a video demo</a>
+      <div class="sets">${Array.from({length:n},(_,j)=>`<button class="set ${j<got?'on':''}" data-e="${i}" data-s="${j}" aria-label="Set ${j+1}">${j+1}</button>`).join('')}</div></div>`}).join('');
+  buildFigs();
+  updRing();
+  $('#finishBtn').textContent=S.done.includes(sid())?'Workout done ✓':'Finish workout · counts toward her level';
+  renderLessonPing();
+}
+function updRing(){
+  const st=S.sets[sid()]||{};let tot=0,got=0;
+  activeEx().forEach(({e,i})=>{const n=setsFor(e,S.week);tot+=n;got+=Math.min(st[i]||0,n)});
+  const pct=tot?got/tot:0;$('#todayRing').style.strokeDashoffset=251.3*(1-pct);$('#todayPct').textContent=Math.round(pct*100)+'%';
+}
+$('#dayChips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;S.day=+b.dataset.d;save();renderToday();flushOv()});
+$('#exList').addEventListener('click',e=>{
+  const b=e.target.closest('.set');if(!b)return;
+  const i=+b.dataset.e,s=+b.dataset.s,k=sid();S.sets[k]=S.sets[k]||{};
+  const cur=S.sets[k][i]||0;S.sets[k][i]=s<cur?s:s+1;
+  const card=b.closest('.ex'),n=card.querySelectorAll('.set').length;
+  card.querySelectorAll('.set').forEach((x,j)=>x.classList.toggle('on',j<S.sets[k][i]));
+  card.classList.toggle('complete',S.sets[k][i]>=n);
+  updRing();
+  const ex=DAYS[S.day].ex[i];
+  if(S.sets[k][i]>cur&&ex.rest&&S.sets[k][i]<n)startTimer(ex.rest);
+  const ak=k+'-'+i;
+  if(S.sets[k][i]>(S.awarded[ak]||0)){const gain=S.sets[k][i]-(S.awarded[ak]||0);S.awarded[ak]=S.sets[k][i];S.daily.sets+=gain;S.stats.sets+=gain;sfx('pop');buzz(15);
+    if(S.sets[k][i]>=n){toast(`${ex.n} done 💪`);sfx('ding');gainXP(10*gain+25,e)}else gainXP(10*gain,e)}
+  else save();
+});
+$('#finishBtn').addEventListener('click',()=>{
+  if(!S.done.includes(sid())){
+    const st=S.sets[sid()]||{};let tot=0,got=0;activeEx().forEach(({e,i})=>{const n=setsFor(e,S.week);tot+=n;got+=Math.min(st[i]||0,n)});
+    const needSets=Math.ceil(tot*.75);
+    if(got<needSets){toast(`Finish ${needSets-got} more set${needSets-got===1?'':'s'} to count this workout`);buzz(60);return}
+    if(S.doneDates.filter(o=>o.d===today()).length>=2){toast('2 workouts already count today. Rest is part of the plan 💤');return}stopTimer();S.done.push(sid());S.doneDates.push({id:sid(),d:today()});confetti();sfx('win');buzz([60,40,60]);openLoot();gainXP(100);
+    toast(['Booty built 🍑','Another brick in the hourglass','She ate that','Glutes: activated','Future you says thanks'][S.done.length%5]);
+    if([0,1,2,3].every(d=>S.done.includes(`w${S.week}d${d}`))&&S.week<52){const w=S.week;S.week++;S.day=0;S.viewSeason=null;save();setTimeout(()=>toast(`Week ${w} complete! Week ${S.week} unlocked 🔓`),2200)}
+    else{const nx=[0,1,2,3].find(d=>!S.done.includes(`w${S.week}d${d}`));if(nx!==undefined){S.day=nx;save()}}}
+  renderToday();renderPlan();
+});
+function renderLessonPing(){
+  const i=Math.min(S.week,52)-1,done=S.lessons[i];const el=$('#lessonPing');
+  el.hidden=!!done;if(done)return;
+  el.innerHTML=`<span class="lpI">📚</span><span><small class="eyebrow">New lesson · +40 pts</small><b>${LESSONS[i][0]}</b></span><span class="lpGo">Read ➜</span>`;
+  el.onclick=()=>openLesson(i);
+}
+
+// ===== Timer
+let tLeft=0,tInt=null;
+function startTimer(sec){tLeft=sec;$('#timer').classList.add('show');tick();clearInterval(tInt);tInt=setInterval(()=>{tLeft--;tick();if(tLeft<=0){stopTimer();toast('Next set. Go!');sfx('ding');buzz([200,100,200])}},1000)}
+function tick(){$('#tLeft').textContent=`${Math.floor(tLeft/60)}:${String(tLeft%60).padStart(2,'0')}`}
+function stopTimer(){clearInterval(tInt);$('#timer').classList.remove('show')}
+$('#tAdd').onclick=()=>{tLeft+=30;tick()};$('#tSkip').onclick=stopTimer;
+
+// ===== Year plan
+function renderPlan(){
+  const vs=S.viewSeason??seasonOf(S.week);
+  const doneWeeks=new Set(S.done.map(x=>+x.slice(1,x.indexOf('d'))));
+  $('#yearFill').style.width=(S.done.length/208*100)+'%';
+  $('#wkLabel').textContent=`Week ${S.week}`;
+  $('#seasonChips').innerHTML=SEASONS.map((s,i)=>`<button class="chip ${i===vs?'on':''}" data-s="${i}">${s.i} ${s.n}</button>`).join('');
+  $('#weeks').innerHTML=Array.from({length:13},(_,k)=>{const w=vs*13+k+1;
+    return `<button class="wk ${w===S.week?'cur':''} ${isRecovery(w)?'rec':''}" data-w="${w}">${isRecovery(w)?'🌙':wkIn(w)}<span class="dots">${[0,1,2,3].map(d=>`<i class="${S.done.includes(`w${w}d${d}`)?'f':''}"></i>`).join('')}</span></button>`}).join('');
+  const cs=seasonOf(S.week);
+  $('#phases').innerHTML=SEASONS.map((ph,i)=>`<div class="card ph ${i===cs?'now':''} ${i<cs?'past':''}"><div class="n">${ph.i}</div><div><h3>Season ${i+1}: ${ph.n} <span class="muted" style="font-family:var(--body);font-size:12px;font-weight:600">${ph.w}</span></h3><div class="muted" style="font-size:13.5px">${ph.d}</div></div></div>`).join('');
+}
+const setWeek=w=>{S.week=Math.max(1,Math.min(52,w));S.viewSeason=null;save();renderPlan();renderToday()};
+$('#wkDown').onclick=()=>setWeek(S.week-1);$('#wkUp').onclick=()=>setWeek(S.week+1);
+$('#weeks').addEventListener('click',e=>{const b=e.target.closest('.wk');if(b){setWeek(+b.dataset.w);toast(`Now on week ${b.dataset.w}`)}});
+$('#seasonChips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b){S.viewSeason=+b.dataset.s;renderPlan()}});
+
+// ===== Fuel
+function loadFuelInputs(){const F=S.fuel;$('#fWeight').value=F.w;$('#fHeight').value=F.h;$('#fAge').value=F.a;$('#fAct').value=F.act;$('#fBF').checked=F.bf;
+  $$('#goalSeg button').forEach(b=>b.classList.toggle('on',b.dataset.g===F.g))}
+function calcFuel(persist){
+  const F=S.fuel;
+  F.w=+$('#fWeight').value||150;F.h=+$('#fHeight').value||64;F.a=+$('#fAge').value||25;F.act=$('#fAct').value;F.bf=$('#fBF').checked;
+  const kg=F.w*0.4536,cm=F.h*2.54,bmr=10*kg+6.25*cm-5*F.a-161,tdee=bmr*(+F.act)+(F.bf?450:0);
+  const adj={lean:F.bf?-250:-400,recomp:0,build:250}[F.g];
+  let kcal=Math.round((tdee+adj)/10)*10;
+  let note={lean:'Gentle deficit: about 0.5–1 lb a week while keeping strength.',recomp:'Maintenance: lose fat and add glute muscle slowly at the same time.',build:'Small surplus: fastest glute growth. The waist may hold steady for a while.'}[F.g];
+  if(F.bf){kcal=Math.max(kcal,1800);note+=' Breastfeeding: kept at 1,800 or higher to protect milk supply.'}
+  const p=Math.round(F.w*0.85),f=Math.round(kcal*0.27/9),c=Math.max(0,Math.round((kcal-p*4-f*9)/4));
+  animNum($('#kcal'),kcal,'');$('#kcalNote').textContent=note+` Maintenance is about ${Math.round(tdee).toLocaleString()} kcal.`;
+  const tot=p*4+c*4+f*9;
+  [[p*4,'#mP',p],[c*4,'#mC',c],[f*9,'#mF',f]].forEach(([cal,id,g],i)=>{$$('.mr')[i].style.strokeDashoffset=201*(1-cal/tot);animNum($(id),g,'g')});
+  S.pTarget=p;S.wTarget=F.bf?128:96;renderTank();if(persist)save();
+}
+function animNum(el,to,suf){const from=parseInt(el.textContent.replace(/\D/g,''))||0,t0=performance.now();
+  const step=t=>{const k=Math.min(1,(t-t0)/700),v=Math.round(from+(to-from)*(1-Math.pow(1-k,3)));el.textContent=v.toLocaleString()+suf;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)}
+['#fWeight','#fHeight','#fAge','#fAct','#fBF'].forEach(s=>$(s).addEventListener('change',()=>calcFuel(true)));
+$('#goalSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.fuel.g=b.dataset.g;$$('#goalSeg button').forEach(x=>x.classList.toggle('on',x===b));calcFuel(true)});
+function renderTank(){
+  const p=S.pTarget||128,w=S.wTarget||96;
+  $('#pBar').style.width=Math.min(100,S.tank.p/p*100)+'%';$('#pTxt').textContent=`${S.tank.p} / ${p} g`;
+  $('#wBar').style.width=Math.min(100,S.tank.w/w*100)+'%';$('#wTxt').textContent=`${S.tank.w} / ${w} oz`;
+}
+$('#v-fuel').addEventListener('click',e=>{const b=e.target.closest('[data-p],[data-w]');if(!b)return;dayRoll();
+  if(b.dataset.p){const before=S.tank.p;S.tank.p+=+b.dataset.p;if(before<S.pTarget&&S.tank.p>=S.pTarget&&!S.tank.ph){S.tank.ph=1;S.stats.pDays++;confetti();sfx('ding');toast('Protein goal hit 🥩');gainXP(50,e)}}
+  if(b.dataset.w){const before=S.tank.w;S.tank.w+=+b.dataset.w;if(before<S.wTarget&&S.tank.w>=S.wTarget&&!S.tank.wh){S.tank.wh=1;S.stats.wDays++;sfx('ding');toast('Fully hydrated 💧');gainXP(30,e)}}
+  b.animate([{transform:'scale(1)'},{transform:'scale(1.2)'},{transform:'scale(1)'}],{duration:250});sfx('pop');save();renderTank()});
+$('#resetDay').onclick=()=>{S.tank={d:today(),p:0,w:0,ph:S.tank.ph,wh:S.tank.wh};save();renderTank()};
+
+// ===== Progress
+function hgPath(r){const hip=46,waist=Math.max(14,Math.min(44,hip*r*0.82)),sh=Math.max(30,40-(0.8-r)*20),cx=60;
+  return `M${cx-sh} 20 Q${cx} 10 ${cx+sh} 20 C${cx+sh} 50 ${cx+waist} 70 ${cx+waist} 95 C${cx+waist} 115 ${cx+hip} 125 ${cx+hip} 145 C${cx+hip} 170 ${cx+20} 190 ${cx} 190 C${cx-20} 190 ${cx-hip} 170 ${cx-hip} 145 C${cx-hip} 125 ${cx-waist} 115 ${cx-waist} 95 C${cx-waist} 70 ${cx-sh} 50 ${cx-sh} 20 Z`}
+function renderProgress(){
+  const L=[...S.log].sort((a,b)=>a.date.localeCompare(b.date)),last=L[L.length-1],first=L[0];
+  if(last){const r=last.wa/last.h;$('#whr').textContent=r.toFixed(2);$('#hgPath').setAttribute('d',hgPath(r));
+    const dW=last.wa-first.wa,dH=last.h-first.h;
+    $('#whrNote').innerHTML=`Waist ${dW<=0?'down':'up'} ${Math.abs(dW).toFixed(2)}" and hips ${dH>=0?'up':'down'} ${Math.abs(dH).toFixed(2)}" since ${first.date}. Lower ratio = more hourglass.${L.some(x=>x.ex)?'<br><b class="gold">Example data shown.</b> Her first check-in replaces it.':''}`;
+  }else{$('#whr').textContent='–';$('#hgPath').setAttribute('d',hgPath(.75));$('#whrNote').textContent='Log her first check-in to see her shape.'}
+  if(L.length<2)$('#chart').innerHTML='<p class="muted" style="font-size:13px">Two check-ins draw the trend line.</p>';
+  else{
+    const W=340,H=170,pl=34,pr=10,pt=10,pb=26,vals=L.flatMap(x=>[x.wa,x.h]),lo=Math.floor(Math.min(...vals)-1),hi=Math.ceil(Math.max(...vals)+1);
+    const X=i=>pl+i*(W-pl-pr)/(L.length-1),Y=v=>pt+(hi-v)*(H-pt-pb)/(hi-lo),ticks=[],stp=Math.max(1,Math.ceil((hi-lo)/4));for(let v=lo;v<=hi;v+=stp)ticks.push(v);
+    const line=(k,c)=>{const pts=L.map((x,i)=>`${X(i)},${Y(x[k])}`).join(' ');
+      return `<polygon points="${X(0)},${H-pb} ${pts} ${X(L.length-1)},${H-pb}" fill="${c}" opacity=".12"/><polyline points="${pts}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"><animate attributeName="stroke-dashoffset" from="1" to="0" dur="1.1s" fill="freeze"/></polyline><circle cx="${X(L.length-1)}" cy="${Y(L[L.length-1][k])}" r="5" fill="${c}"/>`};
+    $('#chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}">${ticks.map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${pl-6}" y="${Y(v)+4}" text-anchor="end" font-size="10" fill="var(--muted)">${v}"</text>`).join('')}${line('h','#ff8f6b')}${line('wa','#5ee6b5')}<text x="${X(0)}" y="${H-6}" font-size="10" fill="var(--muted)">${L[0].date.slice(5)}</text><text x="${X(L.length-1)}" y="${H-6}" font-size="10" text-anchor="end" fill="var(--muted)">${L[L.length-1].date.slice(5)}</text></svg>`;
+  }
+  $('#logRows').innerHTML=L.slice().reverse().map(x=>`<tr><td>${x.date.slice(5)}${x.ex?'<span class="ex-flag">EX</span>':''}</td><td>${x.w||'–'}</td><td>${x.wa}"</td><td>${x.h}"</td><td><button class="del" data-del="${x.date}" aria-label="Delete">×</button></td></tr>`).join('');
+}
+$('#lDate').value=today();
+$('#addLog').onclick=e=>{
+  const wa=+$('#lWa').value,h=+$('#lH').value;if(!wa||!h){toast('Add waist and hips first');return}
+  const d=$('#lDate').value||today();S.log=S.log.filter(x=>!x.ex&&x.date!==d);
+  S.log.push({date:d,w:+$('#lW').value||0,wa,h});['#lW','#lWa','#lH'].forEach(s=>$(s).value='');
+  confetti();sfx('win');toast('Check-in saved 📏');gainXP(75,e);renderProgress();
+};
+$('#logRows').addEventListener('click',e=>{const b=e.target.closest('[data-del]');if(!b)return;S.log=S.log.filter(x=>x.date!==b.dataset.del);save();renderProgress()});
+// backup
+const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))),dec=t=>JSON.parse(decodeURIComponent(escape(atob(t.trim()))));
+$('#bkCopy').onclick=()=>{const code=enc(S);navigator.clipboard.writeText(code).then(()=>toast('Backup code copied 📋')).catch(()=>{$('#bkBox').hidden=false;$('#bkText').value=code;$('#bkText').select();toast('Select and copy the code')})};
+$('#bkShow').onclick=()=>{$('#bkBox').hidden=!$('#bkBox').hidden};
+$('#bkRestore').onclick=()=>{try{const o=dec($('#bkText').value);if(!o||!Array.isArray(o.done))throw 0;S=Object.assign(S,o);save();rerenderAll();toast('Progress restored ✨');$('#bkBox').hidden=true}catch(e){toast('That code did not work. Copy it again in full.')}};
+
+// ===== Learn: lessons
+function renderLearn(){
+  const n=Object.keys(S.lessons).length;$('#lessonCount').textContent=`${n}/52`;
+  const ls=S.lessonSeason??seasonOf(S.week);
+  $('#lessonSeasons').innerHTML=SEASONS.map((s,i)=>`<button class="chip ${i===ls?'on':''}" data-s="${i}">${s.i} ${s.n}</button>`).join('');
+  $('#lessonList').innerHTML=LESSONS.slice(ls*13,ls*13+13).map((l,k)=>{const i=ls*13+k,open=i<S.week,res=S.lessons[i];
+    return `<button class="les ${open?'':'lock'} ${res?'done':''}" data-l="${i}" ${open?'':'disabled'}><span class="ln">${res?'✓':open?i+1:'🔒'}</span><span><b>${l[0]}</b><small>${res?(res==='r'?'Aced the quiz':'Read'):open?'+40 XP':`Unlocks week ${i+1}`}</small></span></button>`}).join('');
+}
+$('#lessonSeasons').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b){S.lessonSeason=+b.dataset.s;renderLearn()}});
+$('#lessonList').addEventListener('click',e=>{const b=e.target.closest('.les');if(b&&!b.disabled)openLesson(+b.dataset.l)});
+function openLesson(i){
+  const [t,body,q,opts]=LESSONS[i],order=[0,1,2].sort(()=>Math.random()-.5),prev=S.lessons[i];
+  enqueue(ov=>{
+    ov.innerHTML=`<div class="ovc lesson"><div class="eyebrow">Glute School · Lesson ${i+1}</div><h2>${t}</h2><p class="lbody">${body}</p>
+      <div class="quiz"><b>Quick quiz${prev?'':' · +40 pts'}</b><p>${q}</p>${order.map(o=>`<button class="qopt" data-o="${o}">${opts[o]}</button>`).join('')}</div>
+      <p class="muted" id="qRes"></p><button class="btn wide" data-close>${prev?'Close':'Done'}</button></div>`;
+    ov.querySelectorAll('.qopt').forEach(btn=>btn.onclick=ev=>{
+      if(ov.querySelector('.qopt.right'))return;const ok=btn.dataset.o==='0';
+      ov.querySelectorAll('.qopt').forEach(x=>x.classList.add(x.dataset.o==='0'?'right':'faded'));if(!ok)btn.classList.add('wrong');
+      $('#qRes').textContent=ok?'Correct! 🎉':'Not quite. The right answer is highlighted.';
+      if(!S.lessons[i]){S.lessons[i]=ok?'r':'w';if(ok){confetti();sfx('win')}else sfx('flip');gainXP(ok?40:15,ev)}
+      renderLearn();renderLessonPing()});
+  },true);
+}
+
+// ===== Learn: question library
+let faqCat=-1;
+function renderFaq(){
+  const q=$('#faqQ').value.trim().toLowerCase();
+  $('#faqCats').innerHTML=`<button class="qc ${faqCat<0?'on':''}" data-c="-1">All</button>`+FAQ.map((c,i)=>`<button class="qc ${faqCat===i?'on':''}" data-c="${i}">${c.i} ${c.c}</button>`).join('');
+  const out=[];FAQ.forEach((c,ci)=>{if(faqCat>=0&&ci!==faqCat&&!q)return;c.q.forEach(([qq,a])=>{if(!q||(qq+' '+a).toLowerCase().includes(q))out.push({c,qq,a})})});
+  $('#faqList').innerHTML=out.length?out.map(o=>`<details><summary><span>${o.c.i} ${o.qq}</span></summary><p>${o.a}</p></details>`).join(''):`<p class="muted">No match yet. Try a shorter word, like "sore" or "protein".</p>`;
+}
+$('#faqQ').addEventListener('input',renderFaq);
+const POPULAR=['How do I know it is working?','Is it normal to feel this in my thighs?','What should I eat before and after a workout?','I am exhausted today. What should I do?','How long until my butt looks bigger?','Can bodyweight workouts really grow glutes?','I am really sore. Should I skip?','How do I lose the postpartum pouch?'];
+$('#faqPop').innerHTML=POPULAR.map(q=>`<button class="qc" type="button">${q}</button>`).join('');
+$('#faqPop').addEventListener('click',e=>{const b=e.target.closest('.qc');if(!b)return;faqCat=-1;$('#faqQ').value=b.textContent;renderFaq();const d=$('#faqList details');if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'center'})}sfx('pop')});
+$('#faqCats').addEventListener('click',e=>{const b=e.target.closest('.qc');if(b){faqCat=+b.dataset.c;$('#faqQ').value='';renderFaq()}});
+
+let SAMPLE=null;function renderChat(){}
+
+function cloudPush(){}function initCaps(){}
+
+// ===== Nav & fun bits
+$$('.dock button').forEach(b=>b.onclick=()=>{
+  $$('.dock button').forEach(x=>x.classList.toggle('on',x===b));
+  $$('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+b.dataset.v));
+  if(b.dataset.v==='fuel')calcFuel();if(b.dataset.v==='progress')renderProgress();if(b.dataset.v==='plan')renderPlan();
+  window.scrollTo({top:0,behavior:'smooth'});sfx('pop');flushOv();
+});
+let tT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2000)}
+function confetti(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const c=$('#confetti'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+  const cols=['#ff4f8b','#ff8f6b','#ffd166','#5ee6b5','#fbeff4'];
+  const P=Array.from({length:120},()=>({x:c.width/2,y:c.height*.4,vx:(Math.random()-.5)*14,vy:Math.random()*-14-4,s:Math.random()*7+4,r:Math.random()*6,c:cols[Math.random()*5|0],pe:Math.random()<.15}));
+  let f=0;(function a(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.vy+=.45;p.x+=p.vx;p.y+=p.vy;p.r+=.1;x.save();x.translate(p.x,p.y);x.rotate(p.r);
+    if(p.pe){x.font=`${p.s*3}px serif`;x.fillText('🍑',0,0)}else{x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2)}x.restore()});
+    if(++f<110)requestAnimationFrame(a);else x.clearRect(0,0,c.width,c.height)})();
+}
+// iPhone install hint
+const isiOS=/iPhone|iPad|iPod/.test(navigator.userAgent),standalone=window.navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;
+$('#installCard').hidden=!(isiOS&&!standalone&&!S.installHide);
+$('#installX').onclick=()=>{S.installHide=1;$('#installCard').hidden=true;save()};
+
+// ===== Program data: 52 weeks = 4 seasons x 13 weeks (week 13 of each = recovery)
+const X=(n,tag,sets,reps,rest,sv,yt,steps,avoid,anim,from)=>({n,tag,sets,reps,rest,sv,yt,steps,avoid,anim,from:from||0});
+const BED='H:40,111 N:52,114 E1:66,118 W1:80,118 E2:66,118 W2:80,118';
+const DAYS=[
+ {k:'A',t:'Glute Strength',ex:[
+  X('Glute Bridge','Glutes',[3,3,4,4],['15','12/leg · 2s squeeze','12 · 3s hold','10-12'],60,
+    ['Both feet down, bodyweight','Single-leg bridge, 2s squeeze at the top','Hip thrust: upper back on the couch edge, a 15 on the hips','Hip thrust: both 30s on the bar, towel under it'],
+    'glute bridge proper form beginner',
+    ['Lie on your back, knees bent, feet flat and hip-width apart, about a hand-length from your butt.','Press through your heels and squeeze your butt to lift your hips until shoulders, hips and knees make one straight line.','Squeeze hard for a second at the top, then lower slowly.'],
+    'Arching the lower back at the top. Ribs stay down; the lift comes from the butt.',
+    {a:BED+' P:88,116 K1:110,92 A1:124,120 K2:108,92 A2:122,120',b:'N:54,112 P:84,94 K1:112,90 K2:110,90',hi:'P'}),
+  X('Box Squat to Couch','Glutes/Legs',[3,3,4,4],['12','15 · 3s lowering','12','10-12'],60,
+    ['Tap the couch, bodyweight','3s lowering, 1s pause on the couch','Goblet squat holding one 15','Goblet squat holding one 30'],
+    'bodyweight box squat form beginner',
+    ['Stand in front of the couch, feet a little wider than hips, toes slightly out.','Push your hips back and bend your knees like you are sitting down, arms out front for balance.','Lightly tap the couch without sitting and relaxing, then push through your heels to stand and squeeze your butt.'],
+    'Knees caving in toward each other. Push them out over the toes.',
+    {base:'stand',a:'',b:'H:104,48 N:98,60 P:82,92 K1:106,96 K2:104,96 E1:110,62 W1:126,60 E2:108,62 W2:124,62',props:[['couch',46,96,32,25]],hi:'P'}),
+  X('Reverse Lunge','Glutes/Legs',[2,3,3,4],['8/leg','10/leg','10/leg','12/leg'],60,
+    ['Bodyweight, hands on hips','3s lowering, pause at the bottom','A 10 in each hand','A 15 in each hand'],
+    'reverse lunge proper form beginner',
+    ['Stand tall with hands on hips.','Take a big step back and lower until the back knee almost touches the floor. Front knee stays over the ankle.','Push through the front heel to step back up. Do all reps on one leg, then switch.'],
+    'Short steps that shove the front knee far past the toes.',
+    {base:'stand',a:'E1:110,60 W1:104,72 E2:90,60 W2:96,72',b:'H:82,44 N:82,58 P:82,90 K1:104,96 K2:70,116 A2:50,111 T2:57,120 E1:92,74 W1:86,86 E2:72,74 W2:78,86',hi:'P',sp:3000}),
+  X('Ankle-Band Kickback','Upper glute',[3,3,3,4],['12/leg','15/leg · 2s hold','15/leg','20/leg'],45,
+    ['Light tension, slow and controlled','2s squeeze at the top','Step farther from the anchor for more tension','Last set: 10 extra pulses at the top'],
+    'standing glute kickback ankle strap resistance band',
+    ['Strap the band on one ankle. Anchor the other end low in front of you: shut it in a door or loop a heavy couch leg.','Hold the wall, lean forward a little and tighten your stomach.','Kick the leg straight back and slightly out, squeeze your butt, return slowly.'],
+    'Swinging, or arching the lower back to get the leg higher.',
+    {a:'H:108,30 N:106,44 P:100,74 K1:101,97 A1:100,120 K2:99,97 A2:100,120 E1:120,52 W1:142,50 E2:120,54 W2:142,54',b:'K1:84,88 A1:66,98 T1:61,104',props:[['wall',144]],band:{j:'A1',at:[144,118]},hi:'P'}),
+  X('Dead Bug','Core',[2,3,3,3],['6/side','8/side','10/side','10/side'],45,
+    ['Bodyweight','Slow 3-second reach','A 10 in the reaching hand','A 15 held in both hands overhead'],
+    'dead bug exercise beginner form',
+    ['Lie on your back, arms straight up, knees bent at 90° above your hips.','Press your lower back into the floor. Slowly lower one arm overhead and the opposite leg toward the floor.','Stop just before your lower back lifts, bring them back, then switch sides.'],
+    'Letting the lower back pop off the floor.',
+    {a:'H:46,111 N:58,114 P:96,116 K1:98,92 A1:122,92 K2:96,92 A2:120,92 E1:60,100 W1:62,84 E2:58,100 W2:60,84',b:'E1:46,104 W1:30,110 K2:120,110 A2:144,114',hi:'M',sp:3200})]},
+ {k:'B',t:'Upper Frame + Core',ex:[
+  X('Incline Push-up','Chest/Arms',[3,3,3,4],['8','10','8-10','10'],60,
+    ['Hands on the kitchen counter','Hands on the couch edge','Hands on the second stair','Knees on the floor, then full push-ups'],
+    'incline push up beginner form',
+    ['Hands on the counter or couch edge, a little wider than shoulders. Walk your feet back so your body is one straight line.','Bend your elbows back at about 45° and lower your chest to the edge.','Push away to straighten your arms. Keep stomach and butt tight the whole time.'],
+    'Hips sagging toward the floor or poking up in the air.',
+    {a:'H:130,62 N:120,68 P:88,86 K1:64,102 A1:40,116 T1:46,121 K2:64,102 A2:40,116 T2:46,121 E1:124,82 W1:128,98 E2:124,82 W2:128,98',b:'H:128,80 N:118,84 P:86,96 K1:63,107 K2:63,107 E1:106,90 E2:106,90',dir:0,props:[['couch',124,98,48,23]],hi:'N'}),
+  X('Pull-up Negative','Back',[3,3,4,4],['3','4','5','5'],90,
+    ['3-second lowering','5-second lowering','Negatives, then a 20s dead hang','Try 1 full pull-up first each set'],
+    'pull up negatives beginner women',
+    ['Put a sturdy chair under the bar. Grab the bar a little wider than shoulders, palms facing away.','Use the chair to get your chin above the bar, then lift your feet off.','Lower yourself as slowly as you can until your arms are straight. Step back up and repeat.'],
+    'Dropping fast. The slow lowering is what builds the strength.',
+    {a:'H:100,14 N:100,26 P:100,58 K1:104,80 A1:104,102 K2:96,80 A2:96,102 E1:86,36 W1:90,18 E2:114,36 W2:110,18',b:'H:100,34 N:100,46 P:100,78 K1:104,100 A1:104,118 K2:96,100 A2:96,118 E1:94,32 E2:106,32',dir:0,props:[['bar',72,128,18]],noFloor:1,view:'Front view',sp:4200,hi:'N'}),
+  X('Dumbbell Lateral Raise','Shoulders',[0,0,3,3],['','','12-15','15'],45,
+    ['','','Two 10s','Two 10s, 2s hold at the top'],
+    'dumbbell lateral raise form women',
+    ['Stand tall with a 10 in each hand at your sides, slight bend in the elbows.','Lift the arms out to the sides, leading with the elbows, until they reach shoulder height.','Lower slowly. Wider shoulders make the waist look smaller.'],
+    'Shrugging the shoulders up to the ears or swinging the weights.',
+    {base:'front',a:'',b:'E1:82,46 W1:66,42 E2:118,46 W2:134,42',dir:0,view:'Front view',hi:'N'},2),
+  X('Superman','Back/Glutes',[3,3,3,3],['10','12 · 2s hold','12 · 3s hold','15 · 3s hold'],45,
+    ['Arms in a Y, thumbs up','Hold at the top','Pulse arms out and back while holding','Swim the arms while holding'],
+    'superman exercise proper form',
+    ['Lie face down, arms straight overhead in a Y shape, thumbs up.','Squeeze your butt and upper back to lift your arms, chest and legs a few inches off the floor.','Hold, then lower slowly.'],
+    'Cranking the neck up. Keep your eyes on the floor just ahead.',
+    {a:'H:150,111 N:138,116 P:102,117 K1:78,118 A1:54,118 T1:49,121 K2:78,118 A2:54,118 T2:49,121 E1:154,118 W1:170,118 E2:154,118 W2:170,118',b:'H:152,103 N:140,108 K1:78,114 A1:55,107 T1:50,111 K2:78,114 A2:55,107 T2:50,111 E1:156,102 W1:170,96 E2:156,102 W2:170,96',dir:0,hi:'P'}),
+  X('Forearm Plank','Core',[3,3,3,3],['20s','30s','40s','45s'],45,
+    ['On the knees is fine','Full plank on the toes','Lift one foot, switch halfway','Slow shoulder taps while holding'],
+    'forearm plank proper form beginner',
+    ['Forearms on the floor, elbows under shoulders, legs straight back on your toes.','Squeeze your butt and pull your belly button in so your body is one straight line.','Breathe slowly and hold. Drop to your knees if your back starts to sag.'],
+    'Hips sagging, or the belly bulging into a ridge down the middle. If it bulges, do it on the knees.',
+    {a:'H:138,88 N:128,92 P:90,100 K1:64,110 A1:40,116 T1:46,121 K2:64,110 A2:40,116 T2:46,121 E1:128,118 W1:146,118 E2:128,118 W2:146,118',b:'P:90,98',dir:0,hi:'M',sp:3400}),
+  X('Stomach Vacuum','Waist',[3,4,4,5],['15s','20s','25s','30s'],30,
+    ['Standing','Standing, longer holds','On hands and knees','Kneeling, longest holds'],
+    'stomach vacuum exercise how to',
+    ['Stand tall with hands on hips.','Breathe all the air out.','Pull your belly button in toward your spine as far as you can and hold, taking small, shallow breaths.'],
+    'Holding your breath completely, or doing it right after eating.',
+    {base:'stand',a:'E1:110,60 W1:104,72 E2:90,60 W2:96,72 B:7',b:'B:-5',hi:'M',sp:4200})]},
+ {k:'C',t:'Glute Volume',ex:[
+  X('Bulgarian Split Squat','Glutes',[2,3,3,4],['8/leg','10/leg','10/leg','10-12/leg'],75,
+    ['Bodyweight','3-second lowering','A 10 in each hand','A 15 in each hand'],
+    'bulgarian split squat glute focus beginner',
+    ['Stand about two big steps in front of the couch, facing away. Rest the top of one foot on the couch behind you.','Lean your chest forward a little and lower straight down until your front thigh is close to level with the floor.','Push through the front heel to stand. Finish all reps, then switch legs.'],
+    'Front heel lifting. If it does, move the front foot farther from the couch.',
+    {a:'H:104,28 N:104,42 P:102,74 K1:116,98 A1:120,120 K2:80,92 A2:60,98 T2:53,100 E1:112,60 W1:106,72 E2:96,60 W2:100,72',b:'H:106,48 N:104,62 P:98,94 K1:122,98 K2:80,114 E1:112,80 W1:104,92 E2:98,80 W2:100,92',props:[['couch',24,98,38,23]],hi:'P',sp:3000}),
+  X('Hip Hinge','Glutes/Hams',[3,3,3,4],['12','15 · 3s lowering','12','12'],60,
+    ['Bodyweight, hands behind head','3-second lowering','Romanian deadlift with two 15s','Romanian deadlift with the 30s on the bar'],
+    'bodyweight good morning hip hinge',
+    ['Stand with feet hip-width, hands lightly behind your head, knees slightly bent.','Push your hips straight back like closing a car door with your butt. Your chest lowers with a flat back.','Stop when you feel a stretch in the back of your legs, then squeeze your butt to stand.'],
+    'Rounding the back, or squatting down instead of pushing the hips back.',
+    {base:'stand',a:'E1:112,34 W1:104,24 E2:88,34 W2:96,24',b:'H:140,58 N:126,62 P:94,74 K1:103,97 K2:101,97 E1:132,46 W1:138,54 E2:130,46 W2:136,54',hi:'P'}),
+  X('Side-Lying Leg Raise','Upper glute',[3,3,3,3],['12/leg','15/leg','15/leg','20/leg'],45,
+    ['Bodyweight','2s hold at the top','Ankle band on the top ankle','Ankle band, plus 10 pulses to finish'],
+    'side lying hip abduction glute medius',
+    ['Lie on your side, legs straight and stacked, head resting on your bottom arm.','Turn the top toes slightly toward the floor and lift the top leg up and a little back.','Pause at the top, lower slowly without resting on the bottom leg.'],
+    'Rolling the hips backward and lifting with the front of the thigh.',
+    {a:'H:40,106 N:54,113 P:96,114 K1:122,113 A1:148,113 K2:122,116 A2:148,117 E1:42,118 W1:34,104 E2:70,104 W2:76,116',b:'K1:120,100 A1:144,86',dir:0,view:'Front view',hi:'P'}),
+  X('Ankle-Band Side Kick','Upper glute',[3,3,3,4],['12/leg','15/leg','15/leg · 2s hold','20/leg'],45,
+    ['Light tension','Step farther from the anchor','2s hold out wide','Rest only 30s'],
+    'standing hip abduction ankle strap band',
+    ['Band on one ankle, other end anchored low on the opposite side (door or couch leg).','Stand tall with a hand on the wall, lean slightly forward.','Sweep the banded leg out to the side, pause, return slowly.'],
+    'Leaning the whole body sideways to swing the leg higher.',
+    {base:'front',a:'E1:90,60 W1:96,72 E2:110,60 W2:104,72',b:'K2:112,94 A2:126,114 T2:130,116',band:{j:'A2',at:[34,118]},view:'Front view',dir:0,hi:'P'}),
+  X('Side Plank','Core',[2,3,3,3],['15s/side','25s/side','35s/side','10 dips/side'],30,
+    ['Knees bent','Legs straight','Top leg lifted','Slow hip dips'],
+    'side plank beginner form',
+    ['Lie on your side, elbow under your shoulder, legs stacked. Bend the knees to make it easier.','Lift your hips so your body makes a straight line from head to feet.','Hold and breathe, then switch sides.'],
+    'Hips sinking toward the floor.',
+    {a:'H:44,90 N:56,96 P:98,108 K1:124,113 A1:150,118 K2:124,113 A2:150,118 E1:56,118 W1:68,118 E2:72,92 W2:86,102',b:'P:98,105',dir:0,view:'Front view',hi:'M',sp:3400})]},
+ {k:'D',t:'Pump + Walk',ex:[
+  X('Sumo Squat','Glutes/Inner thigh',[3,3,4,4],['15','15 · 3s lowering','12','12-15'],60,
+    ['Bodyweight','3s lowering, pause at the bottom','Hold one 15 at the chest','Hold one 30 by the end between the legs'],
+    'sumo squat bodyweight form',
+    ['Feet wide, toes turned out, hands together at your chest.','Sit straight down between your heels, knees pushed out over your toes, chest tall.','Drive up and squeeze your butt at the top.'],
+    'Knees collapsing inward.',
+    {a:'H:100,26 N:100,40 P:100,72 K1:86,96 A1:80,120 T1:74,121 K2:114,96 A2:120,120 T2:126,121 E1:90,56 W1:100,58 E2:110,56 W2:100,58',b:'H:100,46 N:100,60 P:100,90 K1:78,98 K2:122,98 E1:90,76 W1:100,78 E2:110,76 W2:100,78',dir:0,view:'Front view',hi:'P'}),
+  X('Donkey Kick','Glutes',[3,3,3,4],['12/leg','15/leg','15/leg','20/leg'],45,
+    ['Bodyweight','2s hold at the top','Ankle band on','Ankle band, 2s hold'],
+    'donkey kicks proper form',
+    ['Get on hands and knees, hands under shoulders, knees under hips.','Keep the knee bent at 90° and push the sole of your foot up toward the ceiling.','Squeeze at the top, lower without touching the knee down. All reps, then switch.'],
+    'Arching the lower back to get the foot higher.',
+    {a:'H:152,86 N:140,92 P:98,92 K1:98,120 A1:74,120 K2:96,120 A2:72,120 E1:140,106 W1:140,120 E2:138,106 W2:138,120',b:'K1:78,84 A1:78,58 T1:72,55',dir:-1,hi:'P'}),
+  X('Stair Step-up','Glutes',[3,3,3,3],['10/leg','10/leg · 3s lowering','10/leg','12/leg'],60,
+    ['Bodyweight, first step if the second is too high','Second step, 3s lowering','A 10 in each hand','A 15 in each hand'],
+    'step up exercise glute focus',
+    ['Face the stairs and put your whole foot on the second step.','Lean forward slightly and push through that heel to stand up tall on the step.','Lower down slowly on the same leg. All reps, then switch.'],
+    'Pushing off the bottom foot. Let the top leg do the work.',
+    {a:'H:86,28 N:86,42 P:88,74 K1:108,82 A1:114,106 K2:88,97 A2:88,120 E1:88,58 W1:90,72 E2:84,58 W2:82,72',b:'H:114,12 N:114,26 P:114,58 K1:115,82 K2:122,74 A2:114,94 E1:118,42 W1:120,56 E2:110,42 W2:108,56',props:[['step',104,106,56]],hi:'P',sp:3000}),
+  X('Frog Pumps','Glutes',[2,3,3,3],['20','25','25','30'],30,
+    ['Bodyweight','Pause every 5th rep','A 15 on the hips','A 30 on the hips'],
+    'frog pumps glute exercise',
+    ['Lie on your back, put the soles of your feet together and let your knees fall open like a frog.','Pull your heels in close to your butt.','Squeeze your butt to pump your hips up, then lower. Quick and controlled.'],
+    'Lifting with the lower back. Tuck the tailbone slightly before each lift.',
+    {a:BED+' P:88,116 K1:104,102 A1:112,120 K2:102,104 A2:110,120',b:'N:54,112 P:84,100 K1:104,96 K2:102,98',hi:'P',sp:1300}),
+  X('Stroller Walk','Cardio',[1,1,1,1],['20 min','25 min','30 min','30 min'],0,
+    ['Brisk, flat route','Add hills','Hills at a faster pace','Hills plus five 1-minute fast bursts'],
+    'power walking technique tips',
+    ['Brisk pace, fast enough that talking is a little harder than normal.','Pick a route with hills. Uphill walking works the glutes more.','Aim for 8,000+ steps a day on top of the workouts.'],
+    'Leaning on the stroller handle. Stand tall and push from the legs.',
+    {a:'H:96,26 N:96,40 P:94,72 K1:104,96 A1:110,120 K2:86,96 A2:80,118 T2:86,121 E1:108,52 W1:122,60 E2:106,52 W2:120,60',b:'K1:88,96 A1:80,118 T1:86,121 K2:102,96 A2:108,120 T2:115,121',props:[['stroller']],sp:1500})]}
+];
+const SEASONS=[
+ {n:'Foundation',i:'🌱',w:'Weeks 1–13',d:'Bodyweight basics. Learn every move, build the habit, wake the glutes up.'},
+ {n:'Build',i:'🔥',w:'Weeks 14–26',d:'Harder bodyweight: slow lowering, pauses, single-leg moves and ankle bands.'},
+ {n:'Strength',i:'💪',w:'Weeks 27–39',d:'Dumbbells and the bar join in. Heavier work for real muscle growth, plus shoulders for the hourglass frame.'},
+ {n:'Sculpt',i:'⏳',w:'Weeks 40–52',d:'Heaviest season plus pump finishers. Final photos, final measurements, graduation.'}];
+
+// ===== 52 weekly lessons: [title, body, question, [correct, wrong, wrong]]
+const LESSONS=[
+['How glutes actually grow','Muscle grows when you challenge it, then recover and eat enough protein. Each hard set sends a "build more" signal, and the building happens in the 24–72 hours after, mostly while resting and sleeping. That is why the plan has rest days built in.','When does muscle actually grow?',['In the hours and days after, while recovering','During the workout itself','Only if you sleep 10+ hours']],
+['Meet your three glutes','Gluteus maximus is the big one that gives the round, lifted shape. Gluteus medius and minimus sit higher on the side of the hip; growing them fills out the upper-side curve and can make hip dips look softer. Bridges and squats hit the max; band kicks and leg raises hit the medius.','Which move mainly targets the upper-side glute?',['Side-lying leg raise','Forearm plank','Incline push-up']],
+['Form first, reps second','Ten good reps beat twenty sloppy ones. Slow, controlled reps keep tension on the glute instead of letting momentum or the lower back do the work. When form breaks down, the set is over.','What should you do when form breaks down mid-set?',['End the set there','Go faster to finish','Hold your breath and push through']],
+['Progressive overload','Muscles keep growing only if the work keeps getting a little harder. With bodyweight, harder means more reps, slower lowering, pauses, single-leg versions, then bands and dumbbells. Each season of this plan is one step up that ladder.','Which one does NOT make bodyweight harder?',['Doing the same reps forever','Slower lowering','Single-leg versions']],
+['Rest days build the booty','Training breaks muscle fibers down a little; rest days are when they rebuild bigger. Training glutes hard every single day can slow results. A stroller walk is the perfect rest-day move.','The best rest-day choice is…',['A walk and good food','Another hard glute workout','Skipping meals']],
+['Protein 101','Protein is the building material for new muscle. A good target is about 0.7–1 gram per pound of body weight a day, spread across 3–4 meals. Greek yogurt, eggs, chicken, tuna, cottage cheese and shakes make it easy.','Why does protein matter for glutes?',['It is the building material for muscle','It burns belly fat directly','It replaces workouts']],
+['Soreness: normal or not?','Muscle soreness 1–2 days after a new workout is normal and fades as your body adapts. It is not a measure of a good workout; you can grow without being sore. Sharp pain, joint pain, or pain that gets worse is different: stop and get it checked.','No soreness after a workout means…',['It can still be working fine','It did not work','You must double the reps']],
+['Your core after baby','Pregnancy stretches the tissue between the two sides of the abs, a gap called diastasis recti. Deep core work like dead bugs, breathing and vacuums helps it heal, while heavy crunches can make doming worse. A dome or ridge along the midline means ease off and see a pelvic floor physical therapist.','Which is a sign to ease off an ab exercise?',['A dome or ridge along the middle of the belly','Feeling the muscles work','Breathing steadily']],
+['Breathe and brace','Exhale during the hard part of each rep, like lifting the hips or standing up. Gently tighten your stomach as if zipping up tight jeans. This protects your back and pelvic floor and makes every rep stronger.','When should you exhale?',['During the hard part of the rep','Never, hold your breath','Only between sets']],
+['Sleep with a baby','Sleep is when muscle repairs and hunger hormones settle. With an infant, chase total sleep, not perfect sleep: nap when possible, split night feeds, protect bedtime. After a terrible night, do a lighter workout instead of skipping.','After a really bad night, the smart move is…',['A lighter workout or a walk','A max-effort workout','Skipping food']],
+['Measuring the hourglass','Waist-to-hip ratio is your waist divided by your hips. It drops when the waist shrinks or the glutes grow, so it tracks this goal better than the scale. Measure the same morning each week, before eating.','Waist 30", hips 40". The ratio is…',['0.75','1.33','0.70']],
+['Water and cravings','Mild dehydration can feel like hunger or tiredness. Aim for roughly 100 oz a day, more if breastfeeding. Keep a big bottle where you feed the baby so every feed reminds you to drink.','A good trick to drink more water is…',['Keep a bottle where you feed the baby','Only drink at dinner','Swap water for soda']],
+['Why recovery weeks exist','Every 13th week has one fewer set per exercise. Joints, tendons and energy catch up so the next season starts strong. People who skip recovery weeks are the ones who stall or get hurt.','What changes in a recovery week?',['One fewer set per exercise','Double workouts','No eating after 6pm']],
+['Tempo: slow is strong','Lowering slowly for 3 seconds keeps the muscle working longer on every rep. It is one of the best ways to make bodyweight harder. Count it out: one-Mississippi, two-Mississippi, three.','Slow lowering mainly…',['Keeps the muscle working longer','Makes the exercise easier','Only burns calories']],
+['Single-leg superpowers','Moving to one leg roughly doubles the load on that glute without any equipment, and it evens out left-right differences. Start with the weaker side and match those reps on the stronger side.','Which side should go first?',['The weaker side','The stronger side','It never matters']],
+['Mind-muscle connection','Focusing on the glute while you work increases how much it activates. Before a set, squeeze the glute for a second so you know what it should feel like. Feel it mostly in the thighs or back? Slow down and adjust.','You feel bridges in your lower back. Fix it by…',['Ribs down, squeeze the glutes, slow down','Arching harder','Going faster']],
+['Building the shelf','The upper-side glutes give the hips a rounder outer curve. Band kicks, side kicks and side-lying raises target them. They respond well to higher reps and a good burn.','The upper "shelf" mostly comes from…',['The upper-side glutes','The calves','The chest']],
+['Fat loss basics','Fat loss happens when you take in slightly less energy than you burn, over weeks. No food is magic and none is forbidden. A small deficit with high protein drops fat while keeping the muscle you are building.','Fat loss comes from…',['A small, steady calorie deficit','One magic food','Sweating a lot']],
+['You cannot spot-reduce','Ab exercises strengthen the core but do not burn the fat on top of it. Your body decides where fat comes off first, and the lower belly is often last. It does come off with time.','100 crunches a day will…',['Strengthen the abs, not target belly fat','Burn only belly fat','Grow the glutes']],
+['Carbs are fuel','Carbs power hard workouts and help muscles recover. Rice, oats, potatoes, fruit and bread all fit. Put more of them around workouts and keep portions steady.','The best time for more carbs is…',['Around workouts','Never','Right before bed only']],
+['Steps are a secret weapon','Everyday movement burns more than most people think and does not hurt recovery. 8,000+ steps a day, stroller walks included, speeds up fat loss without extra workouts.','Which counts toward daily steps?',['Stroller walks','Only treadmill cardio','Sitting and stretching']],
+['Beating a plateau','Stalls are normal. Check the basics first: sleep, protein, steps, and whether reps are still climbing. Then change one thing, like adding pauses or tightening snacks, and give it two weeks.','During a plateau, change…',['One thing, for two weeks','Everything at once','Nothing, just quit']],
+['Your cycle and training','After a baby, periods can take months to return, especially while breastfeeding. When they do, energy and water weight swing during the month. Expect the scale to bounce a few pounds and train by feel on low days.','A 3-lb jump the week before a period is usually…',['Water','Fat','Lost muscle']],
+['Dieting while breastfeeding','Making milk uses roughly 400–500 extra calories a day. Losing about 1 lb a week or less is generally considered safe; crash diets can hurt supply and energy. That is why the app keeps calories at 1,800 or more with breastfeeding on.','A safe pace while breastfeeding is about…',['1 lb a week or less','5 lb a week','No food after 3pm']],
+['Habit stacking','Attach workouts to something that already happens: right after the baby goes down for the morning nap, or right after coffee. A set time and place beats waiting for motivation.','Habit stacking means…',['Attaching a new habit to an existing one','Doing five workouts at once','Stacking weight plates']],
+['Halfway check','Six months in. Compare day-one photos with now, take new measurements, and notice what is easier: stairs, the car seat, getting off the floor. Then pick one goal for the second half.','The best way to see six months of progress is…',['Side-by-side photos and measurements','The scale only','Asking strangers']],
+['Adding weight the right way','When dumbbells come in, drop the reps a little and keep perfect form. Only go heavier after hitting the top of the rep range on every set. Light weight with great form beats heavy weight with sloppy form.','When should you add weight?',['After hitting the top reps on every set','Every workout no matter what','Whenever you feel like it']],
+['The hip hinge','The hinge, hips back with a flat back, powers deadlifts and is one of the best glute and hamstring builders. Think "close the car door with your butt." The hips go back, not down.','In a hinge, the hips move…',['Back','Straight down','Forward']],
+['Knees, feet and glutes','Push the knees out in line with the toes on squats and lunges. Knees caving in shifts work away from the glutes and stresses the joint. A slight forward lean in lunges loads the glutes more.','A slight forward lean in a lunge…',['Puts more work on the glutes','Is always wrong','Only works the arms']],
+['Reps in reserve','Reps in reserve is how many more you could have done. Most sets should end with 1–3 left in the tank. Five or more left is too easy; total failure every set wears you down.','Ideal reps left in the tank for most sets?',['1–3','10','Zero on every set']],
+['The hourglass illusion','A waist looks smaller when the shoulders and hips around it are wider. That is why the plan trains back and shoulders too. A stronger upper back and rounder glutes create the curve from both ends.','Training shoulders helps the hourglass because…',['The waist looks smaller by contrast','Shoulders burn belly fat','It shrinks the hips']],
+['Pelvic floor and lifting','Leaking, heaviness or bulging during exercise is common after birth but not something to push through. Exhale on effort and do not hold your breath. A pelvic floor physical therapist can usually fix this in a few visits.','Leaking during workouts means…',['See a pelvic floor PT and adjust','Lift heavier','Ignore it forever']],
+['Bloat vs belly fat','A bigger belly at night is usually food, gas and water, not fat. Fiber, water, regular meals and short walks after eating help. Morning waist measurements are the honest ones.','The best time to measure your waist is…',['Morning, before eating','After dinner','Right after a workout']],
+['Sweets, drinks and balance','Nothing is banned. Aim for about 80–90% whole foods and enjoy the rest without guilt. Sugary drinks and alcohol are the easiest calories to cut because they do not fill you up.','The easiest calories to cut without hunger are…',['Sugary drinks','Protein','Vegetables']],
+['Stress and recovery','High stress and poor sleep make recovery harder and cravings stronger. A 10-minute walk, slow breathing, or asking for help with the baby are real recovery tools. On a hard week, a shorter workout still counts.','On a stressful week…',['A shorter workout still counts','Skip everything','Train twice as hard']],
+['Eating out','Pick a protein first, like grilled chicken, steak or shrimp, add a veggie, and enjoy the carb you want most. Sauces and drinks hide the most calories. One meal never ruins progress.','At a restaurant, pick ____ first.',['A protein','Dessert','A sugary drink']],
+['Recomposition','Recomp means losing fat and gaining muscle at the same time, and new or returning lifters are great at it. The scale may barely move while the waist shrinks and the glutes grow, which is exactly the goal.','During a recomp, the scale…',['May barely move while your shape changes','Always drops 5 lb a week','Only goes up from fat']],
+['Scale bounces','Body weight can swing 2–5 lb day to day from water, salt, carbs, hormones and digestion. Watch the trend over weeks and trust the tape and photos.','A 3-lb jump overnight is mostly…',['Water and food','Fat','Muscle loss']],
+['Recovery week, round three','Three seasons done. Use this lighter week to retest: max glute bridges in a row, longest plank, waist and hips. Write the numbers down and beat them at the end of Season 4.','Use this recovery week to…',['Retest and recharge','Train double','Skip meals']],
+['The pump','The full, tight feeling after high-rep glute work comes from blood rushing into the muscle. Pump work like frog pumps and band burns adds a different growth signal on top of heavier work.','Finishers like frog pumps add…',['A different growth signal','Nothing at all','Fat']],
+['Build phases vs cut phases','Sometimes eating at maintenance or a small surplus grows glutes faster; sometimes a small deficit reveals the waist. Switch goals in the Fuel tab, and stay in a phase at least 8 weeks before switching.','Minimum time to stay in a phase?',['About 8 weeks','3 days','1 hour']],
+['Posture and the waist','Standing tall with ribs stacked over the hips and shoulders back makes the waist look longer and slimmer instantly. Planks, supermans and pull-up negatives build the muscles that hold that posture.','Ribs should stack over the…',['Hips','Toes','Knees']],
+['Progress photos','Same spot, same light, same time of day, same outfit. Front, side and back, every 4 weeks. Day to day you will not see change; month to month you will.','How often for progress photos?',['Every 4 weeks','Every hour','Never']],
+['Maintenance calories','Maintenance is the intake that keeps your weight steady. Knowing yours makes holidays and future phases easy. The Fuel tab shows it under the daily target.','Maintenance calories…',['Keep your weight steady','Always cause fat gain','Are 1,000 a day']],
+['Motivation vs discipline','Motivation comes and goes; systems keep you going. A set time, clothes laid out, and a short minimum workout for bad days. Showing up on low days is what creates the results.','On a low-motivation day…',['Do the minimum version','Wait for motivation','Delete the app']],
+['Staying injury-free','Warm up with a few easy reps of each move, progress gradually, and respect sharp or joint pain. Muscle burn is good; sharp pain is a stop sign.','Which one is a stop sign?',['Sharp joint pain','Muscle burn','Heavy breathing']],
+['After this year','Year 2 can repeat the seasons with heavier weights or focus on one goal, like more glute size or a leaner waist. Heavier or adjustable dumbbells open the next level. The habits are the real prize.','The real long-term prize is…',['The habits','One perfect week','The app']],
+['Kindness to your body','Your body grew and fed a human. Progress is not a straight line, and edited photos online are not a fair comparison. Talk to yourself the way you would talk to your best friend.','Comparing yourself to edited photos online…',['Is not a fair comparison','Is great motivation','Is accurate']],
+['A family thing','Kids who see their parents move grow up thinking it is normal. The baby can join bridges and stroller walks, and partners can cover a feed on workout days. Fitness works better as a team.','An easy way to make it a family thing is…',['Walks together and help with feeds','Training in secret','Never talking about it']],
+['Holiday survival','Plan the big meals, keep protein high at the others, and keep walking. A few heavy days do not undo months of work. Pick back up the next morning without guilt.','After a big holiday meal…',['Pick back up the next morning','Starve for three days','Quit for the month']],
+['Look how far you came','Look at day-one photos. Remember week one: shaky bridges, tired after a few reps. List three things you can do now that you could not then. That is proof the plan works.','Proof of progress includes…',['Things you can do now that you could not before','Only the scale','Nothing']],
+['Graduation','A full year of training. Glutes, core, back and habits stronger than they have been in years. Take final photos and measurements, celebrate, and pick a Year 2 goal.','Year 2 should start with…',['A new goal and fresh photos','Stopping for good','Starting from zero']]];
+
+// ===== Question library by category
+const FAQ=[
+ {c:'Does this work?',i:'✅',q:[
+  ["How do I know it is working?", "Look for these, in this order. Weeks 1–4: reps go up and moves feel easier. Weeks 6–10: jeans fit differently in the seat and waist. Weekly check-ins: the tape measure moves. Every 4 weeks: photos show it. If even one of these is moving, it is working."],
+  ["What if I don't see changes yet?", "Early change happens inside the muscle before it shows on the outside. Keep doing all 4 workouts, hit protein, and compare 4-week photos instead of the mirror. Most women see clear change by months 2–3."],
+  ['Can bodyweight workouts really grow glutes?','Yes. Muscle responds to effort, not to the label on the weight. Research on lighter loads shows that sets taken close to failure build about as much muscle as heavy ones. For someone new to training, bodyweight, bands and slow tempo are more than enough challenge, and the plan adds dumbbells in Season 3 once she needs more.'],
+  ['How fast will I see results?','Strength jumps in the first 2–4 weeks. Clothes fit differently around weeks 6–10. Photos show clear change by months 3–4, and the biggest shape change shows up over the full year. Glutes grow slower than most muscles, which is why this is a year-long plan and not a 30-day challenge.'],
+  ['Why should I trust this plan?','It follows the same principles coaches use with every glute client: train glutes 3–4 times a week, hit all three glute muscles, make the work a little harder over time, eat enough protein, and recover. Nothing is a gimmick. It just stacks those basics week after week.'],
+  ['I am not sore. Is it working?','Yes. Soreness mostly comes from new movements and fades as the body adapts. Better signs are reps going up, moves feeling easier, and the tape changing.'],
+  ['Will I get bulky?','No. Building noticeable muscle takes years of heavy training and lots of food. What happens instead: rounder glutes, a firmer look, and better posture.'],
+  ['Why only 4 workouts a week?','Muscle grows during recovery. Four focused sessions plus walks give her enough work to grow and enough rest to rebuild, and it fits life with a baby.'],
+  ['Why does it take a whole year?','Glutes are a large muscle group and grow gradually. A year allows four full seasons: learning, building, strength, and sculpting. Each one stacks on the last, and habits built over a year tend to stick for good.']]},
+ {c:'Glutes & shape',i:'🍑',q:[
+  ["Is it normal to feel this in my thighs?", "A little, yes. Squats, lunges and step-ups work the thighs too. If the thighs are doing most of the work, push through the heels, lean the chest slightly forward on lunges and split squats, and squeeze the glute hard at the top of every rep."],
+  ["How long until my butt looks bigger?", "Most women notice a rounder, firmer shape in about 8–12 weeks of steady training with enough protein. The bigger change builds across 6–12 months, which is why the plan runs a full year."],
+  ["Should my glutes burn during sets?", "Yes. A burn near the end of a set means the muscle is working hard. A sharp or pinching pain is different: stop that exercise and check your form."],
+  ['Which exercises grow glutes the most?','Bridges and hip thrusts, split squats and lunges, hip hinges, and step-ups do the heavy lifting. Band kicks and leg raises shape the upper-side glutes. The plan has all of them.'],
+  ['I feel it in my thighs, not my glutes.','Push through the heels, slow down, and squeeze the glute at the top of every rep. On lunges and split squats, lean the chest slightly forward. On bridges, move the feet a little farther from the butt.'],
+  ['Can I grow glutes and lose fat at the same time?','Yes, especially as a beginner or a returning mom. This is called recomposition. Keep protein high and calories near maintenance or a small deficit.'],
+  ['What about hip dips?','Hip dips are mostly bone structure, and everyone has some. Growing the upper-side glutes with side kicks, leg raises and band work can soften how they look.'],
+  ['Does genetics matter?','Genetics shape where fat sits and the outline of the hips, but every body can build glute muscle. Compare her to her own day one, not to anyone else.'],
+  ['Why train back and shoulders for a glute goal?','The hourglass is a contrast. A slightly wider upper back and shoulders, plus rounder glutes, make the waist look smaller from both ends.']]},
+ {c:'Waist & belly',i:'⌛',q:[
+  ["Why is my belly bigger at night?", "Food, water and gas, not fat. Everyone's belly is bigger at night. Measure your waist in the morning before eating for the honest number."],
+  ["How long until my waist gets smaller?", "With steady workouts, protein and steps, the tape usually starts moving in 3–6 weeks. The lower belly is often the last spot to change, so keep going even when it is slow."],
+  ['Will crunches shrink my waist?','No exercise burns fat from one spot. Crunches strengthen the abs, but the waist shrinks through overall fat loss plus deep-core work like vacuums, dead bugs and planks.'],
+  ['How do I lose the postpartum pouch?','Patience plus three things: steady fat loss, deep-core training to help the abdominal wall heal, and good posture. Some loose skin can remain and is normal; a pelvic floor or women\'s health physical therapist can check the core.'],
+  ['What is a stomach vacuum?','Breathe all the air out, then pull the belly button toward the spine and hold. It trains the deep corset muscle that holds the belly in.'],
+  ['Why no side bends with weights?','Heavy oblique work like weighted side bends can thicken the sides of the waist. The plan uses planks and side planks instead, which build strength without bulk.'],
+  ['Should I use a waist trainer?','It will not burn fat or reshape the waist long term, and wearing one tight for long periods can weaken the core muscles. Any postpartum binder should be cleared with her doctor.']]},
+ {c:'Postpartum & mom life',i:'👶',q:[
+  ["How do I find time with a baby?", "Pick one daily anchor, like the first nap of the day, and treat it like an appointment. A workout takes 25–35 minutes. On chaotic days, do half and call it a win."],
+  ["Is it OK to work out on my period?", "Yes. Many women feel fine training. On low-energy or crampy days, do fewer sets or a walk. Gentle movement often helps cramps."],
+  ['When can I start after giving birth?','Most doctors clear exercise at the postpartum checkup, often around 6 weeks, and later after a C-section or a hard delivery. Get that clearance first, then start with Season 1 Week 1.'],
+  ['How do I check for ab separation?','Lie on your back, knees bent, lift your head slightly, and press your fingers along the midline above and below the belly button. A gap wider than about two fingers, or a dome when you lift, means see a pelvic floor physical therapist and skip planks and knee raises until cleared.'],
+  ['I leak a little during workouts.','Common, but not something to push through. Exhale on effort, ease off jumping or heavy work, and book a pelvic floor physical therapist. Most women improve a lot.'],
+  ['I had a C-section. Anything different?','Wait for her doctor\'s OK, start gently, and avoid anything that pulls on the scar or causes pain. Bridges, walks and breathing work are usually good first steps.'],
+  ['How do I work out with a baby around?','Use nap time, keep workouts at home, and make the baby part of it: bridges with baby on the hips, stroller walks, a play mat next to the workout. Even 15 minutes counts.'],
+  ['I barely slept. Train or rest?','Do a lighter version: fewer sets or just a walk. Keep the habit alive without draining what little energy is left.']]},
+ {c:'Nutrition',i:'🥩',q:[
+  ["What if I don't eat much meat?", "Eggs, Greek yogurt, cottage cheese, protein shakes, tofu, lentils, beans and edamame all count. Pair beans or lentils with rice for a complete protein."],
+  ["Is it bad to eat late at night?", "The total for the day matters more than the clock. If late snacks push you over your calories, swap them for a high-protein one like Greek yogurt or cottage cheese."],
+  ["What do I eat on rest days?", "Same protein, slightly fewer carbs. Muscles do their rebuilding on rest days, so protein matters just as much."],
+  ['How much protein do I need?','About 0.7–1 gram per pound of body weight a day. The Fuel tab calculates her exact number. Spread it across meals: 25–40 grams each.'],
+  ['Do I have to count calories?','Not forever. Use the Fuel numbers for a few weeks to learn portions, then switch to simple habits: protein at every meal, a fist of carbs, half the plate vegetables or fruit.'],
+  ['What should I eat before and after a workout?','Something light 1–2 hours before, like yogurt or toast with peanut butter. Within a couple of hours after, a meal with protein and carbs, like chicken and rice or eggs and toast.'],
+  ['Are cheat meals OK?','Yes. One meal never ruins progress. Aim for about 80–90% whole foods and enjoy the rest without guilt.'],
+  ['Do I need supplements?','No. Protein powder is a convenient way to hit protein. Anything else, especially while breastfeeding, should be cleared with her doctor first.'],
+  ['What are easy high-protein snacks?','Greek yogurt, cottage cheese, string cheese, hard-boiled eggs, tuna pouches, jerky, protein shakes, edamame.']]},
+ {c:'Breastfeeding',i:'🍼',q:[
+  ['Will working out hurt my milk supply?','Moderate exercise does not reduce supply. The things that can hurt supply are under-eating and dehydration, so keep calories and water up.'],
+  ['Can I lose weight while breastfeeding?','Yes, slowly. Around 1 lb a week or less is generally considered safe. The app keeps her calories at 1,800 or higher when breastfeeding is checked.'],
+  ['Is protein powder OK while breastfeeding?','Generally yes for basic whey or plant protein without added herbs or stimulants. Pick a third-party tested brand and check with her doctor.'],
+  ['How much water while breastfeeding?','More than usual. A glass every time she feeds the baby is an easy rule, and the app raises her water goal when breastfeeding is checked.']]},
+ {c:'Soreness & recovery',i:'🛁',q:[
+  ["How do I tell good burn from bad pain?", "Good: a burn or tiredness in the muscle that fades after the set, or soreness for 1–2 days. Bad: sharp, stabbing, pinching or joint pain, pain that gets worse, or pain that changes how you move. Stop and get bad pain checked."],
+  ["My wrists hurt in push-ups or planks.", "Spread the fingers wide and press through the whole hand. Do push-ups on a higher surface like the counter. For planks, stay on the forearms. If pain stays, see a doctor."],
+  ["Can I do two workouts in a row?", "Yes, if you missed a day. Put the upper-body day (B) between two glute days when possible. The app counts at most 2 workouts a day."],
+  ['I am really sore. Should I skip?','Mild soreness: train anyway, it usually eases once warmed up. Very sore or limping: do a walk and the upper-body day instead and come back to glutes tomorrow.'],
+  ['My knees hurt in squats or lunges.','Make sure the knees track over the toes, sit the hips back more, and shorten the depth. If pain stays, swap to bridges and hinges and check with a doctor or physical therapist.'],
+  ['My lower back hurts in bridges.','Ribs down, tuck the tailbone slightly, and stop the lift when the hips are level with the knees. Squeeze the glutes, not the back.'],
+  ['Should I stretch?','Light stretching after workouts feels good and helps mobility. It is optional, so do it if she enjoys it.'],
+  ['I missed a workout. Now what?','Just do the next one. Missing a day changes nothing; missing a month does. The weekly streak only needs 3 workouts a week.']]},
+ {c:'Progress & tracking',i:'📏',q:[
+  ['The scale went up!','Water, salt, carbs, hormones and new muscle all move the scale. Look at the trend over weeks, the tape measure, and photos.'],
+  ['How do I measure waist and hips?','Waist at the belly button, relaxed, tape level. Hips at the widest part of the butt, feet together. Same morning every week, before eating.'],
+  ['What is a good waist-to-hip ratio?','About 0.7 is the classic hourglass number. Every drop of 0.01 is real progress, whether it comes from a smaller waist or bigger glutes.'],
+  ['How do I take good progress photos?','Same spot, same light, same outfit, same time of day. Front, side and back. Every 4 weeks.'],
+  ['My progress stalled.','Check sleep, protein and steps, then make the exercises harder with the "season version" or slower reps. Give one change two weeks before changing anything else.']]},
+ {c:'Using the app',i:'📱',q:[
+  ["Why won't it let me finish a workout?", "A workout counts once at least 3 out of 4 sets are done, so your level always matches real training. The app tells you how many sets are left. Up to 2 workouts count per day."],
+  ["Can I do the days in any order?", "Yes. Any order works. Try to leave a day between Day A and Day C, since both train the glutes hard."],
+  ["What if I miss a whole week?", "Go back to the week you missed on the Year tab and pick up from there. Nothing is lost."],
+  ['How does the year work?','52 weeks in 4 seasons: Foundation, Build, Strength, Sculpt. Each season makes the same moves harder. Every 13th week is a lighter recovery week.'],
+  ['What is the "season version"?','The way she does that exercise this season. Season 1 is bodyweight; later seasons add pauses, single-leg moves, bands and dumbbells.'],
+  ['How do levels work?','Levels come only from finished workouts, so her level always matches her real progress: 20 levels across the 208 workouts of the year, about one every 10 to 11 workouts, five per season. Hourglass Queen takes 200 workouts. A workout counts once at least 3 out of 4 of its sets are done, and up to 2 count per day.'],
+  ['What are points for?','Points come from sets, quests, lessons, check-ins and mystery cards. They are a bonus score for fun and never change her level.'],
+  ['How do I move to the next week?','Use the Plan tab: tap the next week or the + button after finishing that week\'s 4 workouts.'],
+  ['How do I keep my progress safe?','Progress saves inside the app on your phone. Copy a backup code from the Progress tab every few weeks and keep it in Notes. If you switch phones, paste it into Restore.'],
+  ['How do I put it on my iPhone home screen?','Open the link in Safari, tap the Share button (square with an arrow), scroll down, tap "Add to Home Screen", name it Hourglass, and tap Add.']]},
+ {c:'Motivation & mindset',i:'💗',q:[
+  ["I am exhausted today. What should I do?", "Do the minimum: one glute move and a 10-minute walk, or just the stroller walk. If you slept terribly, rest is the smart choice and you will train better tomorrow. One missed day changes nothing; missing a month does."],
+  ["How do I stay consistent for a whole year?", "Same time each day, clothes laid out, and a minimum version for bad days. Track the weekly streak, open the new lesson each week, and look at photos every month. Results build on consistency, not perfect weeks."],
+  ['I have zero motivation today.','Do the minimum: one exercise, two sets. Most days, starting turns into finishing. On the days it does not, she still kept the habit alive.'],
+  ['I keep comparing myself to others online.','Many online photos are posed, edited or filtered. The only fair comparison is her own day-one photo.'],
+  ['I fell off for weeks.','Start where you left off, at the week before if it feels hard. Nothing is lost; the body remembers training faster than it learned it.'],
+  ['How can my partner help?','Cover a feed or nap so she can train, join stroller walks, cook protein-heavy meals, and notice the effort, not just the results.']]}
+];
+
+const QUOTES=['Strong moms raise strong kids.','Every rep is a vote for the woman you are becoming.','Slow progress is still progress.','You do not need perfect. You need consistent.','Ten minutes beats zero minutes.','The glutes you want are built on the days you do not feel like it.','Rest is part of the plan, not a break from it.','You carried a baby. You can carry this.','Small steps every day add up to a different body by next year.','Show up for future you. She is counting on you.','Sore today, strong tomorrow.','Your only competition is last month\'s you.','Done is better than perfect.','A good workout is the one you finished.','Discipline is remembering what you want.','Protein, water, steps, sleep. Repeat.','Your body is not a before picture. It is a work in progress.','Strong is the new shape.','Progress hides in the tape measure, not the scale.','Every season, you level up.','Consistency is the cheat code.','Motherhood made you tough. Use it.','Squeeze like you mean it.','You are not starting over. You are starting stronger.','Champions train on tired days too.','Curves are earned, one bridge at a time.','Be proud of the reps nobody saw.','The year will pass anyway. Make it count.','Celebrate small wins. They are big wins in disguise.','Breathe, brace, squeeze, repeat.'];
+
+
+// ===== Animated exercise figures
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const STAND='H:100,26 N:100,40 P:100,72 K1:101,96 A1:100,120 K2:99,96 A2:100,120 E1:102,56 W1:104,70 E2:98,56 W2:96,70';
+const FRONT='H:100,26 N:100,40 P:100,72 K1:95,96 A1:93,120 K2:105,96 A2:107,120 E1:90,56 W1:88,72 E2:110,56 W2:112,72 T1:89,121 T2:111,121';
+function pose(s,base){const o=base?JSON.parse(JSON.stringify(base)):{B:0};(s||'').trim().split(/\s+/).forEach(t=>{const m=t.match(/^([A-Z]\d?):(-?[\d.]+)(?:,(-?[\d.]+))?$/);if(m)o[m[1]]=m[3]!==undefined?[+m[2],+m[3]]:+m[2]});return o}
+function fillT(p,dir){['1','2'].forEach(s=>{if(!p['T'+s]){const a=p['A'+s];p['T'+s]=[a[0]+7*dir,a[1]+(dir?0.5:0)]}})}
+function lerpPose(a,b,k){const o={};for(const key in a){const x=a[key],y=b[key]??x;o[key]=Array.isArray(x)?[x[0]+(y[0]-x[0])*k,x[1]+(y[1]-x[1])*k]:x+(y-x)*k}return o}
+function propSvg(p){
+  if(p[0]==='couch')return `<rect class="prop" x="${p[1]}" y="${p[2]}" width="${p[3]}" height="${p[4]}" rx="5"/><rect class="prop2" x="${p[1]}" y="${p[2]}" width="${p[3]}" height="5" rx="2.5"/>`;
+  if(p[0]==='step')return `<rect class="prop" x="${p[1]}" y="${p[2]}" width="${p[3]}" height="${121-p[2]}" rx="2"/><rect class="prop" x="${p[1]+18}" y="${p[2]-15}" width="${p[3]-18}" height="${136-p[2]}" rx="2" opacity=".6"/>`;
+  if(p[0]==='bar')return `<line class="barp" x1="${p[1]}" y1="${p[3]}" x2="${p[2]}" y2="${p[3]}"/>`;
+  if(p[0]==='wall')return `<rect class="prop" x="${p[1]}" y="6" width="7" height="115" rx="2"/>`;
+  if(p[0]==='stroller')return `<g class="stroll"><path d="M120 58 L134 76"/><path class="pf" d="M130 74 H164 A16 16 0 0 1 148 98 H140 A12 12 0 0 1 130 86 Z"/><path d="M140 98 L136 106 M154 98 L158 106"/><circle cx="135" cy="113" r="7"/><circle cx="159" cy="113" r="7"/></g>`;
+  return '';
+}
+function buildFigs(){
+  $$('.fig').forEach(svg=>{
+    const A=DAYS[S.day].ex[+svg.dataset.x].anim, dir=A.dir??1;
+    const a=pose(A.a,A.base?pose(A.base==='front'?FRONT:STAND):null), b=pose(A.b,a);
+    fillT(a,dir);fillT(b,dir);
+    svg.innerHTML=(A.noFloor?'':`<line class="floor" x1="6" y1="121.5" x2="194" y2="121.5"/>`)+(A.props||[]).map(propSvg).join('')+
+      `<circle class="glow" r="6"/><line class="band"/><polyline class="bone far l2"/><polyline class="bone far r2"/><path class="bone torso"/><polyline class="bone l1"/><polyline class="bone r1"/><circle class="head" r="8.5"/>`;
+    const q=c=>svg.querySelector(c);
+    svg._f={A,a,b,l1:q('.l1'),l2:q('.l2'),r1:q('.r1'),r2:q('.r2'),torso:q('.torso'),head:q('.head'),glow:q('.glow'),band:q('.band')};
+    drawFig(svg,REDUCE?1:0);
+  });
+}
+function drawFig(svg,k){
+  const f=svg._f,p=lerpPose(f.a,f.b,k),pt=q=>q[0].toFixed(1)+','+q[1].toFixed(1);
+  f.l1.setAttribute('points',[p.P,p.K1,p.A1,p.T1].map(pt).join(' '));
+  f.l2.setAttribute('points',[p.P,p.K2,p.A2,p.T2].map(pt).join(' '));
+  f.r1.setAttribute('points',[p.N,p.E1,p.W1].map(pt).join(' '));
+  f.r2.setAttribute('points',[p.N,p.E2,p.W2].map(pt).join(' '));
+  const [nx,ny]=p.N,[px,py]=p.P,dx=px-nx,dy=py-ny,L=Math.hypot(dx,dy)||1,ux=dy/L,uy=-dx/L;
+  const mx=(nx+px)/2+ux*p.B*2,my=(ny+py)/2+uy*p.B*2;
+  f.torso.setAttribute('d',`M${pt(p.H)} L${pt(p.N)} Q${mx.toFixed(1)},${my.toFixed(1)} ${pt(p.P)}`);
+  f.head.setAttribute('cx',p.H[0]);f.head.setAttribute('cy',p.H[1]);
+  if(f.A.hi){const c=f.A.hi==='M'?[(nx+px)/2+ux*p.B,(ny+py)/2+uy*p.B]:p[f.A.hi];
+    f.glow.setAttribute('cx',c[0]);f.glow.setAttribute('cy',c[1]);f.glow.setAttribute('r',5+5*k);f.glow.style.opacity=.1+.35*k}
+  else f.glow.style.opacity=0;
+  if(f.A.band){const j=p[f.A.band.j],at=f.A.band.at;f.band.setAttribute('x1',at[0]);f.band.setAttribute('y1',at[1]);f.band.setAttribute('x2',j[0]);f.band.setAttribute('y2',j[1])}
+}
+function figLoop(t){
+  if($('#v-today').classList.contains('on')&&!document.hidden)
+    $$('.fig').forEach(svg=>{if(!svg._f)return;const ph=(t/(svg._f.A.sp||2600)+(+svg.dataset.x)*.17)%1;drawFig(svg,(1-Math.cos(2*Math.PI*ph))/2)});
+  requestAnimationFrame(figLoop);
+}
+if(!REDUCE)requestAnimationFrame(figLoop);
+
+
+// ===== Game layer
+const TITLES=['Peach Seed','Sprout','Little Peach','Juicy Peach','Squat Starter','Bridge Builder','Lunge Lady','Band Babe','Squat Sorceress','Bridge Boss','Curve Crafter','Peach Pro','Shelf Starter','Glute Goddess','Waist Whisperer','Curve Queen','Sculpt Siren','Hourglass Heroine','Legend of the Lunge','Hourglass Queen'];
+const PERKS=['Every set counts. Keep tapping those circles.','The habit is sprouting. Protect it.','Strength is climbing faster than you think.','Stairs feel easier already, right?','Squats are starting to feel smooth.','Bridges, built. The glutes are waking up.','Lunges fear you now.','Bands unlocked. Upper glutes, here we come.','Your form is turning into magic.','You run the bridge department.','The curve is under construction.','Pro status. Check the tape this month.','The upper-side shelf is coming in.','Goddess tier. Take progress photos.','The waist is listening.','Curves, earned. Not given.','Sculpting season looks good on you.','Heroine of the hourglass.','Legend. Truly.','Hourglass Queen. A full year of training, earned rep by rep.'];
+// Levels come ONLY from finished workouts: 20 levels spread over the 208 workouts of the year (Queen at 200).
+const LV=Array.from({length:20},(_,i)=>Math.round(i*200/19));
+function levelOf(){const w=S.done.length;let L=0;while(L<19&&w>=LV[L+1])L++;return{L,w,r:w-LV[L],n:L<19?LV[L+1]-LV[L]:0}}
+const seasonOfLevel=L=>Math.min(3,Math.floor(L/5));
+const titleOf=L=>TITLES[Math.min(L,19)];
+
+let AC;function sfx(type){if(!S.sound)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();
+  const N={pop:[[660,.05]],ding:[[880,.08],[1320,.14]],win:[[523,.1],[659,.1],[784,.1],[1047,.3]],level:[[392,.1],[523,.1],[659,.1],[784,.1],[1047,.45]],flip:[[440,.05],[880,.1]],chest:[[300,.08],[600,.08],[900,.08],[1200,.25]]}[type]||[];
+  let t=AC.currentTime;N.forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.2,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.03);t+=d*.8})}catch(e){}}
+const buzz=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
+function floatXP(n,ev){const d=document.createElement('div');d.className='fx';d.textContent=`+${n} pts`;
+  const x=ev&&ev.clientX?ev.clientX:innerWidth/2,y=ev&&ev.clientY?ev.clientY:120;d.style.left=Math.max(8,Math.min(innerWidth-90,x-30))+'px';d.style.top=(y-20)+'px';
+  document.body.appendChild(d);setTimeout(()=>d.remove(),950)}
+function gainXP(n,ev){S.xp+=n;floatXP(n,ev);const a=$('#avatar');a.classList.remove('jelly');void a.offsetWidth;a.classList.add('jelly');save()}
+
+// overlays wait until a workout in progress is finished
+const Q=[];let ovOpen=false;
+const busy=()=>$('#v-today').classList.contains('on')&&Object.keys(S.sets[sid()]||{}).length>0&&!S.done.includes(sid());
+function enqueue(fn,front){front?Q.unshift(fn):Q.push(fn);if(!ovOpen&&(front||!busy()))nextOv()}
+function flushOv(){if(!ovOpen&&Q.length&&!busy())nextOv()}
+function nextOv(){const ov=$('#ov'),f=Q.shift();if(!f){ov.hidden=true;ovOpen=false;return}ovOpen=true;ov.hidden=false;f(ov)}
+$('#ov').addEventListener('click',e=>{if(e.target.closest('[data-close]'))nextOv()});
+
+function showLevelUp(L){if(busy()){toast(`Level up! ${titleOf(L)} 🎉`);sfx('level')}
+  enqueue(ov=>{ov.innerHTML=`<div class="ovc"><span class="big">🍑</span><div class="eyebrow">Level ${L+1}</div><h2 class="lvlup">LEVEL UP!</h2><p>${S.name?esc(S.name)+' is':'She\'s'} now a <b>${titleOf(L)}</b></p><p class="muted">${PERKS[Math.min(L,19)]}</p><button class="btn wide" data-close>Let's go</button></div>`;sfx('level');buzz([60,40,120]);confetti()})}
+
+const wd=w=>[0,1,2,3].some(d=>S.done.includes(`w${w}d${d}`));
+const realLog=()=>S.log.filter(x=>!x.ex).sort((a,b)=>a.date.localeCompare(b.date));
+const BADGES=[
+ {id:'set1',e:'👟',n:'First Rep',d:'Finish your first set',t:()=>S.stats.sets>=1},
+ {id:'w1',e:'🍑',n:'Peach Pit',d:'Finish 1 workout',t:()=>S.done.length>=1},
+ {id:'w10',e:'🔥',n:'Warmed Up',d:'Finish 10 workouts',t:()=>S.done.length>=10},
+ {id:'w25',e:'💪',n:'Booty Builder',d:'Finish 25 workouts',t:()=>S.done.length>=25},
+ {id:'w50',e:'🏅',n:'Committed',d:'Finish 50 workouts',t:()=>S.done.length>=50},
+ {id:'w100',e:'💯',n:'Century',d:'Finish 100 workouts',t:()=>S.done.length>=100},
+ {id:'w150',e:'👑',n:'Unstoppable',d:'Finish 150 workouts',t:()=>S.done.length>=150},
+ {id:'w208',e:'🏆',n:'Year Complete',d:'Finish all 208 workouts',t:()=>S.done.length>=208},
+ {id:'pw',e:'⭐',n:'Perfect Week',d:'All 4 days in one week',t:()=>Array.from({length:52}).some((_,w)=>[0,1,2,3].every(d=>S.done.includes(`w${w+1}d${d}`)))},
+ {id:'s1',e:'🌱',n:'Foundation Done',d:'Train in week 13',t:()=>wd(13)},
+ {id:'s2',e:'🔥',n:'Build Done',d:'Train in week 26',t:()=>wd(26)},
+ {id:'s3',e:'💪',n:'Strength Done',d:'Train in week 39',t:()=>wd(39)},
+ {id:'s4',e:'⏳',n:'Graduate',d:'Train in week 52',t:()=>wd(52)},
+ {id:'p7',e:'🥩',n:'Protein Pro',d:'Hit protein 7 days',t:()=>S.stats.pDays>=7},
+ {id:'h7',e:'💧',n:'Hydro Honey',d:'Hit water 7 days',t:()=>S.stats.wDays>=7},
+ {id:'c5',e:'🎁',n:'Quest Queen',d:'Clear daily quests 5 times',t:()=>S.stats.chests>=5},
+ {id:'l5',e:'📚',n:'Scholar',d:'Finish 5 lessons',t:()=>Object.keys(S.lessons).length>=5},
+ {id:'l52',e:'🎓',n:'Professor',d:'Finish all 52 lessons',t:()=>Object.keys(S.lessons).length>=52},
+ {id:'log1',e:'📏',n:'Measured Up',d:'Save a real check-in',t:()=>realLog().length>=1},
+ {id:'cin',e:'⌛',n:'Cinched',d:'Waist down 1 inch',t:()=>{const L=realLog();return L.length>1&&L[0].wa-L[L.length-1].wa>=1}}];
+function checkBadges(){let nw=0;BADGES.forEach(b=>{if(!S.badges.includes(b.id)&&b.t()){S.badges.push(b.id);S.xp+=50;nw=1;
+  enqueue(ov=>{ov.innerHTML=`<div class="ovc"><span class="big">${b.e}</span><div class="eyebrow">Trophy unlocked</div><h2>${b.n}</h2><p class="muted">${b.d}</p><p class="gold">+50 pts</p><button class="btn wide" data-close>Nice</button></div>`;sfx('win');buzz(80)})}});if(nw)save()}
+
+const TIPS=['Glutes grow on rest days. Sleep counts as training.','Squeeze a full second at the top of every bridge.','Protein at breakfast makes the daily goal way easier.','Slow lowering means more muscle from the same bodyweight.','Stroller hills are free glute work.','Waist-to-hip ratio beats the scale for this goal.','Progress photos every 4 weeks, same light, same spot.','Shaky last reps mean it is working.','Exhale on the hard part of every rep.','Knees out over the toes on every squat.'];
+function openLoot(){enqueue(ov=>{
+  const pool=[25,25,50,50,50,75,100,150],vals=[0,1,2].map(()=>pool[Math.random()*pool.length|0]);
+  ov.innerHTML=`<div class="ovc"><div class="eyebrow">Workout complete</div><h2>Pick a mystery card</h2><div class="loot">${vals.map((v,i)=>`<button class="lc" data-i="${i}"><div class="fr">🍑</div><div class="bk">+${v}<small>pts</small></div></button>`).join('')}</div><p class="muted" id="lootTip">One of them hides a big bonus.</p><button class="btn wide" id="lootGo" hidden>Collect</button></div>`;
+  let picked=-1;
+  ov.querySelectorAll('.lc').forEach(c=>c.onclick=()=>{if(picked>=0)return;picked=+c.dataset.i;c.classList.add('flip');sfx('flip');buzz(30);
+    setTimeout(()=>{ov.querySelectorAll('.lc').forEach(o=>{if(o!==c)o.classList.add('flip','dim')});
+      $('#lootTip').textContent=TIPS[Math.random()*TIPS.length|0];const g=$('#lootGo');g.hidden=false;g.textContent=`Collect +${vals[picked]} pts`;
+      if(vals[picked]>=100){confetti();sfx('win')}},500);
+    $('#lootGo').onclick=e=>{gainXP(vals[picked],e);nextOv()}});
+},true)}
+
+function weekStreak(){const wk=d=>{const x=new Date(d+'T12:00');x.setDate(x.getDate()-((x.getDay()+6)%7));return x.toISOString().slice(0,10)};
+  const c={};(S.doneDates||[]).forEach(o=>{const k=wk(o.d);c[k]=(c[k]||0)+1});
+  const cur=new Date(wk(today())+'T12:00');let n=0;if((c[wk(today())]||0)<3)cur.setDate(cur.getDate()-7);
+  while((c[cur.toISOString().slice(0,10)]||0)>=3){n++;cur.setDate(cur.getDate()-7)}return n}
+
+function renderGame(){
+  dayRoll();
+  const {L,r,n}=levelOf();
+  $('#lvlTitle').textContent=titleOf(L);
+  $('#lvlNum').textContent=n?`Level ${L+1} · ${n-r} workout${n-r===1?'':'s'} to level ${L+2}`:`Level 20 · Year complete 👑`;
+  $('#xpFill').style.width=(n?r/n*100:100)+'%';$('#avatar').style.setProperty('--s',(.8+Math.min(L,20)*.02).toFixed(3));
+  $('#streakN').textContent=weekStreak();
+  if(S.lvlSeen>L)S.lvlSeen=L;
+  if(L>S.lvlSeen){for(let i=S.lvlSeen+1;i<=L;i++)showLevelUp(i);S.lvlSeen=L;save()}
+  const q=[{i:'🏋️',t:'Move: 8 sets or a 20-min walk',v:Math.min(1,S.daily.walk?1:S.daily.sets/8),x:S.daily.walk?'walked':`${Math.min(S.daily.sets,8)}/8 sets`},
+           {i:'🥩',t:'Hit the protein goal',v:Math.min(1,S.tank.p/(S.pTarget||128)),x:`${S.tank.p}/${S.pTarget||128} g`},
+           {i:'💧',t:'Drink the water goal',v:Math.min(1,S.tank.w/(S.wTarget||96)),x:`${S.tank.w}/${S.wTarget||96} oz`}];
+  $('#qlist').innerHTML=q.map(o=>`<div class="qrow"><span class="qic">${o.i}</span><div><b>${o.t}</b><div class="qbar"><i style="width:${o.v*100}%"></i></div><small class="muted">${o.x}</small></div><span class="qck ${o.v>=1?'on':''}">${o.v>=1?'✓':''}</span></div>`).join('')+
+    (S.daily.walk?'':`<button class="btn ghost walkbtn" id="walkBtn">🚶‍♀️ She walked 20+ min today</button>`);
+  const all=q.every(o=>o.v>=1),ch=$('#chest');
+  ch.className='chest '+(S.daily.claimed?'claimed':all?'ready':'');ch.textContent=S.daily.claimed?'✨':'🎁';
+  $('#chestTxt').textContent=S.daily.claimed?'Chest claimed. New quests tomorrow.':all?'Tap the chest!':'Clear all 3 to open the chest';
+  $('#badges').innerHTML=BADGES.map(b=>{const got=S.badges.includes(b.id);return `<div class="bdg ${got?'got':'lock'}" title="${b.d}"><span class="e">${got?b.e:'🔒'}</span>${got?b.n:b.d}</div>`}).join('');
+  $('#badgeCount').textContent=`${S.badges.length}/${BADGES.length}`;
+  checkBadges();
+}
+$('#qlist').addEventListener('click',e=>{if(e.target.closest('#walkBtn')){S.daily.walk=1;sfx('ding');gainXP(30,e)}});
+$('#chest').onclick=e=>{if(!$('#chest').classList.contains('ready'))return;S.daily.claimed=1;S.stats.chests++;sfx('chest');buzz([40,30,80]);confetti();toast('Chest opened! +75 pts');gainXP(75,e)};
+$('#sndBtn').onclick=()=>{S.sound=!S.sound;$('#sndBtn').textContent=S.sound?'🔊':'🔇';save();sfx('ding')};
+$('#lvlBtn').onclick=()=>enqueue(ov=>{const {L,w}=levelOf();
+  ov.innerHTML=`<div class="ovc"><div class="eyebrow">The glow-up ladder</div><h2>Levels = workouts finished</h2>
+   <p class="muted">${w} of 208 workouts done. Each level is earned by real training, so her title always matches how far into the year she is.</p>
+   <div class="ladder">${TITLES.map((t,i)=>`${i%5===0?`<div class="ladS">${SEASONS[i/5].i} Season ${i/5+1}: ${SEASONS[i/5].n}</div>`:''}<div class="lad ${i<L?'past':i===L?'now':''}"><span>${i+1}</span><b>${t}</b><small>${LV[i]} workouts</small></div>`).join('')}</div>
+   <p class="muted" style="font-size:12.5px">🍑 Bonus points: ${S.xp.toLocaleString()}. Points come from sets, quests, lessons and mystery cards. They are the fun score; levels only move with workouts.</p>
+   <button class="btn wide" data-close>Back to it</button></div>`},true);
+
+// first-run welcome
+function onboard(){enqueue(ov=>{
+  const whys=['Feel strong for my baby','Love my curves','Feel confident in my clothes','More energy every day'];
+  ov.innerHTML=`<div class="ovc"><span class="big">🍑</span><h2 class="lvlup">Your glow-up year starts now</h2><p class="muted">52 weeks. 4 seasons. Built for home, with a baby around.</p>
+   <label class="obl">What should Coach call you?<input id="obName" autocomplete="given-name" placeholder="Your first name"></label>
+   <label class="obl">How long since baby arrived?<select id="obPP"><option value="">Choose one</option><option>Under 6 weeks</option><option>6–12 weeks</option><option>3–6 months</option><option>6–12 months</option><option>Over a year</option></select></label>
+   <div class="obl">Your why<div class="qchips" id="obWhy">${whys.map(w=>`<button class="qc" type="button">${w}</button>`).join('')}</div><input id="obWhyT" placeholder="Or write your own"></div>
+   <p class="warnp" id="obWarn" hidden>Under 6 weeks: please get your doctor's OK before starting. Walks and gentle breathing are great until then.</p>
+   <button class="btn wide" id="obGo">Start my year · +100 pts</button></div>`;
+  ov.querySelector('#obWhy').onclick=e=>{const b=e.target.closest('.qc');if(b){ov.querySelectorAll('#obWhy .qc').forEach(x=>x.classList.toggle('on',x===b));$('#obWhyT').value=b.textContent}};
+  $('#obPP').onchange=()=>{$('#obWarn').hidden=$('#obPP').value!=='Under 6 weeks'};
+  $('#obGo').onclick=e=>{S.name=$('#obName').value.trim().slice(0,30);S.pp=$('#obPP').value;S.why=$('#obWhyT').value.trim().slice(0,120);S.start=today();S.onboarded=1;
+    renderMotive();confetti();sfx('win');gainXP(100,e);nextOv()};
+},true)}
+
+function rerenderAll(){loadFuelInputs();calcFuel();renderMotive();renderToday();renderPlan();renderProgress();renderLearn();renderFaq();if(SAMPLE)renderChat();$('#sndBtn').textContent=S.sound?'🔊':'🔇';renderGame()}
+window.gameReady=true;
+rerenderAll();
+if(!S.onboarded)onboard();
+initCaps();
+
+</script>
+<script>if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
+</body></html>
