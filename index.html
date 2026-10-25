@@ -390,7 +390,7 @@ body.noscroll{overflow:hidden}
 .ovc.shop{text-align:left;display:flex;flex-direction:column;gap:10px;width:min(420px,100%);max-height:88vh}
 .ovc.shop.re{animation:none}
 .shopHead{display:flex;justify-content:space-between;align-items:center;gap:10px}.shopHead h2{font-size:24px;color:var(--gold);margin:2px 0 0}
-.shopTabs{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.shopTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .shopTabs button{border:1px solid var(--line);background:var(--surface2);color:var(--fg);border-radius:12px;padding:9px 4px;font-weight:700;font-size:13px}
 .shopTabs button.on{background:var(--peach);border-color:var(--peach);color:#1a0f1f}
 .shopBody{display:grid;gap:8px;overflow-y:auto;min-height:0;align-content:start}
@@ -574,7 +574,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
 
 <!-- PROGRESS -->
 <section class="view" id="v-progress">
-  <button class="card shopCard" id="shopCard"><span class="se">🎁</span><span><small class="eyebrow">Reward shop</small><b id="shopCardTxt">Spend points on shiny finds and new looks</b></span><span class="lpGo">Open ➜</span></button>
+  <button class="card shopCard" id="shopCard"><span class="se">🎁</span><span><small class="eyebrow">Reward shop</small><b id="shopCardTxt">Spend points on rewards</b></span><span class="lpGo">Open ➜</span></button>
   <div class="card hg-wrap">
     <svg class="hg" viewBox="0 0 120 200" width="120" height="200" aria-label="Silhouette shaped by your waist-to-hip ratio">
       <defs><linearGradient id="hgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4f8b"/><stop offset="1" stop-color="#ff8f6b"/></linearGradient></defs>
@@ -1265,7 +1265,7 @@ const FAQ=[
   ['What is the "season version"?','The way she does that exercise this season. Season 1 is bodyweight; later seasons add pauses, single-leg moves, bands and dumbbells.'],
   ['How do levels work?','Levels come only from finished workouts, so your level always matches your real progress: 20 levels across the 208 workouts of the year, about one every 10 to 11 workouts, five per season. Hourglass Queen takes 200 workouts. A workout counts once at least 3 out of 4 of its sets are done, and up to 2 count per day.'],
   ['What are shiny finds?','Collectibles that drop by surprise: about 1 in 10 sets, every finished workout, every chest, some lessons, and golden peaches that sometimes fly across the Train screen. There are 41 to collect in 4 rarities, plus rare shiny versions. Duplicates give bonus points.'],
-  ['What are points for?','Spend them in the Reward shop: tap the 🍑 points in the top corner. Open crates for shiny finds, or unlock peach accessories and app colors. Points come from sets, workouts, quests, lessons, check-ins, mystery cards and golden peaches. Spending them never lowers your level.'],
+  ['What are points for?','Spend them in the Reward shop: tap the 🍑 points in the top corner. Redeem rewards like a late-night ice cream run, picking dinner or picking where you go this weekend (and add your own), open crates for shiny finds, or unlock peach accessories and app colors. Points come from sets, workouts, quests, lessons, check-ins, mystery cards and golden peaches. Spending them never lowers your level.'],
   ['How do I move to the next week?','Use the Plan tab: tap the next week or the + button after finishing that week\'s 4 workouts.'],
   ['How do I keep my progress safe?','Progress saves inside the app on your phone. Copy a backup code from the Progress tab every few weeks and keep it in Notes. If you switch phones, paste it into Restore.'],
   ['How do I put it on my iPhone home screen?','Open the link in Safari, tap the Share button (square with an arrow), scroll down, tap "Add to Home Screen", name it Hourglass, and tap Add.']]},
@@ -1419,9 +1419,9 @@ function renderGame(){
   $('#xpFill').style.width=(n?r/n*100:100)+'%';$('#avatar').style.setProperty('--s',(.8+Math.min(L,20)*.02).toFixed(3));
   $('#streakN').textContent=weekStreak();
   {shopInit();const bal=coins(),cn=$('#coinN');if(cn.textContent!==bal.toLocaleString()){cn.textContent=bal.toLocaleString();const cb=$('#coinBtn');cb.classList.remove('bump');void cb.offsetWidth;cb.classList.add('bump')}
-   const items=[{n:'a Mystery crate',c:300},...SHOP_ACC.filter(a=>!S.ownedAcc.includes(a.id)).map(a=>({n:'the '+a.e+' accessory',c:a.c})),...THEMES.filter(t=>!S.ownedThemes.includes(t.id)).map(t=>({n:t.n+' colors',c:t.c}))];
+   const items=[...S.rewards.map(r=>({n:r.n,c:r.c})),{n:'a Mystery crate',c:300},...SHOP_ACC.filter(a=>!S.ownedAcc.includes(a.id)).map(a=>({n:'the '+a.e+' accessory',c:a.c})),...THEMES.filter(t=>!S.ownedThemes.includes(t.id)).map(t=>({n:t.n+' colors',c:t.c}))];
    const nx=items.filter(r=>r.c>bal).sort((a,b)=>a.c-b.c)[0];
-   $('#shopCardTxt').textContent=bal>=300?'You can open a crate or buy a new look 🎉':nx?`${(nx.c-bal).toLocaleString()} pts to ${nx.n}`:'Spend points on shiny finds and new looks'}renderFinds();renderAvatarAcc(L);
+   $('#shopCardTxt').textContent=S.rewards.some(r=>r.c<=bal)?'You can redeem a reward! 🎉':bal>=300?'You can open a crate or buy a new look 🎉':nx?`${(nx.c-bal).toLocaleString()} pts to ${nx.n}`:'Spend points on shiny finds and new looks'}renderFinds();renderAvatarAcc(L);
   if(S.lvlSeen>L)S.lvlSeen=L;
   if(L>S.lvlSeen){for(let i=S.lvlSeen+1;i<=L;i++)showLevelUp(i);S.lvlSeen=L;save()}
   const wid=S.daily.wid||sid(),wd=+wid.slice(wid.indexOf('d')+1),ww=+wid.slice(1,wid.indexOf('d')),fin=S.done.includes(wid);
@@ -1546,21 +1546,30 @@ function renderAvatarAcc(L){const a=$('#avAcc');if(!a)return;if(S.wear){const w=
 
 
 // ===== Reward shop: points are spendable money =====
-const DEF_REWARDS=[{id:'r1',e:'🛁',n:'Bubble bath, no interruptions',c:500},{id:'r2',e:'☕',n:'Coffee date',c:1000},{id:'r3',e:'😴',n:'Sleep in, someone else takes the baby',c:1500},{id:'r4',e:'💅',n:'Nails done',c:2500},{id:'r5',e:'🩱',n:'New workout outfit',c:4000},{id:'r6',e:'🍝',n:'Date night',c:5000},{id:'r7',e:'💆‍♀️',n:'Spa day',c:10000}];
+const DEF_REWARDS=[
+ {id:'v1',e:'🎤',n:'Car karaoke: my playlist, full volume, no skipping',c:300},
+ {id:'v2',e:'📺',n:'I pick the movie or show, no complaining',c:400},
+ {id:'v3',e:'🍕',n:'I pick dinner. No "I don\'t care"',c:500},
+ {id:'v4',e:'🍦',n:'Spontaneous late-night ice cream run',c:600},
+ {id:'v5',e:'🙅‍♀️',n:'Skip one chore of my choice',c:700},
+ {id:'v6',e:'🍔',n:'Any treat food I want (within reason, gains stay safe)',c:800},
+ {id:'v7',e:'🛍️',n:'Target run and nobody rushes me',c:1200},
+ {id:'v8',e:'🗺️',n:'I pick where we go this weekend',c:1500},
+ {id:'v9',e:'✨',n:'Whatever I want (within reason)',c:3000}];
 const SHOP_ACC=[{id:'flower',e:'🌸',c:200},{id:'bow2',e:'🎀',c:300},{id:'head',e:'🎧',c:500},{id:'shades',e:'🕶️',c:700},{id:'halo',e:'😇',c:1000},{id:'crown2',e:'👑',c:1500}];
 const THEMES=[{id:'peach',n:'Peach',c:0,a:['#ff4f8b','#ff8f6b']},{id:'lilac',n:'Lilac',c:800,a:['#9b5de5','#f15bb5']},{id:'ocean',n:'Ocean',c:800,a:['#3a86ff','#4cc9f0']},{id:'matcha',n:'Matcha',c:800,a:['#2ec4b6','#80ed99']},{id:'sunset',n:'Sunset',c:1000,a:['#ef476f','#ffd166']},{id:'gold',n:'Gold',c:1500,a:['#f77f00','#ffd166']}];
 ODDS.shopR={C:0,R:80,E:17,L:3};ODDS.shopE={C:0,R:0,E:85,L:15};
 const coins=()=>Math.max(0,(S.xp||0)-(S.spent||0));
-function shopInit(){if(!S.rewards)S.rewards=DEF_REWARDS.map(x=>({...x}));S.ownedAcc=S.ownedAcc||[];S.ownedThemes=S.ownedThemes||['peach'];S.spent=S.spent||0;S.redeemed=S.redeemed||[]}
+function shopInit(){if(!S.rewards||S.rewVer!==2){S.rewards=DEF_REWARDS.map(x=>({...x})).concat((S.rewards||[]).filter(r=>String(r.id).startsWith('c')));S.rewards.sort((a,b)=>a.c-b.c);S.rewVer=2}S.ownedAcc=S.ownedAcc||[];S.ownedThemes=S.ownedThemes||['peach'];S.spent=S.spent||0;S.redeemed=S.redeemed||[]}
 function applyTheme(){const t=THEMES.find(x=>x.id===(S.theme||'peach'))||THEMES[0],r=document.documentElement.style;
   if(t.id==='peach'){r.removeProperty('--pink');r.removeProperty('--peach')}else{r.setProperty('--pink',t.a[0]);r.setProperty('--peach',t.a[1])}}
-let shopTab='crates';
+let shopTab='rewards';
 function openShop(){enqueue(ov=>renderShop(ov),true)}
 function renderShop(ov,msg){shopInit();const bal=coins(),re=!!ov.querySelector('.shop');
   let body='';
-  if(shopTab==='rewards')body=`<p class="muted shopNote">Real treats you earn by training. Redeem one, then show this screen to your husband 😉</p>`+
+  if(shopTab==='rewards')body=`<p class="muted shopNote">Earn it, redeem it, then show this screen to your husband. He has to say yes 😉</p>`+
     S.rewards.map(r=>`<div class="shopRow"><span class="se">${r.e}</span><div><b>${esc(r.n)}</b><small>${r.c.toLocaleString()} pts</small></div><button class="btn sm ${bal>=r.c?'':'off'}" data-buy="r:${r.id}">${bal>=r.c?'Redeem':`${(r.c-bal).toLocaleString()} to go`}</button></div>`).join('')+
-    `<details class="addR"><summary>+ Add your own reward</summary><input id="nrN" placeholder="Like: Target run by myself" maxlength="40"><input id="nrC" type="number" inputmode="numeric" placeholder="Cost in points, like 1500"><button class="btn ghost wide" id="nrGo" type="button">Add reward</button></details>`+
+    `<details class="addR"><summary>+ Add your own reward</summary><input id="nrN" placeholder="Like: Sushi night, or a nap with no interruptions" maxlength="40"><input id="nrC" type="number" inputmode="numeric" placeholder="Cost in points, like 1500"><button class="btn ghost wide" id="nrGo" type="button">Add reward</button></details>`+
     (S.redeemed.length?`<div class="eyebrow" style="margin-top:6px">Redeemed</div>`+S.redeemed.slice(-6).reverse().map(x=>`<div class="muted" style="font-size:13px">✓ ${esc(x.n)} · ${x.d}</div>`).join(''):'');
   if(shopTab==='crates')body=`<div class="crate"><span class="ce">📦</span><b>Mystery crate</b><small>One shiny find. Rare or better, guaranteed.</small><button class="btn ${bal>=300?'':'off'}" data-buy="c:shopR">Open · 300 pts</button></div>
     <div class="crate gold"><span class="ce">🎁</span><b>Golden crate</b><small>Epic or better, guaranteed. 15% legendary.</small><button class="btn ${bal>=1200?'':'off'}" data-buy="c:shopE">Open · 1,200 pts</button></div>
@@ -1570,7 +1579,7 @@ function renderShop(ov,msg){shopInit();const bal=coins(),re=!!ov.querySelector('
     <div class="eyebrow" style="margin-top:10px">App colors</div><div class="thGrid">${THEMES.map(t=>{const own=S.ownedThemes.includes(t.id),on=(S.theme||'peach')===t.id;return `<button class="thI ${on?'on':''}" data-buy="t:${t.id}"><span style="background:linear-gradient(135deg,${t.a[0]},${t.a[1]})"></span><b>${t.n}</b><small>${on?'Using':own?'Use':t.c+' pts'}</small></button>`}).join('')}</div>`;
   ov.innerHTML=`<div class="ovc shop ${re?'re':''}"><div class="shopHead"><div><div class="eyebrow">Reward shop</div><h2>🍑 ${bal.toLocaleString()} pts</h2></div><button class="pX" data-close aria-label="Close shop">✕</button></div>
     ${msg?`<div class="shopMsg">${msg}</div>`:''}
-    <div class="shopTabs">${[['crates','📦 Crates'],['style','✨ Style']].map(t=>`<button class="${shopTab===t[0]?'on':''}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</div>
+    <div class="shopTabs">${[['rewards','🎁 Rewards'],['crates','📦 Crates'],['style','✨ Style']].map(t=>`<button class="${shopTab===t[0]?'on':''}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</div>
     <div class="shopBody">${body}</div>
     <p class="muted shopNote">Earn points from sets, workouts, quests, lessons, check-ins, mystery cards and golden peaches. Spending points never lowers your level.</p></div>`;
   ov.onclick=e=>{const t=e.target.closest('[data-tab]');if(t){shopTab=t.dataset.tab;delete ov.dataset.confirm;renderShop(ov);sfx('pop');return}
@@ -1611,7 +1620,7 @@ boot();
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='21';
+const APP_VERSION='22';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
