@@ -505,7 +505,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
 <section class="view" id="v-plan">
   <div class="card" style="display:grid;gap:14px">
     <div class="eyebrow">Your year · 52 weeks</div>
-    <div class="yearbar big"><i id="yearFill"></i></div>
+    <div class="muted" id="yearFill" style="font-size:13.5px;margin-top:-6px"></div>
     <div class="seasonChips" id="seasonChips"></div>
     <div class="stepper"><button id="wkDown" aria-label="Previous week">−</button><b id="wkLabel">Week 1</b><button id="wkUp" aria-label="Next week">+</button></div>
     <div class="weeks" id="weeks"></div>
@@ -817,7 +817,7 @@ $('#tAdd').onclick=()=>{tLeft+=30;tick()};$('#tSkip').onclick=stopTimer;
 function renderPlan(){
   const vs=S.viewSeason??seasonOf(S.week);
   const doneWeeks=new Set(S.done.map(x=>+x.slice(1,x.indexOf('d'))));
-  $('#yearFill').style.width=(S.done.length/208*100)+'%';
+  $('#yearFill').textContent=`${S.done.length} of 208 workouts done`;
   $('#wkLabel').textContent=`Week ${S.week}`;
   $('#seasonChips').innerHTML=SEASONS.map((s,i)=>`<button class="chip ${i===vs?'on':''}" data-s="${i}">${s.i}<span class="dn">${s.n}</span></button>`).join('');
   $('#weeks').innerHTML=Array.from({length:13},(_,k)=>{const w=vs*13+k+1;
@@ -1621,7 +1621,7 @@ boot();
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='25';
+const APP_VERSION='26';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
