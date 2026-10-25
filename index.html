@@ -413,7 +413,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
       <div class="qbtns"><button data-p="10">+10</button><button data-p="25">+25</button><button data-p="40">+40</button></div></div></div>
     <div><div class="row" style="justify-content:space-between"><b>Water</b><span id="wTxt" class="muted"></span></div>
       <div class="counter"><div class="meter"><i id="wBar" style="background:linear-gradient(90deg,#4cc9f0,var(--mint))"></i></div>
-      <div class="qbtns"><button data-w="8">+8oz</button><button data-w="16">+16</button><button data-w="32">+32</button></div></div></div>
+      <div class="qbtns"><button data-w="8">+8oz</button><button data-w="16">+16</button><button data-w="32">+32</button><button data-w="40">+40</button></div></div></div>
   </div>
   <div class="card" style="display:grid;gap:10px">
     <div class="eyebrow">Easy protein hits</div>
@@ -1194,7 +1194,7 @@ function renderGame(){
            {i:'🥩',t:'Hit the protein goal',v:Math.min(1,S.tank.p/(S.pTarget||128)),x:`${S.tank.p}/${S.pTarget||128} g`,
             add:[10,25,40].map(n=>`<button class="qa" data-p="${n}">+${n}g</button>`).join('')},
            {i:'💧',t:'Drink the water goal',v:Math.min(1,S.tank.w/(S.wTarget||96)),x:`${S.tank.w}/${S.wTarget||96} oz`,
-            add:[8,16,32].map(n=>`<button class="qa" data-w="${n}">+${n}oz</button>`).join('')}];
+            add:[8,16,32,40].map(n=>`<button class="qa" data-w="${n}">+${n}oz</button>`).join('')}];
   $('#qlist').innerHTML=q.map(o=>`<div class="qrow"><span class="qic">${o.i}</span><div><b>${o.t}</b><div class="qbar"><i style="width:${o.v*100}%"></i></div><small class="muted">${o.x}</small>${o.add?`<div class="qadd">${o.add}</div>`:''}</div><span class="qck ${o.v>=1?'on':''}">${o.v>=1?'✓':''}</span></div>`).join('');
   const all=q.every(o=>o.v>=1),ch=$('#chest');
   ch.className='chest '+(S.daily.claimed?'claimed':all?'ready':'');ch.textContent=S.daily.claimed?'✨':'🎁';
