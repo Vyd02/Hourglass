@@ -283,10 +283,10 @@ details.how li{color:var(--fg)}
 .btn.danger{background:var(--pink);box-shadow:none}
 .undo{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--peach);background:color-mix(in srgb,var(--peach) 20%,var(--surface2));color:var(--fg);font-weight:900;font-size:18px;line-height:1;display:grid;place-items:center;padding:0}
 .undo.pulse{animation:pop .4s}
-.snack{position:fixed;z-index:12;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(92px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--fg);color:var(--bg);border-radius:16px;padding:10px 10px 10px 16px;font-weight:700;font-size:14px;box-shadow:0 12px 30px -10px #000;transform:translateY(160%);opacity:0;transition:transform .35s cubic-bezier(.3,1.4,.5,1),opacity .2s;pointer-events:none}
+.snack{position:fixed;z-index:12;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(92px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#f3e9f0;color:#1a0f1f;border-radius:10px;padding:4px 4px 4px 16px;min-height:48px;font-weight:600;font-size:14px;box-shadow:0 8px 24px -8px #000;transform:translateY(20px);opacity:0;transition:transform .25s ease,opacity .2s;pointer-events:none}
 .snack.show{transform:none;opacity:1;pointer-events:auto}
 .snack span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.snack button{flex:none;border:0;background:var(--pink);color:#fff;font-weight:900;font-size:14px;letter-spacing:.04em;padding:10px 16px;border-radius:12px}
+.snack button{flex:none;border:0;background:none;color:#d6336c;font-weight:800;font-size:14px;letter-spacing:.06em;padding:12px 14px;border-radius:8px}
 .qa.un,.qbtns .un{border-color:var(--pink);color:var(--pink);background:color-mix(in srgb,var(--pink) 12%,var(--surface))}
 .undoSet{border:1px solid var(--pink);background:color-mix(in srgb,var(--pink) 12%,transparent);color:var(--pink);font-weight:800;font-size:12.5px;border-radius:999px;padding:0 12px;height:44px}
 .del{color:var(--pink)!important;font-size:12px!important;font-weight:700}
@@ -331,6 +331,9 @@ details.how li{color:var(--fg)}
 .pray{padding:14px 16px;border-color:color-mix(in srgb,var(--gold) 45%,var(--line))}
 .pray summary{font-size:15px}
 .pray p{font-size:15px;line-height:1.55;color:var(--fg);font-style:italic}
+.unl{display:grid;gap:8px;margin:6px 0 4px;text-align:left}
+.unr{display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:center;background:var(--surface2);border:1px solid color-mix(in srgb,var(--gold) 40%,var(--line));border-radius:14px;padding:8px 12px;animation:rise .4s both}
+.unr span{font-size:28px;text-align:center}.unr b{display:block;font-size:14.5px}.unr small{color:var(--muted);font-size:12.5px}
 .linkbtn{border:0;background:none;padding:0;color:var(--muted);font-size:12px;text-decoration:underline}
 textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
 .ask{display:grid;gap:12px;border-color:var(--pink);background:linear-gradient(160deg,color-mix(in srgb,var(--pink) 18%,var(--surface)),var(--surface))}
@@ -389,7 +392,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <svg id="avatar" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 13c-9-4-19 2-19 14 0 10 9 17 19 17s19-7 19-17c0-12-10-18-19-14z" fill="url(#peachG)"/><path d="M24 14c-2 8-2 18 0 29" stroke="#c4466a" stroke-width="1.6" fill="none" opacity=".55"/><path d="M24 13c2-6 8-8 13-7-2 5-7 8-13 7z" fill="#5ee6b5"/><circle cx="16" cy="24" r="2.5" fill="#fff" opacity=".5"/></svg><span class="avacc" id="avAcc"></span>
     <div class="lvltx"><b id="lvlTitle">Peach Seed</b><small id="lvlNum">Level 1</small><div class="xpbar"><i id="xpFill"></i></div></div>
   </button>
-  <div class="hdr-r"><button class="undo" id="undoBtn" hidden aria-label="Undo last change">↩</button><div class="streak" title="Weeks in a row with 3+ workouts"><span class="flame">🔥</span><span id="streakN">0</span><small>wk</small></div><button class="sbtn" id="sndBtn" aria-label="Toggle sound">🔊</button></div>
+  <div class="hdr-r"><div class="streak" title="Weeks in a row with 3+ workouts"><span class="flame">🔥</span><span id="streakN">0</span><small>wk</small></div><button class="sbtn" id="sndBtn" aria-label="Toggle sound">🔊</button></div>
 </header>
 
 <!-- TRAIN -->
@@ -409,8 +412,8 @@ input[type=search]{-webkit-appearance:none;appearance:none}
   <div class="chips" id="dayChips"></div>
   <div id="exList" style="display:grid;gap:12px"></div>
   <button class="btn wide" id="finishBtn">Finish workout</button>
-  <button class="btn ghost wide" id="unfinishBtn" hidden>↩ Undo finish (not done yet)</button>
-  <p class="muted" style="font-size:13px;margin:0">Made a mistake? Every change shows an <b>↩ UNDO</b> button at the bottom, and there are undo buttons right next to sets, protein and water. Tap a circle after each set; a rest timer starts on its own. New move? Watch the figure, open "How to do it", or tap the video button first.</p>
+  <button class="linkbtn" id="unfinishBtn" hidden style="justify-self:center">Mark as not done</button>
+  <p class="muted" style="font-size:13px;margin:0">Tap a circle after each set (tap it again to clear it); a rest timer starts on its own. New move? Watch the figure, open "How to do it", or tap the video button first.</p>
 </section>
 
 <!-- PLAN -->
@@ -463,10 +466,10 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <div class="row" style="justify-content:space-between"><div class="eyebrow">This workout day's tank</div><button class="linkbtn" id="resetDay">Reset day</button></div>
     <div><div class="row" style="justify-content:space-between"><b>Protein</b><span id="pTxt" class="muted"></span></div>
       <div class="counter"><div class="meter"><i id="pBar" style="background:linear-gradient(90deg,var(--pink),var(--peach))"></i></div>
-      <div class="qbtns"><button data-p="10">+10</button><button data-p="25">+25</button><button data-p="40">+40</button><button class="un" id="fuUnP" data-unf="p" hidden>↩</button></div></div></div>
+      <div class="qbtns"><button data-p="10">+10</button><button data-p="25">+25</button><button data-p="40">+40</button></div></div></div>
     <div><div class="row" style="justify-content:space-between"><b>Water</b><span id="wTxt" class="muted"></span></div>
       <div class="counter"><div class="meter"><i id="wBar" style="background:linear-gradient(90deg,#4cc9f0,var(--mint))"></i></div>
-      <div class="qbtns"><button data-w="8">+8oz</button><button data-w="16">+16</button><button data-w="32">+32</button><button data-w="40">+40</button><button class="un" id="fuUnW" data-unf="w" hidden>↩</button></div></div></div>
+      <div class="qbtns"><button data-w="8">+8oz</button><button data-w="16">+16</button><button data-w="32">+32</button><button data-w="40">+40</button></div></div></div>
   </div>
   <div class="card" style="display:grid;gap:10px">
     <div class="eyebrow">Easy protein hits</div>
@@ -557,7 +560,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
 </div>
 
 <div class="timer" id="timer" role="status"><span id="tLeft">1:30</span>Rest<button id="tAdd">+30s</button><button id="tSkip">Skip</button></div>
-<div class="snack" id="snack" role="status"><span id="snackTxt">Change saved</span><button id="snackUndo">↩ UNDO</button></div>
+<div class="snack" id="snack" role="status"><span id="snackTxt"></span><button id="snackUndo">UNDO</button></div>
 <div class="toast" id="toast"></div>
 <div id="ov" hidden></div>
 <canvas id="confetti"></canvas>
@@ -591,16 +594,22 @@ function dayRoll(){if(!('wid' in S.daily))newRound()}
 dayRoll();
 // ===== Undo: every tap that changes something can be taken back, one tap at a time
 let UNDO=[],pendSnap=null,undoing=false;
-document.addEventListener('pointerdown',e=>{if(e.target.closest('#undoBtn'))return;pendSnap=JSON.stringify(S)},true);
+document.addEventListener('pointerdown',e=>{if(e.target.closest('#snackUndo'))return;pendSnap=JSON.stringify(S)},true);
 document.addEventListener('keydown',e=>{if(!pendSnap)pendSnap=JSON.stringify(S)},true);
 let ACT='',snackT;
-function showSnack(t){const sn=$('#snack');if(!sn)return;$('#snackTxt').textContent=t;sn.classList.add('show');clearTimeout(snackT);snackT=setTimeout(()=>sn.classList.remove('show'),7000)}
+function showSnack(t){const sn=$('#snack');if(!sn)return;$('#snackTxt').textContent=t;sn.classList.add('show');clearTimeout(snackT);snackT=setTimeout(()=>sn.classList.remove('show'),5000)}
 function trackUndo(){if(undoing||!pendSnap)return;const before=pendSnap;pendSnap=null;
-  if(before!==JSON.stringify(S)){UNDO.push(before);if(UNDO.length>50)UNDO.shift();showSnack(ACT||'Change saved');ACT='';const u=document.getElementById('undoBtn');if(u){u.hidden=false;u.classList.remove('pulse');void u.offsetWidth;u.classList.add('pulse')}}}
+  if(before!==JSON.stringify(S)){let b0={};try{b0=JSON.parse(before)}catch(e){}
+    if(!b0.onboarded&&S.onboarded){ACT='';return} // setup can never be undone
+    UNDO.push(before);if(UNDO.length>50)UNDO.shift();if(ACT)showSnack(ACT)}ACT=''}
 function doUndo(){const prev=UNDO.pop();pendSnap=null;if(!prev)return;
   undoing=true;S=JSON.parse(prev);Q.length=0;$('#ov').hidden=true;ovOpen=false;stopTimer();save();undoing=false;
-  rerenderAll();$('#undoBtn').hidden=!UNDO.length;$('#snack').classList.remove('show');toast('Undone ↩');sfx('flip')}
-const save=()=>{trackUndo();S.ts=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};cloudPush();if(window.gameReady)renderGame()};
+  rerenderAll();$('#snack').classList.remove('show');toast('Undone');sfx('flip')}
+function idbOpen(){return new Promise((res,rej)=>{try{const r=indexedDB.open('hourglass',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
+async function idbLoad(){try{const db=await idbOpen();return await new Promise(res=>{const t=db.transaction('kv').objectStore('kv').get('state');t.onsuccess=()=>{try{res(t.result?JSON.parse(t.result):null)}catch(e){res(null)}};t.onerror=()=>res(null)})}catch(e){return null}}
+let idbT;function idbSave(){clearTimeout(idbT);idbT=setTimeout(async()=>{try{const db=await idbOpen();db.transaction('kv','readwrite').objectStore('kv').put(JSON.stringify(S),'state')}catch(e){}},300)}
+async function idbClear(){clearTimeout(idbT);try{const db=await idbOpen();await new Promise(r=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').delete('state');t.oncomplete=r;t.onerror=r})}catch(e){}}
+const save=()=>{trackUndo();S.ts=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};idbSave();cloudPush();if(window.gameReady)renderGame()};
 
 // ===== season helpers
 const seasonOf=w=>Math.min(3,Math.floor((w-1)/13));
@@ -637,10 +646,10 @@ function renderToday(){
       <div><span class="tag">${e.tag}</span>${e.rest?`<span class="tag">Rest ${e.rest}s</span>`:''}</div>
       <details class="how"><summary>How to do it</summary><ol>${e.steps.map(x=>`<li>${x}</li>`).join('')}</ol><p class="avoid"><b>Avoid:</b> ${e.avoid}</p></details>
       <a class="vid" href="https://www.youtube.com/results?search_query=${encodeURIComponent(e.yt)}" target="_blank" rel="noopener noreferrer"><span>▶</span> Watch a video demo</a>
-      <div class="sets">${Array.from({length:n},(_,j)=>`<button class="set ${j<got?'on':''}" data-e="${i}" data-s="${j}" aria-label="Set ${j+1}">${j+1}</button>`).join('')}<button class="undoSet" data-us="${i}" ${got?'':'hidden'}>↩ Undo set</button></div></div>`}).join('');
+      <div class="sets">${Array.from({length:n},(_,j)=>`<button class="set ${j<got?'on':''}" data-e="${i}" data-s="${j}" aria-label="Set ${j+1}">${j+1}</button>`).join('')}</div></div>`}).join('');
   buildFigs();
   updRing();
-  $('#finishBtn').textContent=S.done.includes(sid())?'Workout done ✓':'Finish workout · counts toward her level';{const lf=S.doneDates[S.doneDates.length-1],ub=$('#unfinishBtn');ub.hidden=!(lf&&lf.d===today()&&S.done.includes(lf.id));if(!ub.hidden){const w=+lf.id.slice(1,lf.id.indexOf('d')),d=+lf.id.slice(lf.id.indexOf('d')+1);ub.textContent=`↩ Undo finishing Week ${w} · Day ${DAYS[d].k}`}}
+  $('#finishBtn').textContent=S.done.includes(sid())?'Workout done ✓':'Finish workout · counts toward her level';{const lf=S.doneDates[S.doneDates.length-1],ub=$('#unfinishBtn');ub.hidden=!(lf&&lf.d===today()&&S.done.includes(lf.id));if(!ub.hidden){const w=+lf.id.slice(1,lf.id.indexOf('d')),d=+lf.id.slice(lf.id.indexOf('d')+1);ub.textContent=`Mark Week ${w} · Day ${DAYS[d].k} as not done`}}
   renderLessonPing();
   $('#prayTxt').textContent=PRAYERS[S.day%PRAYERS.length];
 }
@@ -655,15 +664,15 @@ $('#exList').addEventListener('click',e=>{
   if(u){const i=+u.dataset.us,k=sid();if(S.sets[k]&&S.sets[k][i]){S.sets[k][i]--;ACT=`${DAYS[S.day].ex[i].n}: set removed`;sfx('flip');save();renderToday()}return}
   const b=e.target.closest('.set');if(!b)return;
   const i=+b.dataset.e,s=+b.dataset.s,k=sid();S.sets[k]=S.sets[k]||{};
-  const cur=S.sets[k][i]||0;S.sets[k][i]=s<cur?s:s+1;ACT=S.sets[k][i]>cur?`${DAYS[S.day].ex[i].n}: set ${S.sets[k][i]} logged`:`${DAYS[S.day].ex[i].n}: set removed`;
+  const cur=S.sets[k][i]||0;S.sets[k][i]=s<cur?s:s+1;
   const card=b.closest('.ex'),n=card.querySelectorAll('.set').length;
   card.querySelectorAll('.set').forEach((x,j)=>x.classList.toggle('on',j<S.sets[k][i]));
-  card.classList.toggle('complete',S.sets[k][i]>=n);const us=card.querySelector('.undoSet');if(us)us.hidden=!S.sets[k][i];
+  card.classList.toggle('complete',S.sets[k][i]>=n);
   updRing();
   const ex=DAYS[S.day].ex[i];
   if(S.sets[k][i]>cur&&ex.rest&&S.sets[k][i]<n)startTimer(ex.rest);
   const ak=k+'-'+i;
-  if(S.sets[k][i]>(S.awarded[ak]||0)){const gain=S.sets[k][i]-(S.awarded[ak]||0);S.awarded[ak]=S.sets[k][i];if(!S.daily.wid)S.daily.wid=k;else if(S.daily.wid!==k&&S.done.includes(S.daily.wid)){newRound(k);toast('New workout day, new quests ✨')}S.daily.sets+=gain;S.stats.sets+=gain;sfx('pop');buzz(15);setFX(e);rollDrop('set',.1);
+  if(S.sets[k][i]>(S.awarded[ak]||0)){const gain=S.sets[k][i]-(S.awarded[ak]||0);S.awarded[ak]=S.sets[k][i];if(!S.daily.wid)S.daily.wid=k;else if(S.daily.wid!==k&&S.done.includes(S.daily.wid)){newRound(k);toast('New workout day, new quests ✨')}S.daily.sets+=gain;S.stats.sets+=gain;sfx('pop');buzz(15);setFX(e,S.sets[k][i]>=n);rollDrop('set',.1);
     if(S.sets[k][i]>=n){toast(`${ex.n} done 💪`);sfx('ding');gainXP(10*gain+25,e)}else gainXP(10*gain,e)}
   else save();
 });
@@ -672,16 +681,17 @@ $('#unfinishBtn').onclick=()=>{const lf=S.doneDates[S.doneDates.length-1];if(!lf
   S.done=S.done.filter(x=>x!==id);S.doneDates.pop();
   if(S.week!==w&&![0,1,2,3].some(x=>S.done.includes(`w${S.week}d${x}`)))S.week=w;
   if(S.week===w)S.day=d;
-  ACT='Workout un-finished';sfx('flip');save();renderToday();renderPlan()};
+  ACT='Workout marked not done';sfx('flip');save();renderToday();renderPlan()};
 $('#finishBtn').addEventListener('click',()=>{
   if(!S.done.includes(sid())){
     const st=S.sets[sid()]||{};let tot=0,got=0;activeEx().forEach(({e,i})=>{const n=setsFor(e,S.week);tot+=n;got+=Math.min(st[i]||0,n)});
     const needSets=Math.ceil(tot*.75);
     if(got<needSets){toast(`Finish ${needSets-got} more set${needSets-got===1?'':'s'} to count this workout`);buzz(60);return}
-    if(S.doneDates.filter(o=>o.d===today()).length>=2){toast('2 workouts already count today. Rest is part of the plan 💤');return}stopTimer();ACT='Workout finished';S.done.push(sid());S.doneDates.push({id:sid(),d:today()});confetti();sfx('win');buzz([60,40,60]);openLoot();rollDrop('workout');gainXP(100);
+    if(S.doneDates.filter(o=>o.d===today()).length>=2){toast('2 workouts already count today. Rest is part of the plan 💤');return}stopTimer();ACT='Workout finished';S.done.push(sid());S.doneDates.push({id:sid(),d:today()});BATCH=1;confetti();sfx('win');buzz([60,40,60]);rollDrop('workout');gainXP(100);
     toast(['Booty built 🍑','Another brick in the hourglass','She ate that','Glutes: activated','Future you says thanks'][S.done.length%5]);
     if([0,1,2,3].every(d=>S.done.includes(`w${S.week}d${d}`))&&S.week<52){const w=S.week;S.week++;S.day=0;S.viewSeason=null;save();setTimeout(()=>toast(`Week ${w} complete! Week ${S.week} unlocked 🔓`),2200)}
-    else{const nx=[0,1,2,3].find(d=>!S.done.includes(`w${S.week}d${d}`));if(nx!==undefined){S.day=nx;save()}}}
+    else{const nx=[0,1,2,3].find(d=>!S.done.includes(`w${S.week}d${d}`));if(nx!==undefined){S.day=nx;save()}}
+    BATCH=0;openLoot(PEND.splice(0))}
   renderToday();renderPlan();
 });
 function renderLessonPing(){
@@ -736,7 +746,7 @@ function animNum(el,to,suf){const from=parseInt(el.textContent.replace(/\D/g,'')
   const step=t=>{const k=Math.min(1,(t-t0)/700),v=Math.round(from+(to-from)*(1-Math.pow(1-k,3)));el.textContent=v.toLocaleString()+suf;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)}
 ['#fWeight','#fHeight','#fAge','#fAct','#fBF'].forEach(s=>$(s).addEventListener('change',()=>calcFuel(true)));
 $('#goalSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.fuel.g=b.dataset.g;$$('#goalSeg button').forEach(x=>x.classList.toggle('on',x===b));calcFuel(true)});
-function renderTank(){const up=$('#fuUnP'),uw=$('#fuUnW');if(up){up.hidden=!(S.tank.hp||[]).length;uw.hidden=!(S.tank.hw||[]).length}
+function renderTank(){
   const p=S.pTarget||128,w=S.wTarget||96;
   $('#pBar').style.width=Math.min(100,S.tank.p/p*100)+'%';$('#pTxt').textContent=`${S.tank.p} / ${p} g`;
   $('#wBar').style.width=Math.min(100,S.tank.w/w*100)+'%';$('#wTxt').textContent=`${S.tank.w} / ${w} oz`;
@@ -785,9 +795,9 @@ $('#logRows').addEventListener('click',e=>{const b=e.target.closest('[data-del]'
 const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))),dec=t=>JSON.parse(decodeURIComponent(escape(atob(t.trim()))));
 $('#bkCopy').onclick=()=>{const code=enc(S);navigator.clipboard.writeText(code).then(()=>toast('Backup code copied 📋')).catch(()=>{$('#bkBox').hidden=false;$('#bkText').value=code;$('#bkText').select();toast('Select and copy the code')})};
 $('#amenBtn').onclick=()=>{$('#prayCard').open=false;toast('Amen 🙏 Let\'s go');sfx('ding')};
-$('#undoBtn').onclick=doUndo;$('#snackUndo').onclick=doUndo;document.addEventListener('pointerdown',e=>{if(e.target.closest('#snackUndo'))pendSnap=null},true);
+$('#snackUndo').onclick=doUndo;document.addEventListener('pointerdown',e=>{if(e.target.closest('#snackUndo'))pendSnap=null},true);
 $('#rsShow').onclick=()=>{$('#rsBox').hidden=false};$('#rsNo').onclick=()=>{$('#rsBox').hidden=true};
-$('#rsYes').onclick=async()=>{try{localStorage.removeItem(KEY)}catch(e){}
+$('#rsYes').onclick=async()=>{try{localStorage.removeItem(KEY)}catch(e){}await idbClear();
   try{if(typeof CLOUD!=='undefined'&&CLOUD)await CLOUD.set({json:'{}',ts:Date.now()})}catch(e){}
   location.reload()};
 $('#bkShow').onclick=()=>{$('#bkBox').hidden=!$('#bkBox').hidden};
@@ -813,7 +823,7 @@ function openLesson(i){
       if(ov.querySelector('.qopt.right'))return;const ok=btn.dataset.o==='0';
       ov.querySelectorAll('.qopt').forEach(x=>x.classList.add(x.dataset.o==='0'?'right':'faded'));if(!ok)btn.classList.add('wrong');
       $('#qRes').textContent=ok?'Correct! 🎉':'Not quite. The right answer is highlighted.';
-      if(!S.lessons[i]){ACT='Quiz answered';S.lessons[i]=ok?'r':'w';if(ok){confetti();sfx('win');rollDrop('lesson',.3)}else sfx('flip');gainXP(ok?40:15,ev)}
+      if(!S.lessons[i]){S.lessons[i]=ok?'r':'w';if(ok){confetti();sfx('win');rollDrop('lesson',.3)}else sfx('flip');gainXP(ok?40:15,ev)}
       renderLearn();renderLessonPing()});
   },true);
 }
@@ -1218,14 +1228,15 @@ function floatXP(n,ev){const d=document.createElement('div');d.className='fx';d.
 function gainXP(n,ev){S.xp+=n;floatXP(n,ev);const a=$('#avatar');a.classList.remove('jelly');void a.offsetWidth;a.classList.add('jelly');save()}
 
 // overlays wait until a workout in progress is finished
-const Q=[];let ovOpen=false;
+const Q=[];let ovOpen=false,BATCH=0;const PEND=[];
 const busy=()=>$('#v-today').classList.contains('on')&&Object.keys(S.sets[sid()]||{}).length>0&&!S.done.includes(sid());
-function enqueue(fn,front){front?Q.unshift(fn):Q.push(fn);if(!ovOpen&&(front||!busy()))nextOv()}
-function flushOv(){if(!ovOpen&&Q.length&&!busy())nextOv()}
+function enqueue(fn,front){front?Q.unshift(fn):Q.push(fn);if(!ovOpen&&!BATCH&&(front||!busy()))nextOv()}
+function unlockRows(items){return items.length?`<div class="unl">${items.map(i=>`<div class="unr"><span>${i.e}</span><div><b>${i.t}</b><small>${i.s}</small></div></div>`).join('')}</div>`:''}
+function flushOv(){if(busy())return;if(PEND.length){const items=PEND.splice(0);enqueue(ov=>{ov.innerHTML=`<div class="ovc"><div class="eyebrow">Unlocked</div><h2>Nice work</h2>${unlockRows(items)}<button class="btn wide" data-close>Keep going</button></div>`;sfx('win');confetti()},true);return}if(!ovOpen&&Q.length)nextOv()}
 function nextOv(){const ov=$('#ov'),f=Q.shift();if(!f){ov.hidden=true;ovOpen=false;return}ovOpen=true;ov.hidden=false;f(ov)}
 $('#ov').addEventListener('click',e=>{if(e.target.closest('[data-close]'))nextOv()});
 
-function showLevelUp(L){if(busy()){toast(`Level up! ${titleOf(L)} 🎉`);sfx('level')}
+function showLevelUp(L){if(BATCH||busy()){PEND.push({e:'🍑',t:`Level ${L+1}: ${titleOf(L)}`,s:PERKS[Math.min(L,19)],lv:1});if(busy()){toast(`Level up! ${titleOf(L)} 🎉`);sfx('level')}return}
   enqueue(ov=>{ov.innerHTML=`<div class="ovc"><span class="big">🍑</span><div class="eyebrow">Level ${L+1}</div><h2 class="lvlup">LEVEL UP!</h2><p>${S.name?esc(S.name)+' is':'She\'s'} now a <b>${titleOf(L)}</b></p><p class="muted">${PERKS[Math.min(L,19)]}</p><button class="btn wide" data-close>Let's go</button></div>`;sfx('level');buzz([60,40,120]);confetti()})}
 
 const wd=w=>[0,1,2,3].some(d=>S.done.includes(`w${w}d${d}`));
@@ -1254,12 +1265,14 @@ const BADGES=[
  {id:'log1',e:'📏',n:'Measured Up',d:'Save a real check-in',t:()=>realLog().length>=1},
  {id:'cin',e:'⌛',n:'Cinched',d:'Waist down 1 inch',t:()=>{const L=realLog();return L.length>1&&L[0].wa-L[L.length-1].wa>=1}}];
 function checkBadges(){let nw=0;BADGES.forEach(b=>{if(!S.badges.includes(b.id)&&b.t()){S.badges.push(b.id);S.xp+=50;nw=1;
+  if(BATCH||busy()){PEND.push({e:b.e,t:`Trophy: ${b.n}`,s:`${b.d} · +50 pts`});return}
   enqueue(ov=>{ov.innerHTML=`<div class="ovc"><span class="big">${b.e}</span><div class="eyebrow">Trophy unlocked</div><h2>${b.n}</h2><p class="muted">${b.d}</p><p class="gold">+50 pts</p><button class="btn wide" data-close>Nice</button></div>`;sfx('win');buzz(80)})}});if(nw)save()}
 
 const TIPS=['Glutes grow on rest days. Sleep counts as training.','Squeeze a full second at the top of every bridge.','Protein at breakfast makes the daily goal way easier.','Slow lowering means more muscle from the same bodyweight.','Stroller hills are free glute work.','Waist-to-hip ratio beats the scale for this goal.','Progress photos every 4 weeks, same light, same spot.','Shaky last reps mean it is working.','Exhale on the hard part of every rep.','Knees out over the toes on every squat.'];
-function openLoot(){enqueue(ov=>{
+function openLoot(items){items=items||[];enqueue(ov=>{
   const pool=[25,25,50,50,50,75,100,150],vals=[0,1,2].map(()=>pool[Math.random()*pool.length|0]);
-  ov.innerHTML=`<div class="ovc"><div class="eyebrow">Workout complete</div><h2>Pick a mystery card</h2><div class="loot">${vals.map((v,i)=>`<button class="lc" data-i="${i}"><div class="fr">🍑</div><div class="bk">+${v}<small>pts</small></div></button>`).join('')}</div><p class="muted" id="lootTip">One of them hides a big bonus.</p><button class="btn wide" id="lootGo" hidden>Collect</button></div>`;
+  ov.innerHTML=`<div class="ovc"><div class="eyebrow">Workout complete</div>${unlockRows(items)}<h2>Pick a mystery card</h2><div class="loot">${vals.map((v,i)=>`<button class="lc" data-i="${i}"><div class="fr">🍑</div><div class="bk">+${v}<small>pts</small></div></button>`).join('')}</div><p class="muted" id="lootTip">One of them hides a big bonus.</p><button class="btn wide" id="lootGo" hidden>Collect</button></div>`;
+  if(items.some(i=>i.lv))sfx('level');
   let picked=-1;
   ov.querySelectorAll('.lc').forEach(c=>c.onclick=()=>{if(picked>=0)return;picked=+c.dataset.i;c.classList.add('flip');sfx('flip');buzz(30);
     setTimeout(()=>{ov.querySelectorAll('.lc').forEach(o=>{if(o!==c)o.classList.add('flip','dim')});
@@ -1285,9 +1298,9 @@ function renderGame(){
   const wid=S.daily.wid||sid(),wd=+wid.slice(wid.indexOf('d')+1),ww=+wid.slice(1,wid.indexOf('d')),fin=S.done.includes(wid);
   const q=[{i:'🏋️',t:`Finish Week ${ww} · Day ${DAYS[wd].k} workout`,v:fin?1:Math.min(.95,S.daily.sets/Math.max(1,DAYS[wd].ex.reduce((a,e)=>a+setsFor(e,ww),0))),x:fin?'Workout done ✓':`${S.daily.sets} sets so far`,add:''},
            {i:'🥩',t:'Hit the protein goal',v:Math.min(1,S.tank.p/(S.pTarget||128)),x:`${S.tank.p}/${S.pTarget||128} g`,
-            add:[10,25,40].map(n=>`<button class="qa" data-p="${n}">+${n}g</button>`).join('')+((S.tank.hp||[]).length?`<button class="qa un" data-un="p">↩ Undo +${S.tank.hp[S.tank.hp.length-1]}g</button>`:'')},
+            add:[10,25,40].map(n=>`<button class="qa" data-p="${n}">+${n}g</button>`).join('')},
            {i:'💧',t:'Drink the water goal',v:Math.min(1,S.tank.w/(S.wTarget||96)),x:`${S.tank.w}/${S.wTarget||96} oz`,
-            add:[8,16,32,40].map(n=>`<button class="qa" data-w="${n}">+${n}oz</button>`).join('')+((S.tank.hw||[]).length?`<button class="qa un" data-un="w">↩ Undo +${S.tank.hw[S.tank.hw.length-1]}oz</button>`:'')}];
+            add:[8,16,32,40].map(n=>`<button class="qa" data-w="${n}">+${n}oz</button>`).join('')}];
   $('#qlist').innerHTML=q.map(o=>`<div class="qrow"><span class="qic">${o.i}</span><div><b>${o.t}</b><div class="qbar"><i style="width:${o.v*100}%"></i></div><small class="muted">${o.x}</small>${o.add?`<div class="qadd">${o.add}</div>`:''}</div><span class="qck ${o.v>=1?'on':''}">${o.v>=1?'✓':''}</span></div>`).join('');
   const all=q.every(o=>o.v>=1),ch=$('#chest');
   ch.className='chest '+(S.daily.claimed?'claimed':all?'ready':'');ch.textContent=S.daily.claimed?'✨':'🎁';
@@ -1377,12 +1390,12 @@ document.addEventListener('click',e=>{const b=e.target.closest('.fnd');if(!b)ret
 
 // tap juice: emoji burst + hype words + combo
 let combo={id:null,n:0};
-function setFX(e){
+function setFX(e,big){
   const x=e&&e.clientX||innerWidth/2,y=e&&e.clientY||innerHeight/2,em=['🍑','✨','💪','🔥','⭐','💖'];
-  for(let i=0;i<10;i++){const s=document.createElement('span');s.className='burst';s.textContent=em[Math.random()*em.length|0];
+  for(let i=0;i<(big?10:6);i++){const s=document.createElement('span');s.className='burst';s.textContent=em[Math.random()*em.length|0];
     const a=Math.random()*Math.PI*2,d=50+Math.random()*70;s.style.cssText=`left:${x}px;top:${y}px;--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d-30}px`;
     document.body.appendChild(s);setTimeout(()=>s.remove(),800)}
-  if(Math.random()<.45){const h=document.createElement('div');h.className='hype';h.textContent=HYPE[Math.random()*HYPE.length|0];
+  if(big){const h=document.createElement('div');h.className='hype';h.textContent=HYPE[Math.random()*HYPE.length|0];
     h.style.left=Math.max(10,Math.min(innerWidth-220,x-90))+'px';h.style.top=(y-70)+'px';document.body.appendChild(h);setTimeout(()=>h.remove(),1300)}
   const id=sid();if(combo.id!==id)combo={id,n:0};combo.n++;
   if(combo.n%5===0){const c=document.createElement('div');c.className='combo';c.innerHTML=`🔥 x${combo.n}<small>COMBO</small>`;document.body.appendChild(c);setTimeout(()=>c.remove(),1400);sfx('win');buzz([30,30,60])}
@@ -1395,7 +1408,7 @@ function maybeGolden(){
   goldT=setTimeout(()=>{if(!$('#v-today').classList.contains('on')||ovOpen||document.hidden||Math.random()>.45)return;
     goldLast=Date.now();const g=document.createElement('button');g.className='goldpeach';g.innerHTML='<span class="goldf">🍑</span>';g.setAttribute('aria-label','Catch the golden peach');
     g.style.top=(140+Math.random()*(innerHeight-360))+'px';document.body.appendChild(g);sfx('flip');
-    g.onclick=e=>{const pts=[50,75,100,150][Math.random()*4|0];g.classList.add('caught');ACT='Caught a golden peach';toast(`Golden peach caught! +${pts} pts 🍑✨`);confetti();sfx('chest');buzz([40,30,90]);
+    g.onclick=e=>{const pts=[50,75,100,150][Math.random()*4|0];g.classList.add('caught');toast(`Golden peach caught! +${pts} pts 🍑✨`);confetti();sfx('chest');buzz([40,30,90]);
       pendSnap=pendSnap||JSON.stringify(S);gainXP(pts,e);S.stats.golden=(S.stats.golden||0)+1;rollDrop('golden',.35);setTimeout(()=>g.remove(),400)};
     setTimeout(()=>g.remove(),7200)},8000+Math.random()*20000)}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)maybeGolden()});
@@ -1406,15 +1419,22 @@ function renderAvatarAcc(L){const a=$('#avAcc');if(!a)return;const hit=ACCS.find
 function rerenderAll(){loadFuelInputs();calcFuel();renderMotive();renderToday();renderPlan();renderProgress();renderLearn();renderFaq();if(SAMPLE)renderChat();$('#sndBtn').textContent=S.sound?'🔊':'🔇';renderGame()}
 window.gameReady=true;
 rerenderAll();
-if(!S.onboarded)onboard();
 maybeGolden();
-initCaps();
+const hasHistory=()=>!!(S.onboarded||S.done.length||S.xp>0||S.name||Object.keys(S.sets||{}).length||S.log.length||Object.keys(S.lessons||{}).length);
+async function boot(){
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+  const saved=await idbLoad();
+  if(saved&&(saved.ts||0)>(S.ts||0)){S=Object.assign(S,saved);dayRoll();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};rerenderAll()}
+  try{await Promise.race([initCaps(),new Promise(r=>setTimeout(r,4000))])}catch(e){}
+  if(hasHistory()){if(!S.onboarded){S.onboarded=1;save()}}else onboard();
+}
+boot();
 
 </script>
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='15';
+const APP_VERSION='16';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
