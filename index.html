@@ -383,6 +383,31 @@ body.noscroll{overflow:hidden}
 .topic span{font-size:22px}.topic b{font-size:14px;line-height:1.25}.topic small{color:var(--muted);font-size:12px}
 .topic:active{transform:scale(.97)}
 .topic:last-child:nth-child(odd){grid-column:1/-1}
+.coin{display:flex;align-items:center;gap:5px;background:color-mix(in srgb,var(--gold) 16%,var(--surface2));border:1px solid color-mix(in srgb,var(--gold) 50%,var(--line));color:var(--gold);font-weight:800;padding:7px 11px;border-radius:999px;font-variant-numeric:tabular-nums;font-size:14px;white-space:nowrap}
+.coin.bump{animation:pop .4s}
+.shopCard{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;text-align:left;width:100%;font:inherit;color:var(--fg);border-color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,var(--surface))}
+.shopCard b{display:block;font-size:15px}.se{font-size:28px;text-align:center}
+.ovc.shop{text-align:left;display:flex;flex-direction:column;gap:10px;width:min(420px,100%);max-height:88vh}
+.ovc.shop.re{animation:none}
+.shopHead{display:flex;justify-content:space-between;align-items:center;gap:10px}.shopHead h2{font-size:24px;color:var(--gold);margin:2px 0 0}
+.shopTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.shopTabs button{border:1px solid var(--line);background:var(--surface2);color:var(--fg);border-radius:12px;padding:9px 4px;font-weight:700;font-size:13px}
+.shopTabs button.on{background:var(--peach);border-color:var(--peach);color:#1a0f1f}
+.shopBody{display:grid;gap:8px;overflow-y:auto;min-height:0;align-content:start}
+.shopRow{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;background:var(--surface2);border-radius:14px;padding:10px 12px}
+.shopRow b{display:block;font-size:14.5px;line-height:1.25}.shopRow small{color:var(--gold);font-weight:700;font-size:12.5px}
+.btn.sm{padding:9px 12px;font-size:13px;border-radius:12px;box-shadow:none;white-space:nowrap}
+.btn.off{background:var(--surface);color:var(--muted);border:1px solid var(--line);box-shadow:none}
+.shopMsg{background:color-mix(in srgb,var(--mint) 14%,var(--surface2));border:1px solid var(--mint);border-radius:14px;padding:12px;font-size:14px;text-align:center;display:grid;gap:8px;justify-items:center;animation:rise .3s}
+.shopNote{font-size:12.5px;margin:0}
+.addR{background:var(--surface2);border-radius:14px;padding:10px 12px}.addR summary{font-weight:700;cursor:pointer}.addR input{margin-top:8px}.addR .btn{margin-top:8px}
+.crate{display:grid;justify-items:center;gap:4px;text-align:center;background:var(--surface2);border:1px solid #4cc9f0;border-radius:16px;padding:16px}
+.crate.gold{border-color:#c77dff;box-shadow:0 0 24px -10px #c77dff}.crate .ce{font-size:44px;display:inline-block;animation:wob .9s ease-in-out infinite alternate}.crate small{color:var(--muted)}.crate .btn{margin-top:6px}
+.accGrid,.thGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.accI,.thI{display:grid;justify-items:center;gap:3px;border:1px solid var(--line);background:var(--surface2);border-radius:14px;padding:10px 4px;color:var(--fg)}
+.accI span{font-size:28px}.accI small,.thI small{color:var(--gold);font-weight:700;font-size:11.5px}
+.accI.on,.thI.on{border-color:var(--mint);box-shadow:0 0 0 1px var(--mint) inset}
+.thI span{width:30px;height:30px;border-radius:50%}.thI b{font-size:13px}
 .linkbtn{border:0;background:none;padding:0;color:var(--muted);font-size:12px;text-decoration:underline}
 textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
 .ask{display:grid;gap:12px;border-color:var(--pink);background:linear-gradient(160deg,color-mix(in srgb,var(--pink) 18%,var(--surface)),var(--surface))}
@@ -441,7 +466,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <svg id="avatar" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 13c-9-4-19 2-19 14 0 10 9 17 19 17s19-7 19-17c0-12-10-18-19-14z" fill="url(#peachG)"/><path d="M24 14c-2 8-2 18 0 29" stroke="#c4466a" stroke-width="1.6" fill="none" opacity=".55"/><path d="M24 13c2-6 8-8 13-7-2 5-7 8-13 7z" fill="#5ee6b5"/><circle cx="16" cy="24" r="2.5" fill="#fff" opacity=".5"/></svg><span class="avacc" id="avAcc"></span>
     <div class="lvltx"><b id="lvlTitle">Peach Seed</b><small id="lvlNum">Level 1</small><div class="xpbar"><i id="xpFill"></i></div></div>
   </button>
-  <div class="hdr-r"><div class="streak" title="Weeks in a row with 3+ workouts"><span class="flame">🔥</span><span id="streakN">0</span><small>wk</small></div><button class="sbtn" id="sndBtn" aria-label="Toggle sound">🔊</button></div>
+  <div class="hdr-r"><div class="streak" title="Weeks in a row with 3+ workouts"><span class="flame">🔥</span><span id="streakN">0</span><small>wk</small></div><button class="coin" id="coinBtn" aria-label="Open reward shop">🍑 <span id="coinN">0</span></button></div>
 </header>
 
 <!-- TRAIN -->
@@ -549,6 +574,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
 
 <!-- PROGRESS -->
 <section class="view" id="v-progress">
+  <button class="card shopCard" id="shopCard"><span class="se">🎁</span><span><small class="eyebrow">Reward shop</small><b id="shopCardTxt">Spend points on real treats</b></span><span class="lpGo">Open ➜</span></button>
   <div class="card hg-wrap">
     <svg class="hg" viewBox="0 0 120 200" width="120" height="200" aria-label="Silhouette shaped by your waist-to-hip ratio">
       <defs><linearGradient id="hgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4f8b"/><stop offset="1" stop-color="#ff8f6b"/></linearGradient></defs>
@@ -577,7 +603,8 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <div style="overflow-x:auto"><table><thead><tr><th>Date</th><th>Wt</th><th>Waist</th><th>Hips</th><th></th></tr></thead><tbody id="logRows"></tbody></table></div>
   </div>
   <div class="card" style="display:grid;gap:10px">
-    <div class="eyebrow">Keep your progress safe</div>
+    <div class="eyebrow">Settings & backup</div>
+    <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><span>Sound effects</span><button class="sbtn" id="sndBtn" aria-label="Toggle sound">🔊</button></div>
     <div class="muted" style="font-size:13.5px" id="syncState">Progress is saved inside the app on this phone. Copy a backup code every few weeks and keep it in Notes.</div>
     <div class="row"><button class="btn ghost" id="bkCopy">Copy backup code</button><button class="btn ghost" id="bkShow">Restore from code</button></div>
     <div id="bkBox" hidden style="display:grid;gap:8px"><textarea id="bkText" rows="3" placeholder="Paste a backup code here"></textarea><button class="btn" id="bkRestore">Restore progress</button></div>
@@ -1238,7 +1265,7 @@ const FAQ=[
   ['What is the "season version"?','The way she does that exercise this season. Season 1 is bodyweight; later seasons add pauses, single-leg moves, bands and dumbbells.'],
   ['How do levels work?','Levels come only from finished workouts, so your level always matches your real progress: 20 levels across the 208 workouts of the year, about one every 10 to 11 workouts, five per season. Hourglass Queen takes 200 workouts. A workout counts once at least 3 out of 4 of its sets are done, and up to 2 count per day.'],
   ['What are shiny finds?','Collectibles that drop by surprise: about 1 in 10 sets, every finished workout, every chest, some lessons, and golden peaches that sometimes fly across the Train screen. There are 41 to collect in 4 rarities, plus rare shiny versions. Duplicates give bonus points.'],
-  ['What are points for?','Points come from sets, quests, lessons, check-ins and mystery cards. They are a bonus score for fun and never change your level.'],
+  ['What are points for?','Spend them in the Reward shop: tap the 🍑 points in the top corner. Redeem real treats like a coffee date, nails done or date night (and add your own), open crates for shiny finds, or unlock peach accessories and app colors. Points come from sets, workouts, quests, lessons, check-ins, mystery cards and golden peaches. Spending them never lowers your level.'],
   ['How do I move to the next week?','Use the Plan tab: tap the next week or the + button after finishing that week\'s 4 workouts.'],
   ['How do I keep my progress safe?','Progress saves inside the app on your phone. Copy a backup code from the Progress tab every few weeks and keep it in Notes. If you switch phones, paste it into Restore.'],
   ['How do I put it on my iPhone home screen?','Open the link in Safari, tap the Share button (square with an arrow), scroll down, tap "Add to Home Screen", name it Hourglass, and tap Add.']]},
@@ -1390,7 +1417,10 @@ function renderGame(){
   $('#lvlTitle').textContent=titleOf(L);
   $('#lvlNum').textContent=n?`Level ${L+1} · ${n-r} to level ${L+2}`:`Level 20 · Year complete 👑`;
   $('#xpFill').style.width=(n?r/n*100:100)+'%';$('#avatar').style.setProperty('--s',(.8+Math.min(L,20)*.02).toFixed(3));
-  $('#streakN').textContent=weekStreak();renderFinds();renderAvatarAcc(L);
+  $('#streakN').textContent=weekStreak();
+  {shopInit();const bal=coins(),cn=$('#coinN');if(cn.textContent!==bal.toLocaleString()){cn.textContent=bal.toLocaleString();const cb=$('#coinBtn');cb.classList.remove('bump');void cb.offsetWidth;cb.classList.add('bump')}
+   const nx=S.rewards.filter(r=>r.c>bal).sort((a,b)=>a.c-b.c)[0],can=S.rewards.some(r=>r.c<=bal);
+   $('#shopCardTxt').textContent=can?'You can redeem a reward! 🎉':nx?`${(nx.c-bal).toLocaleString()} pts to ${nx.n}`:'Spend points on real treats'}renderFinds();renderAvatarAcc(L);
   if(S.lvlSeen>L)S.lvlSeen=L;
   if(L>S.lvlSeen){for(let i=S.lvlSeen+1;i<=L;i++)showLevelUp(i);S.lvlSeen=L;save()}
   const wid=S.daily.wid||sid(),wd=+wid.slice(wid.indexOf('d')+1),ww=+wid.slice(1,wid.indexOf('d')),fin=S.done.includes(wid);
@@ -1413,7 +1443,7 @@ $('#lvlBtn').onclick=()=>enqueue(ov=>{const {L,w}=levelOf();
   ov.innerHTML=`<div class="ovc"><div class="eyebrow">The glow-up ladder</div><h2>Levels = workouts finished</h2>
    <p class="muted">${w} of 208 workouts done. Each level is earned by real training, so your title always matches how far into the year you are.</p>
    <div class="ladder">${TITLES.map((t,i)=>`${i%5===0?`<div class="ladS">${SEASONS[i/5].i} Season ${i/5+1}: ${SEASONS[i/5].n}</div>`:''}<div class="lad ${i<L?'past':i===L?'now':''}"><span>${i+1}</span><b>${t}</b><small>${LV[i]} workouts</small></div>`).join('')}</div>
-   <p class="muted" style="font-size:12.5px">🍑 Bonus points: ${S.xp.toLocaleString()}. Points come from sets, quests, lessons and mystery cards. They are the fun score; levels only move with workouts.</p>
+   <p class="muted" style="font-size:12.5px">🍑 You have ${coins().toLocaleString()} points to spend in the Reward shop. Levels only move with workouts.</p>
    <button class="btn wide" data-close>Back to it</button></div>`},true);
 
 // first-run welcome
@@ -1511,9 +1541,58 @@ function maybeGolden(){
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)maybeGolden()});
 $$('.dock button').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.v==='today')maybeGolden()}));
 const ACCS=[[13,'👑'],[8,'😎'],[3,'🎀'],[1,'🌱']];
-function renderAvatarAcc(L){const a=$('#avAcc');if(!a)return;const hit=ACCS.find(x=>L>=x[0]);a.textContent=hit?hit[1]:''}
+function renderAvatarAcc(L){const a=$('#avAcc');if(!a)return;if(S.wear){const w=SHOP_ACC.find(x=>x.id===S.wear);if(w){a.textContent=w.e;return}}const hit=ACCS.find(x=>L>=x[0]);a.textContent=hit?hit[1]:''}
 
-function rerenderAll(){loadFuelInputs();calcFuel();renderMotive();renderToday();renderPlan();renderProgress();renderLearn();renderFaq();if(SAMPLE)renderChat();$('#sndBtn').textContent=S.sound?'🔊':'🔇';renderGame()}
+
+// ===== Reward shop: points are spendable money =====
+const DEF_REWARDS=[{id:'r1',e:'🛁',n:'Bubble bath, no interruptions',c:500},{id:'r2',e:'☕',n:'Coffee date',c:1000},{id:'r3',e:'😴',n:'Sleep in, someone else takes the baby',c:1500},{id:'r4',e:'💅',n:'Nails done',c:2500},{id:'r5',e:'🩱',n:'New workout outfit',c:4000},{id:'r6',e:'🍝',n:'Date night',c:5000},{id:'r7',e:'💆‍♀️',n:'Spa day',c:10000}];
+const SHOP_ACC=[{id:'flower',e:'🌸',c:200},{id:'bow2',e:'🎀',c:300},{id:'head',e:'🎧',c:500},{id:'shades',e:'🕶️',c:700},{id:'halo',e:'😇',c:1000},{id:'crown2',e:'👑',c:1500}];
+const THEMES=[{id:'peach',n:'Peach',c:0,a:['#ff4f8b','#ff8f6b']},{id:'lilac',n:'Lilac',c:800,a:['#9b5de5','#f15bb5']},{id:'ocean',n:'Ocean',c:800,a:['#3a86ff','#4cc9f0']},{id:'matcha',n:'Matcha',c:800,a:['#2ec4b6','#80ed99']},{id:'sunset',n:'Sunset',c:1000,a:['#ef476f','#ffd166']},{id:'gold',n:'Gold',c:1500,a:['#f77f00','#ffd166']}];
+ODDS.shopR={C:0,R:80,E:17,L:3};ODDS.shopE={C:0,R:0,E:85,L:15};
+const coins=()=>Math.max(0,(S.xp||0)-(S.spent||0));
+function shopInit(){if(!S.rewards)S.rewards=DEF_REWARDS.map(x=>({...x}));S.ownedAcc=S.ownedAcc||[];S.ownedThemes=S.ownedThemes||['peach'];S.spent=S.spent||0;S.redeemed=S.redeemed||[]}
+function applyTheme(){const t=THEMES.find(x=>x.id===(S.theme||'peach'))||THEMES[0],r=document.documentElement.style;
+  if(t.id==='peach'){r.removeProperty('--pink');r.removeProperty('--peach')}else{r.setProperty('--pink',t.a[0]);r.setProperty('--peach',t.a[1])}}
+let shopTab='rewards';
+function openShop(){enqueue(ov=>renderShop(ov),true)}
+function renderShop(ov,msg){shopInit();const bal=coins(),re=!!ov.querySelector('.shop');
+  let body='';
+  if(shopTab==='rewards')body=`<p class="muted shopNote">Real treats you earn by training. Redeem one, then show this screen to your husband 😉</p>`+
+    S.rewards.map(r=>`<div class="shopRow"><span class="se">${r.e}</span><div><b>${esc(r.n)}</b><small>${r.c.toLocaleString()} pts</small></div><button class="btn sm ${bal>=r.c?'':'off'}" data-buy="r:${r.id}">${bal>=r.c?'Redeem':`${(r.c-bal).toLocaleString()} to go`}</button></div>`).join('')+
+    `<details class="addR"><summary>+ Add your own reward</summary><input id="nrN" placeholder="Like: Target run by myself" maxlength="40"><input id="nrC" type="number" inputmode="numeric" placeholder="Cost in points, like 1500"><button class="btn ghost wide" id="nrGo" type="button">Add reward</button></details>`+
+    (S.redeemed.length?`<div class="eyebrow" style="margin-top:6px">Redeemed</div>`+S.redeemed.slice(-6).reverse().map(x=>`<div class="muted" style="font-size:13px">✓ ${esc(x.n)} · ${x.d}</div>`).join(''):'');
+  if(shopTab==='crates')body=`<div class="crate"><span class="ce">📦</span><b>Mystery crate</b><small>One shiny find. Rare or better, guaranteed.</small><button class="btn ${bal>=300?'':'off'}" data-buy="c:shopR">Open · 300 pts</button></div>
+    <div class="crate gold"><span class="ce">🎁</span><b>Golden crate</b><small>Epic or better, guaranteed. 15% legendary.</small><button class="btn ${bal>=1200?'':'off'}" data-buy="c:shopE">Open · 1,200 pts</button></div>
+    <p class="muted shopNote" style="text-align:center">${Object.keys(S.finds||{}).length} of ${FINDS.length} shiny finds collected</p>`;
+  if(shopTab==='style')body=`<div class="eyebrow">Peach accessories</div><div class="accGrid">${SHOP_ACC.map(a=>{const own=S.ownedAcc.includes(a.id),on=S.wear===a.id;return `<button class="accI ${on?'on':''}" data-buy="a:${a.id}"><span>${a.e}</span><small>${on?'Wearing':own?'Wear':a.c+' pts'}</small></button>`}).join('')}</div>
+    ${S.wear?`<button class="linkbtn" data-buy="a:none" style="justify-self:start">Take accessory off</button>`:''}
+    <div class="eyebrow" style="margin-top:10px">App colors</div><div class="thGrid">${THEMES.map(t=>{const own=S.ownedThemes.includes(t.id),on=(S.theme||'peach')===t.id;return `<button class="thI ${on?'on':''}" data-buy="t:${t.id}"><span style="background:linear-gradient(135deg,${t.a[0]},${t.a[1]})"></span><b>${t.n}</b><small>${on?'Using':own?'Use':t.c+' pts'}</small></button>`}).join('')}</div>`;
+  ov.innerHTML=`<div class="ovc shop ${re?'re':''}"><div class="shopHead"><div><div class="eyebrow">Reward shop</div><h2>🍑 ${bal.toLocaleString()} pts</h2></div><button class="pX" data-close aria-label="Close shop">✕</button></div>
+    ${msg?`<div class="shopMsg">${msg}</div>`:''}
+    <div class="shopTabs">${[['rewards','🎁 Rewards'],['crates','📦 Crates'],['style','✨ Style']].map(t=>`<button class="${shopTab===t[0]?'on':''}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</div>
+    <div class="shopBody">${body}</div>
+    <p class="muted shopNote">Earn points from sets, workouts, quests, lessons, check-ins, mystery cards and golden peaches. Spending points never lowers your level.</p></div>`;
+  ov.onclick=e=>{const t=e.target.closest('[data-tab]');if(t){shopTab=t.dataset.tab;delete ov.dataset.confirm;renderShop(ov);sfx('pop');return}
+    const b=e.target.closest('[data-buy]');if(b){shopBuy(b.dataset.buy,ov);return}
+    if(e.target.closest('#nrGo')){const n=$('#nrN').value.trim(),c=Math.round(+$('#nrC').value);if(!n||!(c>=50)){toast('Add a name and a cost of at least 50 points');return}
+      S.rewards.push({id:'c'+Date.now(),e:'⭐',n,c});S.rewards.sort((a,b)=>a.c-b.c);save();renderShop(ov,`Added <b>${esc(n)}</b> for ${c.toLocaleString()} pts`)}};
+}
+function shopBuy(code,ov){const i=code.indexOf(':'),k=code.slice(0,i),id=code.slice(i+1),bal=coins();shopInit();
+  const short=c=>{toast(`${(c-bal).toLocaleString()} more points to go. Keep training!`);buzz(40)};
+  if(k==='r'){const r=S.rewards.find(x=>x.id===id);if(!r)return;if(bal<r.c)return short(r.c);
+    if(ov.dataset.confirm!==code){ov.dataset.confirm=code;renderShop(ov,`Redeem <b>${esc(r.n)}</b> for ${r.c.toLocaleString()} pts?<div class="row" style="justify-content:center"><button class="btn sm" data-buy="${code}">Yes, redeem</button><button class="btn sm off" data-tab="rewards">Cancel</button></div>`);return}
+    delete ov.dataset.confirm;S.spent+=r.c;S.redeemed.push({n:r.n,c:r.c,d:today()});save();confetti();sfx('level');buzz([60,40,120]);
+    renderShop(ov,`<span style="font-size:56px;line-height:1">${r.e}</span><b style="font-size:17px">${esc(r.n)}: unlocked!</b><span>Show this screen to your husband. You earned it 💗</span>`);return}
+  if(k==='c'){const cost=id==='shopE'?1200:300;if(bal<cost)return short(cost);S.spent+=cost;save();nextOv();rollDrop(id);return}
+  if(k==='a'){if(id==='none'){S.wear=null;save();renderShop(ov);return}const a=SHOP_ACC.find(x=>x.id===id);
+    if(S.ownedAcc.includes(id)){S.wear=id;save();renderShop(ov);return}if(bal<a.c)return short(a.c);
+    S.spent+=a.c;S.ownedAcc.push(id);S.wear=id;save();sfx('win');confetti();renderShop(ov,`<span style="font-size:44px">${a.e}</span>Your peach is wearing it!`);return}
+  if(k==='t'){const t=THEMES.find(x=>x.id===id);if(S.ownedThemes.includes(id)){S.theme=id;applyTheme();save();renderShop(ov);return}if(bal<t.c)return short(t.c);
+    S.spent+=t.c;S.ownedThemes.push(id);S.theme=id;applyTheme();save();sfx('win');confetti();renderShop(ov,`<b>${t.n}</b> colors unlocked!`)}
+}
+
+$('#coinBtn').onclick=openShop;$('#shopCard').onclick=openShop;
+function rerenderAll(){applyTheme();loadFuelInputs();calcFuel();renderMotive();renderToday();renderPlan();renderProgress();renderLearn();renderFaq();if(SAMPLE)renderChat();$('#sndBtn').textContent=S.sound?'🔊':'🔇';renderGame()}
 window.gameReady=true;
 rerenderAll();
 maybeGolden();
@@ -1531,7 +1610,7 @@ boot();
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='19';
+const APP_VERSION='20';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
