@@ -324,6 +324,8 @@ details.how li{color:var(--fg)}
 .verse{background:color-mix(in srgb,var(--gold) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-radius:14px;padding:10px 12px;display:grid;gap:4px}
 .verse .vlab{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
 .verse p{margin:0;font-size:15.5px;line-height:1.45;font-weight:600;text-wrap:pretty}
+.vrow{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.esv{font-size:12.5px;font-weight:800;color:var(--bg);background:var(--gold);padding:5px 10px;border-radius:999px;text-decoration:none;white-space:nowrap}
 .verse small{color:var(--muted);font-size:12px;font-weight:700}
 .quote.sm{font-size:14px;color:var(--muted);font-weight:600}
 .pray{padding:14px 16px;border-color:color-mix(in srgb,var(--gold) 45%,var(--line))}
@@ -576,11 +578,12 @@ const esc=t=>String(t||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const sample=[
   {date:'2026-09-05',w:152,wa:31.5,h:39,ex:1},{date:'2026-09-19',w:151,wa:31,h:39.25,ex:1},
   {date:'2026-10-03',w:150.5,wa:30.5,h:39.5,ex:1},{date:'2026-10-17',w:150,wa:30.25,h:39.75,ex:1}];
-let S={week:1,day:0,sets:{},done:[],log:sample,fuel:{w:150,h:64,a:25,act:'1.55',bf:false,g:'recomp'},tank:{d:today(),p:0,w:0},
+let S={week:1,day:0,sets:{},done:[],log:[],fuel:{w:150,h:64,a:25,act:'1.55',bf:false,g:'recomp'},tank:{d:today(),p:0,w:0},
   xp:0,lvlSeen:0,badges:[],stats:{sets:0,pDays:0,wDays:0,chests:0},daily:{d:today(),sets:0,walk:0,claimed:0},doneDates:[],awarded:{},sound:true,
   name:'',why:'',pp:'',start:'',lessons:{},ts:0,installHide:0,viewSeason:null,lessonSeason:null,history:[]};
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(S,s)}catch(e){}
 if(!S.start)S.start=today();
+S.log=(S.log||[]).filter(x=>!x.ex); // no example data, ever
 // Quests run per WORKOUT DAY: a round starts with a workout and ends when she opens the chest
 // (or when she starts a new workout after finishing the last one).
 function newRound(wid){S.daily={wid:wid||null,sets:0,claimed:0};S.tank={p:0,w:0}}
@@ -614,7 +617,7 @@ function renderMotive(){
   const d=dayNum(),pct=Math.min(100,d/365*100);
   $('#motive').innerHTML=`<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b class="hi">${S.name?`Hey ${esc(S.name)}`:'Hey gorgeous'} 👋</b><span class="pill">Day ${Math.min(d,365)} of 365</span></div>
     <div class="yearbar"><i style="width:${pct}%"></i></div>
-    <div class="verse"><span class="vlab">📖 Verse of the day</span><p>${VERSES[(d-1)%VERSES.length][0]}</p><small>${VERSES[(d-1)%VERSES.length][1]} (KJV)</small></div>
+    <div class="verse"><span class="vlab">📖 Verse of the day</span><p>${VERSES[(d-1)%VERSES.length][0]}</p><div class="vrow"><small>${VERSES[(d-1)%VERSES.length][1]} (KJV)</small><a class="esv" href="https://www.esv.org/${VERSES[(d-1)%VERSES.length][1].replace(/–/g,'-').replace(/ /g,'+')}/" target="_blank" rel="noopener noreferrer">Read in ESV ↗</a></div></div>
     <p class="quote sm">“${QUOTES[(d-1)%QUOTES.length]}”</p>${S.why?`<p class="why">💗 Her why: ${esc(S.why)}</p>`:''}`;
 }
 function renderToday(){
@@ -757,7 +760,7 @@ function renderProgress(){
   const L=[...S.log].sort((a,b)=>a.date.localeCompare(b.date)),last=L[L.length-1],first=L[0];
   if(last){const r=last.wa/last.h;$('#whr').textContent=r.toFixed(2);$('#hgPath').setAttribute('d',hgPath(r));
     const dW=last.wa-first.wa,dH=last.h-first.h;
-    $('#whrNote').innerHTML=`Waist ${dW<=0?'down':'up'} ${Math.abs(dW).toFixed(2)}" and hips ${dH>=0?'up':'down'} ${Math.abs(dH).toFixed(2)}" since ${first.date}. Lower ratio = more hourglass.${L.some(x=>x.ex)?'<br><b class="gold">Example data shown.</b> Her first check-in replaces it.':''}`;
+    $('#whrNote').innerHTML=`Waist ${dW<=0?'down':'up'} ${Math.abs(dW).toFixed(2)}" and hips ${dH>=0?'up':'down'} ${Math.abs(dH).toFixed(2)}" since ${first.date}. Lower ratio = more hourglass.`;
   }else{$('#whr').textContent='–';$('#hgPath').setAttribute('d',hgPath(.75));$('#whrNote').textContent='Log her first check-in to see her shape.'}
   if(L.length<2)$('#chart').innerHTML='<p class="muted" style="font-size:13px">Two check-ins draw the trend line.</p>';
   else{
@@ -767,6 +770,7 @@ function renderProgress(){
       return `<polygon points="${X(0)},${H-pb} ${pts} ${X(L.length-1)},${H-pb}" fill="${c}" opacity=".12"/><polyline points="${pts}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"><animate attributeName="stroke-dashoffset" from="1" to="0" dur="1.1s" fill="freeze"/></polyline><circle cx="${X(L.length-1)}" cy="${Y(L[L.length-1][k])}" r="5" fill="${c}"/>`};
     $('#chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}">${ticks.map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${pl-6}" y="${Y(v)+4}" text-anchor="end" font-size="10" fill="var(--muted)">${v}"</text>`).join('')}${line('h','#ff8f6b')}${line('wa','#5ee6b5')}<text x="${X(0)}" y="${H-6}" font-size="10" fill="var(--muted)">${L[0].date.slice(5)}</text><text x="${X(L.length-1)}" y="${H-6}" font-size="10" text-anchor="end" fill="var(--muted)">${L[L.length-1].date.slice(5)}</text></svg>`;
   }
+  if(!L.length){$('#logRows').innerHTML='<tr><td colspan="5" class="muted" style="padding:14px 4px">No check-ins yet. Measure waist and hips, then save the first one above.</td></tr>';return}
   $('#logRows').innerHTML=L.slice().reverse().map(x=>`<tr><td>${x.date.slice(5)}${x.ex?'<span class="ex-flag">EX</span>':''}</td><td>${x.w||'–'}</td><td>${x.wa}"</td><td>${x.h}"</td><td><button class="del" data-del="${x.date}" aria-label="Delete">Delete</button></td></tr>`).join('');
 }
 $('#lDate').value=today();
