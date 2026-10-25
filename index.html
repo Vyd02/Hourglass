@@ -385,6 +385,12 @@ body.noscroll{overflow:hidden}
 .topic:last-child:nth-child(odd){grid-column:1/-1}
 .coin{display:flex;align-items:center;gap:5px;background:color-mix(in srgb,var(--gold) 16%,var(--surface2));border:1px solid color-mix(in srgb,var(--gold) 50%,var(--line));color:var(--gold);font-weight:800;padding:7px 11px;border-radius:999px;font-variant-numeric:tabular-nums;font-size:14px;white-space:nowrap}
 .coin.bump{animation:pop .4s}
+.coin{position:relative;padding:5px 12px 5px 8px!important;gap:6px!important;border-radius:14px!important}
+.coin .cIco{font-size:20px;line-height:1}
+.coin .cTx{display:grid;line-height:1.05;text-align:left}
+.coin .cTx small{font-size:9.5px;letter-spacing:.14em;font-weight:800;color:var(--fg);opacity:.8}
+.coin .cTx b{font-size:15px;font-variant-numeric:tabular-nums}
+.cDot{position:absolute;top:-3px;right:-3px;width:12px;height:12px;border-radius:50%;background:var(--pink);border:2px solid var(--bg);animation:pop 1.6s ease-in-out infinite}
 .shopCard{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;text-align:left;width:100%;font:inherit;color:var(--fg);border-color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,var(--surface))}
 .shopCard b{display:block;font-size:15px}.se{font-size:28px;text-align:center}
 .ovc.shop{text-align:left;display:flex;flex-direction:column;gap:10px;width:min(420px,100%);max-height:88vh}
@@ -467,7 +473,7 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <svg id="avatar" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 13c-9-4-19 2-19 14 0 10 9 17 19 17s19-7 19-17c0-12-10-18-19-14z" fill="url(#peachG)"/><path d="M24 14c-2 8-2 18 0 29" stroke="#c4466a" stroke-width="1.6" fill="none" opacity=".55"/><path d="M24 13c2-6 8-8 13-7-2 5-7 8-13 7z" fill="#5ee6b5"/><circle cx="16" cy="24" r="2.5" fill="#fff" opacity=".5"/></svg><span class="avacc" id="avAcc"></span>
     <div class="lvltx"><b id="lvlTitle">Peach Seed</b><small id="lvlNum">Level 1</small><div class="xpbar"><i id="xpFill"></i></div></div>
   </button>
-  <div class="hdr-r"><div class="streak" title="Weeks in a row with 3+ workouts"><span class="flame">🔥</span><span id="streakN">0</span><small>wk</small></div><button class="coin" id="coinBtn" aria-label="Open reward shop">🍑 <span id="coinN">0</span></button></div>
+  <div class="hdr-r"><div class="streak" title="Weeks in a row with 3+ workouts"><span class="flame">🔥</span><span id="streakN">0</span><small>wk</small></div><button class="coin" id="coinBtn" aria-label="Open the shop"><span class="cIco">🛍️</span><span class="cTx"><small>SHOP</small><b id="coinN">0</b></span><i class="cDot" id="coinDot" hidden></i></button></div>
 </header>
 
 <!-- TRAIN -->
@@ -576,7 +582,6 @@ input[type=search]{-webkit-appearance:none;appearance:none}
 
 <!-- PROGRESS -->
 <section class="view" id="v-progress">
-  <button class="card shopCard" id="shopCard"><span class="se">🎁</span><span><small class="eyebrow">Reward shop</small><b id="shopCardTxt">Spend points on rewards</b></span><span class="lpGo">Open ➜</span></button>
   <div class="card hg-wrap">
     <svg class="hg" viewBox="0 0 120 200" width="120" height="200" aria-label="Silhouette shaped by your waist-to-hip ratio">
       <defs><linearGradient id="hgGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff4f8b"/><stop offset="1" stop-color="#ff8f6b"/></linearGradient></defs>
@@ -1423,7 +1428,7 @@ function renderGame(){
   {shopInit();const bal=coins(),cn=$('#coinN');if(cn.textContent!==bal.toLocaleString()){cn.textContent=bal.toLocaleString();const cb=$('#coinBtn');cb.classList.remove('bump');void cb.offsetWidth;cb.classList.add('bump')}
    const items=[...S.rewards.map(r=>({n:r.n,c:r.c})),{n:'a Mystery crate',c:300},...SHOP_ACC.filter(a=>!S.ownedAcc.includes(a.id)).map(a=>({n:'the '+a.e+' accessory',c:a.c})),...THEMES.filter(t=>!S.ownedThemes.includes(t.id)).map(t=>({n:t.n+' colors',c:t.c}))];
    const nx=items.filter(r=>r.c>bal).sort((a,b)=>a.c-b.c)[0];
-   $('#shopCardTxt').textContent=S.rewards.some(r=>r.c<=bal)?'You can redeem a reward! 🎉':bal>=300?'You can open a crate or buy a new look 🎉':nx?`${(nx.c-bal).toLocaleString()} pts to ${nx.n}`:'Spend points on shiny finds and new looks'}renderFinds();renderAvatarAcc(L);
+   S._next=S.rewards.some(r=>r.c<=bal)?'You can redeem a reward! 🎉':bal>=300?'You can open a crate or buy a new look 🎉':nx?`${(nx.c-bal).toLocaleString()} pts to ${nx.n}`:'Spend points on shiny finds and new looks';$('#coinDot').hidden=!S.rewards.some(r=>r.c<=bal)}renderFinds();renderAvatarAcc(L);
   if(S.lvlSeen>L)S.lvlSeen=L;
   if(L>S.lvlSeen){for(let i=S.lvlSeen+1;i<=L;i++)showLevelUp(i);S.lvlSeen=L;save()}
   const wid=S.daily.wid||sid(),wd=+wid.slice(wid.indexOf('d')+1),ww=+wid.slice(1,wid.indexOf('d')),fin=S.done.includes(wid);
@@ -1580,7 +1585,7 @@ function renderShop(ov,msg){shopInit();const bal=coins(),re=!!ov.querySelector('
   if(shopTab==='style')body=`<div class="eyebrow">Peach accessories</div><div class="accGrid">${SHOP_ACC.map(a=>{const own=S.ownedAcc.includes(a.id),on=S.wear===a.id;return `<button class="accI ${on?'on':''}" data-buy="a:${a.id}"><span>${a.e}</span><small>${on?'Wearing':own?'Wear':a.c+' pts'}</small></button>`}).join('')}</div>
     ${S.wear?`<button class="linkbtn" data-buy="a:none" style="justify-self:start">Take accessory off</button>`:''}
     <div class="eyebrow" style="margin-top:10px">App colors</div><div class="thGrid">${THEMES.map(t=>{const own=S.ownedThemes.includes(t.id),on=(S.theme||'peach')===t.id;return `<button class="thI ${on?'on':''}" data-buy="t:${t.id}"><span style="background:linear-gradient(135deg,${t.a[0]},${t.a[1]})"></span><b>${t.n}</b><small>${on?'Using':own?'Use':t.c+' pts'}</small></button>`}).join('')}</div>`;
-  ov.innerHTML=`<div class="ovc shop ${re?'re':''}"><div class="shopHead"><div><div class="eyebrow">Reward shop</div><h2>🍑 ${bal.toLocaleString()} pts</h2></div><button class="pX" data-close aria-label="Close shop">✕</button></div>
+  ov.innerHTML=`<div class="ovc shop ${re?'re':''}"><div class="shopHead"><div><div class="eyebrow">Shop</div><h2>🍑 ${bal.toLocaleString()} pts</h2>${S._next?`<small class="muted" style="font-size:12.5px">${S._next}</small>`:''}</div><button class="pX" data-close aria-label="Close shop">✕</button></div>
     ${msg?`<div class="shopMsg">${msg}</div>`:''}
     <div class="shopTabs">${[['rewards','🎁 Rewards'],['crates','📦 Crates'],['style','✨ Style']].map(t=>`<button class="${shopTab===t[0]?'on':''}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</div>
     <div class="shopBody">${body}</div>
@@ -1604,7 +1609,7 @@ function shopBuy(code,ov){const i=code.indexOf(':'),k=code.slice(0,i),id=code.sl
     S.spent+=t.c;S.ownedThemes.push(id);S.theme=id;applyTheme();save();sfx('win');confetti();renderShop(ov,`<b>${t.n}</b> colors unlocked!`)}
 }
 
-$('#coinBtn').onclick=openShop;$('#shopCard').onclick=openShop;
+$('#coinBtn').onclick=openShop;
 function rerenderAll(){applyTheme();loadFuelInputs();calcFuel();renderMotive();renderToday();renderPlan();renderProgress();renderLearn();renderFaq();if(SAMPLE)renderChat();$('#sndBtn').textContent=S.sound?'🔊':'🔇';renderGame()}
 window.gameReady=true;
 rerenderAll();
@@ -1623,7 +1628,7 @@ boot();
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='27';
+const APP_VERSION='28';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
