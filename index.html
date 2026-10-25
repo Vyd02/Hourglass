@@ -1188,7 +1188,7 @@ function renderGame(){
   $('#qlist').innerHTML=q.map(o=>`<div class="qrow"><span class="qic">${o.i}</span><div><b>${o.t}</b><div class="qbar"><i style="width:${o.v*100}%"></i></div><small class="muted">${o.x}</small>${o.add?`<div class="qadd">${o.add}</div>`:''}</div><span class="qck ${o.v>=1?'on':''}">${o.v>=1?'✓':''}</span></div>`).join('');
   const all=q.every(o=>o.v>=1),ch=$('#chest');
   ch.className='chest '+(S.daily.claimed?'claimed':all?'ready':'');ch.textContent=S.daily.claimed?'✨':'🎁';
-  $('#chestTxt').textContent=S.daily.claimed?'Chest claimed. New quests tomorrow.':all?'Tap the chest!':'Clear all 3 to open the chest';
+  $('#chestTxt').textContent=(S.daily.claimed?'Chest claimed!':all?'Tap the chest!':'Clear all 3 to open the chest')+' · New quests in '+untilMidnight();
   $('#badges').innerHTML=BADGES.map(b=>{const got=S.badges.includes(b.id);return `<div class="bdg ${got?'got':'lock'}" title="${b.d}"><span class="e">${got?b.e:'🔒'}</span>${got?b.n:b.d}</div>`}).join('');
   $('#badgeCount').textContent=`${S.badges.length}/${BADGES.length}`;
   checkBadges();
@@ -1218,6 +1218,12 @@ function onboard(){enqueue(ov=>{
     renderMotive();confetti();sfx('win');gainXP(100,e);nextOv()};
 },true)}
 
+function untilMidnight(){const n=new Date(),m=new Date(n);m.setHours(24,0,0,0);const mins=Math.max(1,Math.ceil((m-n)/6e4));return mins>=60?`${Math.floor(mins/60)}h ${mins%60}m`:`${mins}m`}
+// The app can stay open in the background overnight, so check for a new day whenever it comes back and once a minute.
+function newDayCheck(){if(S.daily.d!==today()||S.tank.d!==today()){dayRoll();save();rerenderAll();toast('New day, new quests ✨');sfx('ding')}else if(window.gameReady)renderGame()}
+setInterval(newDayCheck,60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)newDayCheck()});
+window.addEventListener('pageshow',newDayCheck);window.addEventListener('focus',newDayCheck);
 function rerenderAll(){loadFuelInputs();calcFuel();renderMotive();renderToday();renderPlan();renderProgress();renderLearn();renderFaq();if(SAMPLE)renderChat();$('#sndBtn').textContent=S.sound?'🔊':'🔇';renderGame()}
 window.gameReady=true;
 rerenderAll();
