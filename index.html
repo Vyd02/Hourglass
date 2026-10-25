@@ -278,6 +278,8 @@ details.how li{color:var(--fg)}
 .wk.rec{background:color-mix(in srgb,var(--gold) 12%,var(--surface))}
 .ph.now{border-color:var(--peach)}.ph.past{opacity:.7}
 .ph .n{font-size:26px!important}
+.rsbox{background:color-mix(in srgb,var(--pink) 12%,var(--surface2));border:1px solid var(--pink);border-radius:14px;padding:12px}
+.btn.danger{background:var(--pink);box-shadow:none}
 .linkbtn{border:0;background:none;padding:0;color:var(--muted);font-size:12px;text-decoration:underline}
 textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
 .ask{display:grid;gap:12px;border-color:var(--pink);background:linear-gradient(160deg,color-mix(in srgb,var(--pink) 18%,var(--surface)),var(--surface))}
@@ -460,6 +462,8 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <div class="muted" style="font-size:13.5px" id="syncState">Progress is saved inside the app on this phone. Copy a backup code every few weeks and keep it in Notes.</div>
     <div class="row"><button class="btn ghost" id="bkCopy">Copy backup code</button><button class="btn ghost" id="bkShow">Restore from code</button></div>
     <div id="bkBox" hidden style="display:grid;gap:8px"><textarea id="bkText" rows="3" placeholder="Paste a backup code here"></textarea><button class="btn" id="bkRestore">Restore progress</button></div>
+    <button class="linkbtn" id="rsShow" style="justify-self:start;margin-top:4px">Start over from day 1</button>
+    <div id="rsBox" hidden class="rsbox"><b>Erase everything and start over?</b><p class="muted" style="margin:4px 0 10px;font-size:13px">Workouts, levels, trophies, lessons and check-ins on this phone go back to zero. This can't be undone.</p><div class="row"><button class="btn danger" id="rsYes">Yes, erase it</button><button class="btn ghost" id="rsNo">Cancel</button></div></div>
   </div>
 </section>
 
@@ -695,6 +699,10 @@ $('#logRows').addEventListener('click',e=>{const b=e.target.closest('[data-del]'
 // backup
 const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))),dec=t=>JSON.parse(decodeURIComponent(escape(atob(t.trim()))));
 $('#bkCopy').onclick=()=>{const code=enc(S);navigator.clipboard.writeText(code).then(()=>toast('Backup code copied 📋')).catch(()=>{$('#bkBox').hidden=false;$('#bkText').value=code;$('#bkText').select();toast('Select and copy the code')})};
+$('#rsShow').onclick=()=>{$('#rsBox').hidden=false};$('#rsNo').onclick=()=>{$('#rsBox').hidden=true};
+$('#rsYes').onclick=async()=>{try{localStorage.removeItem(KEY)}catch(e){}
+  try{if(typeof CLOUD!=='undefined'&&CLOUD)await CLOUD.set({json:'{}',ts:Date.now()})}catch(e){}
+  location.reload()};
 $('#bkShow').onclick=()=>{$('#bkBox').hidden=!$('#bkBox').hidden};
 $('#bkRestore').onclick=()=>{try{const o=dec($('#bkText').value);if(!o||!Array.isArray(o.done))throw 0;S=Object.assign(S,o);save();rerenderAll();toast('Progress restored ✨');$('#bkBox').hidden=true}catch(e){toast('That code did not work. Copy it again in full.')}};
 
