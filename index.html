@@ -1547,6 +1547,7 @@ function renderAvatarAcc(L){const a=$('#avAcc');if(!a)return;if(S.wear){const w=
 
 // ===== Reward shop: points are spendable money =====
 const DEF_REWARDS=[
+ {id:'v0',e:'🚶‍♀️',n:'Walk around the neighborhood together',c:300},
  {id:'v1',e:'🎶',n:'My playlist in the car all day, and you can\'t change the song',c:400},
  {id:'v2',e:'📺',n:'I pick the movie or show, no complaining',c:400},
  {id:'v3',e:'🍕',n:'I choose where we eat tonight, and you can\'t say no',c:500},
@@ -1560,7 +1561,7 @@ const SHOP_ACC=[{id:'flower',e:'🌸',c:200},{id:'bow2',e:'🎀',c:300},{id:'hea
 const THEMES=[{id:'peach',n:'Peach',c:0,a:['#ff4f8b','#ff8f6b']},{id:'lilac',n:'Lilac',c:800,a:['#9b5de5','#f15bb5']},{id:'ocean',n:'Ocean',c:800,a:['#3a86ff','#4cc9f0']},{id:'matcha',n:'Matcha',c:800,a:['#2ec4b6','#80ed99']},{id:'sunset',n:'Sunset',c:1000,a:['#ef476f','#ffd166']},{id:'gold',n:'Gold',c:1500,a:['#f77f00','#ffd166']}];
 ODDS.shopR={C:0,R:80,E:17,L:3};ODDS.shopE={C:0,R:0,E:85,L:15};
 const coins=()=>Math.max(0,(S.xp||0)-(S.spent||0));
-function shopInit(){if(!S.rewards||S.rewVer!==3){S.rewards=DEF_REWARDS.map(x=>({...x})).concat((S.rewards||[]).filter(r=>String(r.id).startsWith('c')));S.rewards.sort((a,b)=>a.c-b.c);S.rewVer=3}S.ownedAcc=S.ownedAcc||[];S.ownedThemes=S.ownedThemes||['peach'];S.spent=S.spent||0;S.redeemed=S.redeemed||[]}
+function shopInit(){if(!S.rewards||S.rewVer!==4){S.rewards=DEF_REWARDS.map(x=>({...x})).concat((S.rewards||[]).filter(r=>String(r.id).startsWith('c')));S.rewards.sort((a,b)=>a.c-b.c);S.rewVer=4}S.ownedAcc=S.ownedAcc||[];S.ownedThemes=S.ownedThemes||['peach'];S.spent=S.spent||0;S.redeemed=S.redeemed||[]}
 function applyTheme(){const t=THEMES.find(x=>x.id===(S.theme||'peach'))||THEMES[0],r=document.documentElement.style;
   if(t.id==='peach'){r.removeProperty('--pink');r.removeProperty('--peach')}else{r.setProperty('--pink',t.a[0]);r.setProperty('--peach',t.a[1])}}
 let shopTab='rewards';
@@ -1620,7 +1621,7 @@ boot();
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='23';
+const APP_VERSION='24';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
