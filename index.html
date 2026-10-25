@@ -210,6 +210,9 @@ details.how li{color:var(--fg)}
 .qbar i{display:block;height:100%;background:var(--mint);border-radius:999px;transition:width .6s}
 .qck{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-weight:900;color:var(--bg);font-size:13px}
 .qck.on{background:var(--mint);border-color:var(--mint);animation:pop .4s}
+.qadd{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.qa{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 10px;font-weight:700;font-size:12.5px;color:var(--fg)}
+.qa:active{transform:scale(.95)}
 .walkbtn{padding:10px;font-size:13px;margin-top:4px}
 .chest{font-size:30px;border:0;background:none;filter:grayscale(1);opacity:.45;padding:0}
 .chest.ready{filter:none;opacity:1;animation:wiggle 1s infinite}
@@ -652,10 +655,11 @@ function renderTank(){
   $('#pBar').style.width=Math.min(100,S.tank.p/p*100)+'%';$('#pTxt').textContent=`${S.tank.p} / ${p} g`;
   $('#wBar').style.width=Math.min(100,S.tank.w/w*100)+'%';$('#wTxt').textContent=`${S.tank.w} / ${w} oz`;
 }
-$('#v-fuel').addEventListener('click',e=>{const b=e.target.closest('[data-p],[data-w]');if(!b)return;dayRoll();
+function tankAdd(b,e){dayRoll();
   if(b.dataset.p){const before=S.tank.p;S.tank.p+=+b.dataset.p;if(before<S.pTarget&&S.tank.p>=S.pTarget&&!S.tank.ph){S.tank.ph=1;S.stats.pDays++;confetti();sfx('ding');toast('Protein goal hit 🥩');gainXP(50,e)}}
   if(b.dataset.w){const before=S.tank.w;S.tank.w+=+b.dataset.w;if(before<S.wTarget&&S.tank.w>=S.wTarget&&!S.tank.wh){S.tank.wh=1;S.stats.wDays++;sfx('ding');toast('Fully hydrated 💧');gainXP(30,e)}}
-  b.animate([{transform:'scale(1)'},{transform:'scale(1.2)'},{transform:'scale(1)'}],{duration:250});sfx('pop');save();renderTank()});
+  b.animate([{transform:'scale(1)'},{transform:'scale(1.2)'},{transform:'scale(1)'}],{duration:250});sfx('pop');save();renderTank()}
+$('#v-fuel').addEventListener('click',e=>{const b=e.target.closest('[data-p],[data-w]');if(b)tankAdd(b,e)});
 $('#resetDay').onclick=()=>{S.tank={d:today(),p:0,w:0,ph:S.tank.ph,wh:S.tank.wh};save();renderTank()};
 
 // ===== Progress
@@ -1174,11 +1178,14 @@ function renderGame(){
   $('#streakN').textContent=weekStreak();
   if(S.lvlSeen>L)S.lvlSeen=L;
   if(L>S.lvlSeen){for(let i=S.lvlSeen+1;i<=L;i++)showLevelUp(i);S.lvlSeen=L;save()}
-  const q=[{i:'🏋️',t:'Move: 8 sets or a 20-min walk',v:Math.min(1,S.daily.walk?1:S.daily.sets/8),x:S.daily.walk?'walked':`${Math.min(S.daily.sets,8)}/8 sets`},
-           {i:'🥩',t:'Hit the protein goal',v:Math.min(1,S.tank.p/(S.pTarget||128)),x:`${S.tank.p}/${S.pTarget||128} g`},
-           {i:'💧',t:'Drink the water goal',v:Math.min(1,S.tank.w/(S.wTarget||96)),x:`${S.tank.w}/${S.wTarget||96} oz`}];
-  $('#qlist').innerHTML=q.map(o=>`<div class="qrow"><span class="qic">${o.i}</span><div><b>${o.t}</b><div class="qbar"><i style="width:${o.v*100}%"></i></div><small class="muted">${o.x}</small></div><span class="qck ${o.v>=1?'on':''}">${o.v>=1?'✓':''}</span></div>`).join('')+
-    (S.daily.walk?'':`<button class="btn ghost walkbtn" id="walkBtn">🚶‍♀️ She walked 20+ min today</button>`);
+  const moved=S.daily.sets>=8||S.daily.walk;
+  const q=[{i:'🏋️',t:'Move: 8 sets or a 20-min walk',v:moved?1:Math.min(1,S.daily.sets/8),x:S.daily.sets>=8?`${S.daily.sets} sets done today`:S.daily.walk?'Walked 20+ min':`${S.daily.sets}/8 sets today`,
+            add:moved?'':`<button class="qa" data-walk="1">🚶‍♀️ I walked 20 min</button>`},
+           {i:'🥩',t:'Hit the protein goal',v:Math.min(1,S.tank.p/(S.pTarget||128)),x:`${S.tank.p}/${S.pTarget||128} g`,
+            add:[10,25,40].map(n=>`<button class="qa" data-p="${n}">+${n}g</button>`).join('')},
+           {i:'💧',t:'Drink the water goal',v:Math.min(1,S.tank.w/(S.wTarget||96)),x:`${S.tank.w}/${S.wTarget||96} oz`,
+            add:[8,16,32].map(n=>`<button class="qa" data-w="${n}">+${n}oz</button>`).join('')}];
+  $('#qlist').innerHTML=q.map(o=>`<div class="qrow"><span class="qic">${o.i}</span><div><b>${o.t}</b><div class="qbar"><i style="width:${o.v*100}%"></i></div><small class="muted">${o.x}</small>${o.add?`<div class="qadd">${o.add}</div>`:''}</div><span class="qck ${o.v>=1?'on':''}">${o.v>=1?'✓':''}</span></div>`).join('');
   const all=q.every(o=>o.v>=1),ch=$('#chest');
   ch.className='chest '+(S.daily.claimed?'claimed':all?'ready':'');ch.textContent=S.daily.claimed?'✨':'🎁';
   $('#chestTxt').textContent=S.daily.claimed?'Chest claimed. New quests tomorrow.':all?'Tap the chest!':'Clear all 3 to open the chest';
@@ -1186,7 +1193,7 @@ function renderGame(){
   $('#badgeCount').textContent=`${S.badges.length}/${BADGES.length}`;
   checkBadges();
 }
-$('#qlist').addEventListener('click',e=>{if(e.target.closest('#walkBtn')){S.daily.walk=1;sfx('ding');gainXP(30,e)}});
+$('#qlist').addEventListener('click',e=>{const b=e.target.closest('.qa');if(!b)return;if(b.dataset.walk){S.daily.walk=1;sfx('ding');gainXP(30,e)}else tankAdd(b,e)});
 $('#chest').onclick=e=>{if(!$('#chest').classList.contains('ready'))return;S.daily.claimed=1;S.stats.chests++;sfx('chest');buzz([40,30,80]);confetti();toast('Chest opened! +75 pts');gainXP(75,e)};
 $('#sndBtn').onclick=()=>{S.sound=!S.sound;$('#sndBtn').textContent=S.sound?'🔊':'🔇';save();sfx('ding')};
 $('#lvlBtn').onclick=()=>enqueue(ov=>{const {L,w}=levelOf();
