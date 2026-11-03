@@ -1762,13 +1762,14 @@ $('#husSend').onclick=sendToHusband;$('#husExit').onclick=closeHus;
 $('#husMine').onclick=()=>{$('#husIn').hidden=!$('#husIn').hidden};
 $('#husInGo').onclick=()=>{const pc=readPair($('#husInTxt').value);if(pc){try{localStorage.setItem(PKEY,pc)}catch(e){}}const d=readHusLink($('#husInTxt').value);if(!d){toast('That link didn\'t work. Copy the whole link she sent.');return}keepHus(d);$('#husIn').hidden=true;$('#husInTxt').value='';$('#husAgain').hidden=false;openHus()};
 $('#husAgain').onclick=()=>openHus();renderPairState();setInterval(renderPairState,60000);
-window.addEventListener('hashchange',()=>{const pc=readPair(location.hash);if(pc){try{localStorage.setItem(PKEY,pc)}catch(e){}}const d=readHusLink(location.hash);if(!d)return;keepHus(d);try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}$('#husAgain').hidden=false;openHus()});$('#husAgain').hidden=!loadHus();
+window.addEventListener('hashchange',()=>{if(!window.HUSBAND_ONLY&&(readPair(location.hash)||readHusLink(location.hash))){location.replace('husband.html'+location.hash);return}const pc=readPair(location.hash);if(pc){try{localStorage.setItem(PKEY,pc)}catch(e){}}const d=readHusLink(location.hash);if(!d)return;keepHus(d);try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}$('#husAgain').hidden=false;openHus()});$('#husAgain').hidden=!loadHus();
 function rerenderAll(){applyTheme();loadFuelInputs();calcFuel();renderMotive();renderToday();renderPlan();renderProgress();renderLearn();renderFaq();if(SAMPLE)renderChat();$('#sndBtn').textContent=S.sound?'🔊':'🔇';renderGame()}
 window.gameReady=true;
 rerenderAll();
 maybeGolden();
 const hasHistory=()=>!!(S.onboarded||S.done.length||S.xp>0||S.name||Object.keys(S.sets||{}).length||S.log.length||Object.keys(S.lessons||{}).length);
 async function boot(){
+  if(!window.HUSBAND_ONLY&&(readPair(location.hash)||readPair(location.search)||readHusLink(location.hash))){location.replace('husband.html'+location.search+location.hash);return}
   if(window.HUSBAND_ONLY){const pc=readPair(location.hash)||readPair(location.search);if(pc){try{localStorage.setItem(PKEY,pc)}catch(e){}}
     const d=readHusLink(location.hash);if(d)keepHus(d);
     const code=(()=>{try{return localStorage.getItem(PKEY)}catch(e){return null}})();
@@ -1788,7 +1789,7 @@ boot();
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:70;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='33';
+const APP_VERSION='34';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
