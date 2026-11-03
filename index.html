@@ -439,6 +439,7 @@ body.noscroll{overflow:hidden}
 .hHeat i{aspect-ratio:1;max-width:100%;border-radius:4px;background:var(--surface2)}.hHeat i.on{background:var(--mint)}.hHeat i.td{outline:2px solid var(--gold);outline-offset:-2px}
 .hChips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.hChips span{font-size:12.5px;border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:5px 10px}
 .hChips span.sh{box-shadow:0 0 10px -2px #fff}
+body.husOnly #ov,body.husOnly .timer,body.husOnly .goldpeach,body.husOnly .snack{display:none!important}
 .husSet{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px;margin-top:4px}.husSet small{font-size:13px}
 .linkbtn{border:0;background:none;padding:0;color:var(--muted);font-size:12px;text-decoration:underline}
 textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
@@ -1674,14 +1675,14 @@ function husLiveStop(){try{husES&&husES.close()}catch(e){}husES=null;clearInterv
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!$('#hus').hidden)husLiveStart()});
 const b64u=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 const unb64u=t=>{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';return JSON.parse(decodeURIComponent(escape(atob(t))))};
-const husLink=()=>HBASE+'#h='+b64u(husbandSnap())+(LIVE&&S.pair?'&pair='+S.pair:'');
+const husLink=()=>HBASE+'husband.html#h='+b64u(husbandSnap())+(LIVE&&S.pair?'&pair='+S.pair:'');
 async function sendToHusband(){if(LIVE&&!S.pair){S.pair=newCode();save()}livePush(true);const url=husLink(),nm=S.name||'My';
   try{if(navigator.share){await navigator.share({title:'Hourglass progress',text:`${nm==='My'?'My':nm+'’s'} Hourglass progress 🍑`,url});toast('Sent 💌');return}}catch(e){if(e&&e.name==='AbortError')return}
   try{await navigator.clipboard.writeText(url);toast('Link copied. Text it to your husband 💌');return}catch(e){}
   $('#husOut').hidden=false;$('#husOutTxt').value=url;$('#husOutTxt').select();toast('Copy this link and text it to him')}
 function loadHus(){try{return JSON.parse(localStorage.getItem(HKEY)||'null')}catch(e){return null}}
 function keepHus(d){try{const old=loadHus();if(!old||(d.full&&!old.full)||((d.t||0)>=(old.t||0)&&!(old.full&&!d.full)))localStorage.setItem(HKEY,JSON.stringify(d))}catch(e){}}
-function readPair(txt){const m=String(txt||'').match(/[#&]pair=([a-z0-9]{24,})/);return m?m[1]:null}
+function readPair(txt){const m=String(txt||'').match(/[#&?]p(?:air)?=([a-z0-9]{24,})/);return m?m[1]:null}
 function readHusLink(txt){const m=String(txt||'').match(/[#&]h=([A-Za-z0-9_-]+)/);if(!m)return null;try{const d=unb64u(m[1]);return d&&d.v===1?d:null}catch(e){return null}}
 function ago(t){const m=Math.round((Date.now()-t)/6e4);if(m<2)return 'just now';if(m<60)return m+' min ago';const h=Math.round(m/60);if(h<24)return h+(h===1?' hour ago':' hours ago');const d=Math.round(h/24);return d+(d===1?' day ago':' days ago')}
 function husTrend(L){if(L.length<2)return '<p class="muted" style="font-size:13px;margin:0">Her trend line shows up after 2 check-ins.</p>';
@@ -1706,7 +1707,10 @@ function husbandSnap(full){shopInit();
     fu:Object.assign({g:S.fuel.g,bf:S.fuel.bf?1:0,wt:S.fuel.w},S.fuelOut||{}),
     pe:S.xp||0,ps:S.spent||0,rd:(S.redeemed||[]).map(r=>[r.n,r.d,r.c]),nr:nx?[nx.n,nx.c]:null,
     bdl:S.badges.slice(),fdl:Object.entries(S.finds||{}).map(([k,v])=>[k,v.n,v.shiny?1:0]),lsn:Object.entries(S.lessons||{}).map(([k,v])=>[+k,v])})}
-function openHus(refresh){const d=loadHus();if(!d)return;if(!refresh)husLiveStart();
+function openHus(refresh){const d=loadHus();
+  if(window.HUSBAND_ONLY){$('#husExit').hidden=true;document.body.classList.add('husOnly')}
+  if(!d){if(window.HUSBAND_ONLY){husLiveStart();const has=(()=>{try{return localStorage.getItem(PKEY)}catch(e){return null}})();
+    $('#husT').textContent="Katelyn's Hourglass";$('#husBody').innerHTML=`<div class="hc" style="text-align:center;padding:30px 16px"><div style="font-size:48px">🍑</div><h3>${has?'Loading her progress…':'Open the link Katelyn sent you'}</h3><p class="muted">${has?'This takes a second.':'On her phone: Progress → Settings & backup → Send link to husband.'}</p></div>`;$('#hus').hidden=false}return}if(!refresh)husLiveStart();
   const isLive=LIVE&&!!(()=>{try{return localStorage.getItem(PKEY)}catch(e){return null}})();const F=!!d.full,nm=d.n?esc(d.n):'Katelyn';
   let L=0;while(L<19&&d.dn>=LV[L+1])L++;const toNext=L<19?LV[L+1]-d.dn:0,s=seasonOf(d.w);
   const dayLbl=id=>{const w=+id.slice(1,id.indexOf('d')),k=+id.slice(id.indexOf('d')+1);return `Week ${w} · Day ${DAYS[k].k} · ${DAYS[k].t}`};
@@ -1765,6 +1769,11 @@ rerenderAll();
 maybeGolden();
 const hasHistory=()=>!!(S.onboarded||S.done.length||S.xp>0||S.name||Object.keys(S.sets||{}).length||S.log.length||Object.keys(S.lessons||{}).length);
 async function boot(){
+  if(window.HUSBAND_ONLY){const pc=readPair(location.hash)||readPair(location.search);if(pc){try{localStorage.setItem(PKEY,pc)}catch(e){}}
+    const d=readHusLink(location.hash);if(d)keepHus(d);
+    const code=(()=>{try{return localStorage.getItem(PKEY)}catch(e){return null}})();
+    try{history.replaceState(null,'',location.pathname+(code?'?p='+code:''))}catch(e){}
+    openHus();return}
   {const pc=readPair(location.hash);if(pc){try{localStorage.setItem(PKEY,pc)}catch(e){}}const d=readHusLink(location.hash);if(d){keepHus(d);try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}window._husNow=1}}
   try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
   const saved=await idbLoad();
@@ -1777,9 +1786,9 @@ boot();
 
 </script>
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
-<style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
+<style>.upd{position:fixed;z-index:70;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='32';
+const APP_VERSION='33';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
