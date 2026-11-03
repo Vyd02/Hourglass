@@ -1680,8 +1680,14 @@ async function sendToHusband(){if(LIVE&&!S.pair){S.pair=newCode();save()}livePus
   try{if(navigator.share){await navigator.share({title:'Hourglass progress',text:`${nm==='My'?'My':nm+'’s'} Hourglass progress 🍑`,url});toast('Sent 💌');return}}catch(e){if(e&&e.name==='AbortError')return}
   try{await navigator.clipboard.writeText(url);toast('Link copied. Text it to your husband 💌');return}catch(e){}
   $('#husOut').hidden=false;$('#husOutTxt').value=url;$('#husOutTxt').select();toast('Copy this link and text it to him')}
-function loadHus(){try{return JSON.parse(localStorage.getItem(HKEY)||'null')}catch(e){return null}}
-function keepHus(d){try{const old=loadHus();if(!old||(d.full&&!old.full)||((d.t||0)>=(old.t||0)&&!(old.full&&!d.full)))localStorage.setItem(HKEY,JSON.stringify(d))}catch(e){}}
+// Firebase drops empty lists, so fill in every list the view expects
+function fixHus(d){if(!d||typeof d!=='object'||d.v!==1)return null;
+  ['dd','lg','rd','wd','bdl','fdl','lsn','q'].forEach(k=>{if(!Array.isArray(d[k]))d[k]=Array.isArray(d[k]&&Object.values(d[k]))?Object.values(d[k]):(d[k]&&typeof d[k]==='object'?Object.values(d[k]):[])});
+  while(d.wd.length<4)d.wd.push(0);while(d.q.length<3)d.q.push(0);
+  if(d.full){d.cw=d.cw||{id:'w'+(d.w||1)+'d0',done:0,ex:[]};if(!Array.isArray(d.cw.ex))d.cw.ex=d.cw.ex?Object.values(d.cw.ex):[];d.fu=d.fu||{}}
+  ['dn','st','pt','bd','fd','ls','ss','pd','wdy','ch','gp','pe','ps'].forEach(k=>{if(typeof d[k]!=='number')d[k]=+d[k]||0});d.w=d.w||1;return d}
+function loadHus(){try{return fixHus(JSON.parse(localStorage.getItem(HKEY)||'null'))}catch(e){return null}}
+function keepHus(d){d=fixHus(d);if(!d)return;try{const old=loadHus();if(!old||(d.full&&!old.full)||((d.t||0)>=(old.t||0)&&!(old.full&&!d.full)))localStorage.setItem(HKEY,JSON.stringify(d))}catch(e){}}
 function readPair(txt){const m=String(txt||'').match(/[#&?]p(?:air)?=([a-z0-9]{24,})/);return m?m[1]:null}
 function readHusLink(txt){const m=String(txt||'').match(/[#&]h=([A-Za-z0-9_-]+)/);if(!m)return null;try{const d=unb64u(m[1]);return d&&d.v===1?d:null}catch(e){return null}}
 function ago(t){const m=Math.round((Date.now()-t)/6e4);if(m<2)return 'just now';if(m<60)return m+' min ago';const h=Math.round(m/60);if(h<24)return h+(h===1?' hour ago':' hours ago');const d=Math.round(h/24);return d+(d===1?' day ago':' days ago')}
@@ -1707,7 +1713,8 @@ function husbandSnap(full){shopInit();
     fu:Object.assign({g:S.fuel.g,bf:S.fuel.bf?1:0,wt:S.fuel.w},S.fuelOut||{}),
     pe:S.xp||0,ps:S.spent||0,rd:(S.redeemed||[]).map(r=>[r.n,r.d,r.c]),nr:nx?[nx.n,nx.c]:null,
     bdl:S.badges.slice(),fdl:Object.entries(S.finds||{}).map(([k,v])=>[k,v.n,v.shiny?1:0]),lsn:Object.entries(S.lessons||{}).map(([k,v])=>[+k,v])})}
-function openHus(refresh){const d=loadHus();
+function openHus(refresh){try{return drawHus(refresh)}catch(e){console.error(e);if(window.HUSBAND_ONLY){$('#husBody').innerHTML='<div class="hc" style="text-align:center;padding:30px 16px"><div style="font-size:48px">🍑</div><h3>Loading her progress…</h3></div>';$('#hus').hidden=false}}}
+function drawHus(refresh){const d=loadHus();
   if(window.HUSBAND_ONLY){$('#husExit').hidden=true;document.body.classList.add('husOnly')}
   if(!d){if(window.HUSBAND_ONLY){husLiveStart();const has=(()=>{try{return localStorage.getItem(PKEY)}catch(e){return null}})();
     $('#husT').textContent="Katelyn's Hourglass";$('#husBody').innerHTML=`<div class="hc" style="text-align:center;padding:30px 16px"><div style="font-size:48px">🍑</div><h3>${has?'Loading her progress…':'Open the link Katelyn sent you'}</h3><p class="muted">${has?'This takes a second.':'On her phone: Progress → Settings & backup → Send link to husband.'}</p></div>`;$('#hus').hidden=false}return}if(!refresh)husLiveStart();
@@ -1789,7 +1796,7 @@ boot().catch(e=>{console.error(e);if(window.HUSBAND_ONLY)try{openHus()}catch(_){
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:70;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='35';
+const APP_VERSION='36';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
