@@ -430,6 +430,15 @@ body.noscroll{overflow:hidden}
 @keyframes livep{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--mint) 70%,transparent)}100%{box-shadow:0 0 0 8px transparent}}
 .liveTag{font-family:var(--body);font-size:10.5px;font-weight:800;letter-spacing:.1em;color:var(--mint);margin-left:6px;vertical-align:middle}
 .pairSt{font-size:13px}
+.hStat{font-size:13.5px;color:var(--muted);margin-bottom:4px}
+.hGrid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.hGrid3 .hc{padding:10px 8px}.hGrid3 .hs b{font-size:16px}
+.hEx{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}.hEx:last-of-type{border-bottom:0}
+.hEx small{color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;font-size:12.5px}.hEx.ok span{color:var(--mint)}
+.hBar{height:8px;border-radius:999px;background:var(--surface2);overflow:hidden;margin-top:4px}.hBar i{display:block;height:100%;border-radius:999px}
+.hHeat{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(7,1fr);grid-auto-flow:column;gap:4px;margin-top:8px}
+.hHeat i{aspect-ratio:1;max-width:100%;border-radius:4px;background:var(--surface2)}.hHeat i.on{background:var(--mint)}.hHeat i.td{outline:2px solid var(--gold);outline-offset:-2px}
+.hChips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.hChips span{font-size:12.5px;border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:5px 10px}
+.hChips span.sh{box-shadow:0 0 10px -2px #fff}
 .husSet{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px;margin-top:4px}.husSet small{font-size:13px}
 .linkbtn{border:0;background:none;padding:0;color:var(--muted);font-size:12px;text-decoration:underline}
 textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
@@ -879,7 +888,7 @@ function calcFuel(persist){
   animNum($('#kcal'),kcal,'');$('#kcalNote').textContent=note+` Maintenance is about ${Math.round(tdee).toLocaleString()} kcal.`;
   const tot=p*4+c*4+f*9;
   [[p*4,'#mP',p],[c*4,'#mC',c],[f*9,'#mF',f]].forEach(([cal,id,g],i)=>{$$('.mr')[i].style.strokeDashoffset=201*(1-cal/tot);animNum($(id),g,'g')});
-  S.pTarget=p;S.wTarget=F.bf?128:96;renderTank();if(persist)save();
+  S.fuelOut={kcal,p,c,f};S.pTarget=p;S.wTarget=F.bf?128:96;renderTank();if(persist)save();
 }
 function animNum(el,to,suf){const from=parseInt(el.textContent.replace(/\D/g,''))||0,t0=performance.now();
   const step=t=>{const k=Math.min(1,(t-t0)/700),v=Math.round(from+(to-from)*(1-Math.pow(1-k,3)));el.textContent=v.toLocaleString()+suf;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)}
@@ -1644,11 +1653,11 @@ const newCode=()=>{const a=new Uint8Array(24);crypto.getRandomValues(a);return A
 const fbPath=c=>`${FB_URL}/couples/${c}/snap.json`;
 let pushT2=null,lastPush=0;
 function livePush(now){if(!LIVE||!S.pair)return;clearTimeout(pushT2);pushT2=setTimeout(async()=>{
-  try{const r=await fetch(fbPath(S.pair),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(husbandSnap())});if(r.ok){lastPush=Date.now();S.pairSync=lastPush;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}renderPairState()}}catch(e){}},now?0:2500)}
+  try{const r=await fetch(fbPath(S.pair),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(husbandSnap(1))});if(r.ok){lastPush=Date.now();S.pairSync=lastPush;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}renderPairState()}}catch(e){}},now?0:2500)}
 window.addEventListener('online',()=>livePush(true));
 function renderPairState(){const el=$('#pairState');if(!el)return;
   if(!LIVE){el.hidden=true;return}el.hidden=false;
-  el.innerHTML=S.pair?`<span class="liveDot"></span> Live sharing is on${S.pairSync?` · synced ${ago(S.pairSync)}`:''} <button class="linkbtn" id="pairStop" type="button">Stop sharing</button>`:'Live sharing is off. Tap the button above to connect your husband.'}
+  el.innerHTML=S.pair?`<span class="liveDot"></span> Live sharing is on${S.pairSync?` · synced ${ago(S.pairSync)}`:''}`:'Tap the button above to connect your husband.'}
 document.addEventListener('click',async e=>{if(!e.target.closest('#pairStop'))return;const c=S.pair;S.pair=null;S.pairSync=0;save();renderPairState();toast('Live sharing stopped');
   if(LIVE&&c){try{await fetch(fbPath(c),{method:'DELETE'})}catch(e){}}});
 // his phone: watch her progress live
@@ -1665,18 +1674,13 @@ function husLiveStop(){try{husES&&husES.close()}catch(e){}husES=null;clearInterv
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!$('#hus').hidden)husLiveStart()});
 const b64u=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 const unb64u=t=>{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';return JSON.parse(decodeURIComponent(escape(atob(t))))};
-function husbandSnap(){shopInit();return{v:1,t:Date.now(),n:S.name||'',w:S.week,dn:S.done.length,
-  wd:[0,1,2,3].map(d=>S.done.includes(`w${S.week}d${d}`)?1:0),st:weekStreak(),pt:coins(),
-  dd:S.doneDates.slice(-10).map(o=>[o.id,o.d]),lg:realLog().slice(-20).map(x=>[x.date,x.w||0,x.wa,x.h]),
-  bd:S.badges.length,fd:Object.keys(S.finds||{}).length,ls:Object.keys(S.lessons||{}).length,
-  rd:(S.redeemed||[]).slice(-8).map(r=>[r.n,r.d]),pp:S.tank&&S.tank.d===today()?[S.tank.p,S.pTarget||0,S.tank.w,S.wTarget||0]:null}}
 const husLink=()=>HBASE+'#h='+b64u(husbandSnap())+(LIVE&&S.pair?'&pair='+S.pair:'');
 async function sendToHusband(){if(LIVE&&!S.pair){S.pair=newCode();save()}livePush(true);const url=husLink(),nm=S.name||'My';
   try{if(navigator.share){await navigator.share({title:'Hourglass progress',text:`${nm==='My'?'My':nm+'’s'} Hourglass progress 🍑`,url});toast('Sent 💌');return}}catch(e){if(e&&e.name==='AbortError')return}
   try{await navigator.clipboard.writeText(url);toast('Link copied. Text it to your husband 💌');return}catch(e){}
   $('#husOut').hidden=false;$('#husOutTxt').value=url;$('#husOutTxt').select();toast('Copy this link and text it to him')}
 function loadHus(){try{return JSON.parse(localStorage.getItem(HKEY)||'null')}catch(e){return null}}
-function keepHus(d){try{const old=loadHus();if(!old||(d.t||0)>=(old.t||0))localStorage.setItem(HKEY,JSON.stringify(d))}catch(e){}}
+function keepHus(d){try{const old=loadHus();if(!old||(d.full&&!old.full)||((d.t||0)>=(old.t||0)&&!(old.full&&!d.full)))localStorage.setItem(HKEY,JSON.stringify(d))}catch(e){}}
 function readPair(txt){const m=String(txt||'').match(/[#&]pair=([a-z0-9]{24,})/);return m?m[1]:null}
 function readHusLink(txt){const m=String(txt||'').match(/[#&]h=([A-Za-z0-9_-]+)/);if(!m)return null;try{const d=unb64u(m[1]);return d&&d.v===1?d:null}catch(e){return null}}
 function ago(t){const m=Math.round((Date.now()-t)/6e4);if(m<2)return 'just now';if(m<60)return m+' min ago';const h=Math.round(m/60);if(h<24)return h+(h===1?' hour ago':' hours ago');const d=Math.round(h/24);return d+(d===1?' day ago':' days ago')}
@@ -1685,22 +1689,68 @@ function husTrend(L){if(L.length<2)return '<p class="muted" style="font-size:13p
   const X=i=>pl+i*(W-pl-pr)/(L.length-1),Y=y=>pt+(hi-y)*(H-pt-pb)/(hi-lo);
   const ln=(k,c)=>`<polyline points="${L.map((x,i)=>X(i)+','+Y(x[k])).join(' ')}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${X(L.length-1)}" cy="${Y(L[L.length-1][k])}" r="4.5" fill="${c}"/>`;
   return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">${[lo,hi].map(y=>`<text x="${pl-6}" y="${Y(y)+4}" text-anchor="end" font-size="10" fill="var(--muted)">${y}"</text>`).join('')}${ln(3,'#ff8f6b')}${ln(2,'#5ee6b5')}<text x="${X(0)}" y="${H-5}" font-size="10" fill="var(--muted)">${L[0][0].slice(5)}</text><text x="${X(L.length-1)}" y="${H-5}" font-size="10" text-anchor="end" fill="var(--muted)">${L[L.length-1][0].slice(5)}</text></svg>`}
-function openHus(refresh){const d=loadHus();if(!d)return;if(!refresh)husLiveStart();const isLive=LIVE&&!!(()=>{try{return localStorage.getItem(PKEY)}catch(e){return null}})();const nm=d.n?esc(d.n):'Katelyn';
-  let L=0;while(L<19&&d.dn>=LV[L+1])L++;const toNext=L<19?LV[L+1]-d.dn:0,s=seasonOf(d.w),lastC=d.lg[d.lg.length-1],firstC=d.lg[0];
-  const lastW=d.dd[d.dd.length-1],dayLbl=id=>{const w=+id.slice(1,id.indexOf('d')),k=+id.slice(id.indexOf('d')+1);return `Week ${w} · Day ${DAYS[k].k} · ${DAYS[k].t}`};
-  $('#husBody').innerHTML=`
-   <div class="hc hHero"><div class="eyebrow">${nm}'s progress</div><h2>${titleOf(L)}</h2><div class="muted">Level ${L+1} of 20${toNext?` · ${toNext} workout${toNext===1?'':'s'} to level ${L+2}`:' · Year complete 👑'}</div>
-     <div class="yearbar tall still" style="margin-top:10px"><i style="width:${Math.max(d.dn?2:0,d.dn/208*100)}%"></i></div><div class="muted" style="font-size:12.5px;margin-top:6px">${d.dn} of 208 workouts · Season ${s+1}: ${SEASONS[s].n}</div></div>
-   <div class="hGrid"><div class="hc hs"><b>🔥 ${d.st}</b><small>week streak</small></div><div class="hc hs"><b>🍑 ${d.pt.toLocaleString()}</b><small>points</small></div><div class="hc hs"><b>🏆 ${d.bd}</b><small>trophies</small></div><div class="hc hs"><b>📚 ${d.ls}/52</b><small>lessons</small></div></div>
-   <div class="hc"><div class="eyebrow">This week · Week ${d.w}</div><div class="hWeek">${d.wd.map((x,k)=>`<div class="${x?'ok':''}"><b>${x?'✓':DAYS[k].k}</b><small>Day ${DAYS[k].k}</small></div>`).join('')}</div>
-     <div class="muted" style="font-size:13px;margin-top:8px">${lastW?`Last workout: ${dayLbl(lastW[0])}, ${lastW[1]}`:'No workouts finished yet.'}</div></div>
-   ${d.pp?`<div class="hc"><div class="eyebrow">Today's fuel</div><div class="muted" style="font-size:14px">Protein ${d.pp[0]}/${d.pp[1]} g · Water ${d.pp[2]}/${d.pp[3]} oz</div></div>`:''}
-   <div class="hc"><div class="row" style="justify-content:space-between"><div class="eyebrow">Measurements</div><div class="legend"><span><i style="background:#ff8f6b"></i>Hips</span><span><i style="background:#5ee6b5"></i>Waist</span></div></div>
-     ${lastC?`<div class="muted" style="font-size:13.5px;margin:4px 0 8px">Latest ${lastC[0]}: waist ${lastC[2]}", hips ${lastC[3]}"${lastC[1]?`, ${lastC[1]} lb`:''}${firstC&&d.lg.length>1?` · waist ${(lastC[2]-firstC[2]<=0?'down ':'up ')+Math.abs(lastC[2]-firstC[2]).toFixed(2)}" since ${firstC[0]}`:''}</div>`:'<p class="muted" style="font-size:13px;margin:4px 0">No check-ins yet.</p>'}
-     ${husTrend(d.lg)}</div>
-   <div class="hc"><div class="eyebrow">Rewards she redeemed</div>${d.rd.length?d.rd.slice().reverse().map(r=>`<div class="hRw">🎁 <b>${esc(r[0])}</b><small>${r[1]}</small></div>`).join(''):'<p class="muted" style="font-size:13px;margin:4px 0 0">None yet. When she redeems one, it shows up here.</p>'}</div>
-   <p class="muted" style="font-size:12.5px;text-align:center;margin:4px 0 0">${isLive?`<span class="liveDot"></span> Live · her last change was ${ago(d.t)}. This screen updates by itself.`:`Updated ${ago(d.t)}. For fresh numbers, ask her to tap <b>Send link to husband</b>.`}</p>`;
-  $('#husT').innerHTML=`${nm}'s Hourglass${isLive?' <span class="liveTag"><span class="liveDot"></span>LIVE</span>':''}`;if(!refresh){$('#hus').hidden=false;$('#hus .pBody').scrollTop=0}document.body.classList.add('noscroll')}
+function husbandSnap(full){shopInit();
+  const base={v:1,t:Date.now(),n:S.name||'',w:S.week,dn:S.done.length,
+  wd:[0,1,2,3].map(d=>S.done.includes(`w${S.week}d${d}`)?1:0),st:weekStreak(),pt:coins(),
+  dd:S.doneDates.slice(-10).map(o=>[o.id,o.d]),lg:realLog().slice(-20).map(x=>[x.date,x.w||0,x.wa,x.h]),
+  bd:S.badges.length,fd:Object.keys(S.finds||{}).length,ls:Object.keys(S.lessons||{}).length,
+  rd:(S.redeemed||[]).slice(-8).map(r=>[r.n,r.d]),pp:S.tank&&S.tank.d===today()?[S.tank.p,S.pTarget||0,S.tank.w,S.wTarget||0]:null};
+  if(!full)return base;
+  const st=S.sets[sid()]||{},bal=coins(),nx=S.rewards.filter(r=>r.c>bal).sort((a,b)=>a.c-b.c)[0];
+  const wid=S.daily&&S.daily.wid||sid();
+  return Object.assign(base,{full:1,la:S.ts||Date.now(),dy:S.day,start:S.start,why:S.why||'',
+    dd:S.doneDates.map(o=>[o.id,o.d]),lg:realLog().map(x=>[x.date,x.w||0,x.wa,x.h]),
+    cw:{id:sid(),done:S.done.includes(sid())?1:0,ex:activeEx().map(({e,i})=>{const n=setsFor(e,S.week);return [e.n,Math.min(st[i]||0,n),n,e.reps[seasonOf(S.week)]]})},
+    q:[S.done.includes(wid)?1:0,S.daily&&S.daily.prayed?1:0,S.daily&&S.daily.walked?1:0],
+    ss:S.stats.sets||0,pd:S.stats.pDays||0,wdy:S.stats.wDays||0,ch:S.stats.chests||0,gp:S.stats.golden||0,
+    fu:Object.assign({g:S.fuel.g,bf:S.fuel.bf?1:0,wt:S.fuel.w},S.fuelOut||{}),
+    pe:S.xp||0,ps:S.spent||0,rd:(S.redeemed||[]).map(r=>[r.n,r.d,r.c]),nr:nx?[nx.n,nx.c]:null,
+    bdl:S.badges.slice(),fdl:Object.entries(S.finds||{}).map(([k,v])=>[k,v.n,v.shiny?1:0]),lsn:Object.entries(S.lessons||{}).map(([k,v])=>[+k,v])})}
+function openHus(refresh){const d=loadHus();if(!d)return;if(!refresh)husLiveStart();
+  const isLive=LIVE&&!!(()=>{try{return localStorage.getItem(PKEY)}catch(e){return null}})();const F=!!d.full,nm=d.n?esc(d.n):'Katelyn';
+  let L=0;while(L<19&&d.dn>=LV[L+1])L++;const toNext=L<19?LV[L+1]-d.dn:0,s=seasonOf(d.w);
+  const dayLbl=id=>{const w=+id.slice(1,id.indexOf('d')),k=+id.slice(id.indexOf('d')+1);return `Week ${w} · Day ${DAYS[k].k} · ${DAYS[k].t}`};
+  const lastW=d.dd[d.dd.length-1],lastC=d.lg[d.lg.length-1],firstC=d.lg[0];
+  const cwGot=F?d.cw.ex.reduce((a,x)=>a+x[1],0):0,cwTot=F?d.cw.ex.reduce((a,x)=>a+x[2],0):0;
+  const nowWorking=F&&!d.cw.done&&cwGot>0&&Date.now()-d.la<15*6e4;
+  const status=!F?`Updated ${ago(d.t)}`:nowWorking?`<b style="color:var(--mint)">🏋️ Working out right now</b> · ${cwGot}/${cwTot} sets`:`Active ${ago(d.la)}`;
+  const bar=(v,m,c)=>`<div class="hBar"><i style="width:${m?Math.min(100,v/m*100):0}%;background:${c}"></i></div>`;
+  const sec=(t,b)=>`<div class="hc"><div class="eyebrow">${t}</div>${b}</div>`;
+  let h=`<div class="hc hHero"><div class="hStat">${isLive?'<span class="liveDot"></span>':''}${status}</div><h2>${titleOf(L)}</h2>
+     <div class="muted">Level ${L+1} of 20${toNext?` · ${toNext} workout${toNext===1?'':'s'} to level ${L+2}`:' · Year complete 👑'}</div>
+     <div class="yearbar tall still" style="margin-top:10px"><i style="width:${Math.max(d.dn?2:0,d.dn/208*100)}%"></i></div>
+     <div class="muted" style="font-size:12.5px;margin-top:6px">${d.dn} of 208 workouts · Season ${s+1}: ${SEASONS[s].n} · Week ${d.w} of 52${isRecovery(d.w)?' (recovery week)':''}${F&&d.start?` · Day ${Math.max(1,Math.round((new Date(today())-new Date(d.start))/864e5)+1)} of 365`:''}</div></div>`;
+  h+=`<div class="hGrid3">${[['🔥',d.st,'week streak'],['💪',d.dn,'workouts'],['✅',F?d.ss:'–','sets logged'],['🍑',d.pt.toLocaleString(),'points'],['🏆',d.bd,'trophies'],['📚',d.ls+'/52','lessons']].map(x=>`<div class="hc hs"><b>${x[0]} ${x[1]}</b><small>${x[2]}</small></div>`).join('')}</div>`;
+  if(F){const k=+d.cw.id.slice(d.cw.id.indexOf('d')+1);
+    h+=sec(`Current workout · ${dayLbl(d.cw.id)}`,`<div class="muted" style="font-size:13px;margin:2px 0 8px">${d.cw.done?'✅ Finished':cwGot?`In progress: ${cwGot} of ${cwTot} sets`:'Not started yet'}</div>`+
+      d.cw.ex.map(x=>`<div class="hEx ${x[1]>=x[2]?'ok':''}"><span>${x[1]>=x[2]?'✓ ':''}${esc(x[0])}</span><small>${x[1]}/${x[2]} sets · ${x[3]}</small></div>`).join(''));
+    h+=sec('Workout-day quests',[['🏋️','Finish the workout',d.q[0]],['🙏','Pray before training',d.q[1]],['🚶‍♀️','20-minute walk',d.q[2]]].map(x=>`<div class="hEx ${x[2]?'ok':''}"><span>${x[0]} ${x[1]}</span><small>${x[2]?'✓ Done':'Not yet'}</small></div>`).join('')+`<div class="muted" style="font-size:12.5px;margin-top:6px">Chests opened: ${d.ch} · Golden peaches caught: ${d.gp}</div>`)}
+  h+=sec(`This week · Week ${d.w}`,`<div class="hWeek">${d.wd.map((x,k)=>`<div class="${x?'ok':''}"><b>${x?'✓':DAYS[k].k}</b><small>Day ${DAYS[k].k}</small></div>`).join('')}</div><div class="muted" style="font-size:13px;margin-top:8px">${lastW?`Last workout: ${dayLbl(lastW[0])}, ${lastW[1]}`:'No workouts finished yet.'}</div>`);
+  if(F){const days=new Set(d.dd.map(x=>x[1])),cells=[],t0=new Date(today()+'T12:00');t0.setDate(t0.getDate()-((t0.getDay()+6)%7)-49);
+    for(let i=0;i<56;i++){const dt=new Date(t0);dt.setDate(t0.getDate()+i);const ds=dt.toISOString().slice(0,10);cells.push(`<i class="${days.has(ds)?'on':''} ${ds===today()?'td':''}" title="${ds}"></i>`)}
+    h+=sec('Last 8 weeks',`<div class="hHeat">${cells.join('')}</div><div class="muted" style="font-size:12px;margin-top:6px">Each column is a week (Monday on top). Green = workout finished. Gold outline = today.</div>`);
+    h+=sec('Workout history',d.dd.length?d.dd.slice(-15).reverse().map(x=>`<div class="hEx"><span>${dayLbl(x[0])}</span><small>${x[1]}</small></div>`).join(''):'<p class="muted" style="font-size:13px;margin:4px 0 0">None yet.</p>')}
+  if(d.pp||F){const fu=d.fu||{},gN={lean:'Lean down',recomp:'Recomp',build:'Build'}[fu.g]||'';
+    h+=sec("Today's fuel",(d.pp?`<div class="hEx"><span>🥩 Protein</span><small>${d.pp[0]}/${d.pp[1]} g</small></div>${bar(d.pp[0],d.pp[1],'var(--pink)')}<div class="hEx" style="margin-top:8px"><span>💧 Water</span><small>${d.pp[2]}/${d.pp[3]} oz</small></div>${bar(d.pp[2],d.pp[3],'#4cc9f0')}`:'<p class="muted" style="font-size:13px;margin:4px 0">Nothing logged today yet.</p>')+
+      (F?`<div class="muted" style="font-size:13px;margin-top:10px">Plan: ${gN}${fu.kcal?` · ${fu.kcal.toLocaleString()} kcal · P ${fu.p}g / C ${fu.c}g / F ${fu.f}g`:''}${fu.bf?' · breastfeeding':''}<br>Protein goal hit on ${d.pd} days · water goal on ${d.wdy} days</div>`:''))}
+  h+=sec('Measurements',(lastC?`<div class="muted" style="font-size:13.5px;margin:4px 0 8px">Latest ${lastC[0]}: waist ${lastC[2]}", hips ${lastC[3]}"${lastC[1]?`, ${lastC[1]} lb`:''} · ratio ${(lastC[2]/lastC[3]).toFixed(2)}${firstC&&d.lg.length>1?`<br>Since ${firstC[0]}: waist ${(lastC[2]-firstC[2]<=0?'−':'+')+Math.abs(lastC[2]-firstC[2]).toFixed(2)}", hips ${(lastC[3]-firstC[3]>=0?'+':'−')+Math.abs(lastC[3]-firstC[3]).toFixed(2)}"${lastC[1]&&firstC[1]?`, weight ${(lastC[1]-firstC[1]<=0?'−':'+')+Math.abs(lastC[1]-firstC[1]).toFixed(1)} lb`:''}`:''}</div>`:'<p class="muted" style="font-size:13px;margin:4px 0">No check-ins yet.</p>')+
+    `<div class="legend" style="margin-bottom:4px"><span><i style="background:#ff8f6b"></i>Hips</span><span><i style="background:#5ee6b5"></i>Waist</span></div>`+husTrend(d.lg)+
+    (F&&d.lg.length?`<div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>Date</th><th>Wt</th><th>Waist</th><th>Hips</th></tr></thead><tbody>${d.lg.slice().reverse().map(x=>`<tr><td>${x[0].slice(5)}</td><td>${x[1]||'–'}</td><td>${x[2]}"</td><td>${x[3]}"</td></tr>`).join('')}</tbody></table></div>`:''));
+  if(F)h+=sec('Points & rewards',`<div class="muted" style="font-size:13px">Earned ${d.pe.toLocaleString()} · spent ${d.ps.toLocaleString()} · balance <b style="color:var(--gold)">${d.pt.toLocaleString()}</b></div>`+
+      (d.nr?`<div class="hEx" style="margin-top:8px"><span>🎯 Saving for: ${esc(d.nr[0])}</span><small>${d.pt.toLocaleString()}/${d.nr[1].toLocaleString()}</small></div>${bar(d.pt,d.nr[1],'var(--gold)')}`:'')+
+      `<div class="eyebrow" style="margin-top:12px">Redeemed (you owe her)</div>`+(d.rd.length?d.rd.slice().reverse().map(r=>`<div class="hRw">🎁 <b>${esc(r[0])}</b><small>${r[1]}</small></div>`).join(''):'<p class="muted" style="font-size:13px;margin:4px 0 0">Nothing redeemed yet.</p>'));
+  else h+=sec('Rewards she redeemed',d.rd.length?d.rd.slice().reverse().map(r=>`<div class="hRw">🎁 <b>${esc(r[0])}</b><small>${r[1]}</small></div>`).join(''):'<p class="muted" style="font-size:13px;margin:4px 0 0">None yet.</p>');
+  if(F){const got=BADGES.filter(b=>d.bdl.includes(b.id)),leg=d.fdl.filter(f=>{const x=FINDS.find(y=>y[0]===f[0]);return x&&x[2]==='L'}),shn=d.fdl.filter(f=>f[2]);
+    h+=sec(`Trophies · ${got.length}/${BADGES.length}`,got.length?`<div class="hChips">${got.map(b=>`<span>${b.e} ${b.n}</span>`).join('')}</div>`:'<p class="muted" style="font-size:13px;margin:4px 0 0">None yet.</p>');
+    h+=sec(`Shiny finds · ${d.fdl.length}/${FINDS.length}`,d.fdl.length?`<div class="hChips">${d.fdl.map(f=>{const x=FINDS.find(y=>y[0]===f[0]);return x?`<span class="${f[2]?'sh':''}" style="border-color:${RAR[x[2]].c}">${x[1]} ${x[3]}${f[1]>1?' ×'+f[1]:''}</span>`:''}).join('')}</div><div class="muted" style="font-size:12.5px;margin-top:6px">${leg.length} legendary · ${shn.length} shiny</div>`:'<p class="muted" style="font-size:13px;margin:4px 0 0">None yet.</p>');
+    const aced=d.lsn.filter(x=>x[1]==='r').length,lastL=d.lsn.sort((a,b)=>a[0]-b[0]).slice(-1)[0];
+    h+=sec(`Lessons · ${d.lsn.length}/52`,`<div class="muted" style="font-size:13px">${aced} quizzes aced${lastL?` · latest: “${LESSONS[lastL[0]][0]}”`:''}</div>`);
+    if(d.why)h+=sec('Her why',`<div style="font-size:15px">💗 ${esc(d.why)}</div>`)}
+  h+=`<p class="muted" style="font-size:12.5px;text-align:center;margin:4px 0 0">${isLive?'<span class="liveDot"></span> Live. This screen updates by itself.':`Updated ${ago(d.t)}. For fresh numbers, ask her to tap <b>Send link to husband</b>.`}</p>`;
+  const y=$('#hus .pBody').scrollTop;$('#husBody').innerHTML=h;
+  $('#husT').innerHTML=`${nm}'s Hourglass${isLive?' <span class="liveTag"><span class="liveDot"></span>LIVE</span>':''}`;
+  if(!refresh){$('#hus').hidden=false;$('#hus .pBody').scrollTop=0;document.body.classList.add('noscroll')}else $('#hus .pBody').scrollTop=y}
+
 function closeHus(){husLiveStop();$('#hus').hidden=true;document.body.classList.remove('noscroll')}
 
 $('#coinBtn').onclick=openShop;
@@ -1729,7 +1779,7 @@ boot();
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='31';
+const APP_VERSION='32';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
