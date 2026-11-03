@@ -715,7 +715,7 @@ const sample=[
 let S={week:1,day:0,sets:{},done:[],log:[],fuel:{w:150,h:64,a:25,act:'1.55',bf:false,g:'recomp'},tank:{d:today(),p:0,w:0},
   xp:0,lvlSeen:0,badges:[],stats:{sets:0,pDays:0,wDays:0,chests:0},daily:{d:today(),sets:0,walk:0,claimed:0},doneDates:[],awarded:{},sound:true,
   name:'',why:'',pp:'',start:'',lessons:{},ts:0,installHide:0,viewSeason:null,lessonSeason:null,history:[]};
-try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(S,s)}catch(e){}
+if(!window.HUSBAND_ONLY){try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(S,s)}catch(e){}}
 if(!S.start)S.start=today();
 S.log=(S.log||[]).filter(x=>!x.ex); // no example data, ever
 // Quests run per WORKOUT DAY: a round starts with a workout and ends when she opens the chest
@@ -740,7 +740,7 @@ function idbOpen(){return new Promise((res,rej)=>{try{const r=indexedDB.open('ho
 async function idbLoad(){try{const db=await idbOpen();return await new Promise(res=>{const t=db.transaction('kv').objectStore('kv').get('state');t.onsuccess=()=>{try{res(t.result?JSON.parse(t.result):null)}catch(e){res(null)}};t.onerror=()=>res(null)})}catch(e){return null}}
 let idbT;function idbSave(){clearTimeout(idbT);idbT=setTimeout(async()=>{try{const db=await idbOpen();db.transaction('kv','readwrite').objectStore('kv').put(JSON.stringify(S),'state')}catch(e){}},300)}
 async function idbClear(){clearTimeout(idbT);try{const db=await idbOpen();await new Promise(r=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').delete('state');t.oncomplete=r;t.onerror=r})}catch(e){}}
-const save=()=>{trackUndo();S.ts=Date.now();if(S.pair&&typeof livePush==='function')livePush();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};idbSave();cloudPush();if(window.gameReady)renderGame()};
+const save=()=>{if(window.HUSBAND_ONLY){if(window.gameReady)try{renderGame()}catch(e){}return}trackUndo();S.ts=Date.now();if(S.pair&&typeof livePush==='function')livePush();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};idbSave();cloudPush();if(window.gameReady)renderGame()};
 
 // ===== season helpers
 const seasonOf=w=>Math.min(3,Math.floor((w-1)/13));
@@ -1765,8 +1765,8 @@ $('#husAgain').onclick=()=>openHus();renderPairState();setInterval(renderPairSta
 window.addEventListener('hashchange',()=>{if(!window.HUSBAND_ONLY&&(readPair(location.hash)||readHusLink(location.hash))){location.replace('husband.html'+location.hash);return}const pc=readPair(location.hash);if(pc){try{localStorage.setItem(PKEY,pc)}catch(e){}}const d=readHusLink(location.hash);if(!d)return;keepHus(d);try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}$('#husAgain').hidden=false;openHus()});$('#husAgain').hidden=!loadHus();
 function rerenderAll(){applyTheme();loadFuelInputs();calcFuel();renderMotive();renderToday();renderPlan();renderProgress();renderLearn();renderFaq();if(SAMPLE)renderChat();$('#sndBtn').textContent=S.sound?'🔊':'🔇';renderGame()}
 window.gameReady=true;
-rerenderAll();
-maybeGolden();
+try{rerenderAll()}catch(e){console.error(e)}
+try{if(!window.HUSBAND_ONLY)maybeGolden()}catch(e){}
 const hasHistory=()=>!!(S.onboarded||S.done.length||S.xp>0||S.name||Object.keys(S.sets||{}).length||S.log.length||Object.keys(S.lessons||{}).length);
 async function boot(){
   if(!window.HUSBAND_ONLY&&(readPair(location.hash)||readPair(location.search)||readHusLink(location.hash))){location.replace('husband.html'+location.search+location.hash);return}
@@ -1783,13 +1783,13 @@ async function boot(){
   if(window._husNow||(!hasHistory()&&loadHus())){openHus();return}
   if(hasHistory()){if(!S.onboarded){S.onboarded=1;save()}}else onboard();
 }
-boot();
+boot().catch(e=>{console.error(e);if(window.HUSBAND_ONLY)try{openHus()}catch(_){}});
 
 </script>
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:70;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='34';
+const APP_VERSION='35';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
