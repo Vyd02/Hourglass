@@ -415,6 +415,18 @@ body.noscroll{overflow:hidden}
 .accI.on,.thI.on{border-color:var(--mint);box-shadow:0 0 0 1px var(--mint) inset}
 .thI span{width:30px;height:30px;border-radius:50%}.thI b{font-size:13px}
 .yearbar.still i{transition:none!important;animation:none!important}
+.hus{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.hus[hidden]{display:none!important}
+.hc{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 16px}
+.hHero{background:linear-gradient(160deg,var(--surface2),var(--surface))}.hHero h2{font-size:24px;margin:4px 0 2px}
+.hGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hs{display:grid;gap:2px}.hs b{font-family:var(--display);font-size:19px;font-variant-numeric:tabular-nums}.hs small{color:var(--muted);font-size:12px}
+.hWeek{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.hWeek div{display:grid;justify-items:center;gap:2px;background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:10px 4px}
+.hWeek div b{font-size:18px}.hWeek div small{color:var(--muted);font-size:11px}
+.hWeek div.ok{border-color:var(--mint);background:color-mix(in srgb,var(--mint) 14%,var(--surface2))}.hWeek div.ok b{color:var(--mint)}
+.hRw{display:flex;align-items:baseline;gap:6px;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}.hRw:last-child{border-bottom:0}.hRw small{margin-left:auto;color:var(--muted);font-size:12px;white-space:nowrap}
+.husSet{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px;margin-top:4px}.husSet small{font-size:13px}
 .linkbtn{border:0;background:none;padding:0;color:var(--muted);font-size:12px;text-decoration:underline}
 textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
 .ask{display:grid;gap:12px;border-color:var(--pink);background:linear-gradient(160deg,color-mix(in srgb,var(--pink) 18%,var(--surface)),var(--surface))}
@@ -615,6 +627,12 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <div class="muted" style="font-size:13.5px" id="syncState">Progress is saved inside the app on this phone. Copy a backup code every few weeks and keep it in Notes.</div>
     <div class="row"><button class="btn ghost" id="bkCopy">Copy backup code</button><button class="btn ghost" id="bkShow">Restore from code</button></div>
     <div id="bkBox" hidden style="display:grid;gap:8px"><textarea id="bkText" rows="3" placeholder="Paste a backup code here"></textarea><button class="btn" id="bkRestore">Restore progress</button></div>
+    <div class="husSet"><b>💌 Husband view</b><small class="muted">Send your husband a link so he can see your progress. It only shows him a copy. Nothing on your phone changes.</small>
+      <button class="btn ghost" id="husSend">Send progress to husband</button>
+      <div id="husOut" hidden style="display:grid;gap:6px"><textarea id="husOutTxt" rows="3" readonly></textarea></div>
+      <button class="linkbtn" id="husMine" style="justify-self:start">I'm the husband: open her link</button>
+      <div id="husIn" hidden style="display:grid;gap:6px"><textarea id="husInTxt" rows="3" placeholder="Paste the link she sent you"></textarea><button class="btn" id="husInGo">Open her progress</button></div>
+      <button class="linkbtn" id="husAgain" hidden style="justify-self:start">Open husband view</button></div>
     <button class="linkbtn" id="rsShow" style="justify-self:start;margin-top:4px">Start over from day 1</button>
     <div id="rsBox" hidden class="rsbox"><b>Erase everything and start over?</b><p class="muted" style="margin:4px 0 10px;font-size:13px">Workouts, levels, trophies, lessons and check-ins on this phone go back to zero. This can't be undone.</p><div class="row"><button class="btn danger" id="rsYes">Yes, erase it</button><button class="btn ghost" id="rsNo">Cancel</button></div></div>
   </div>
@@ -657,6 +675,10 @@ input[type=search]{-webkit-appearance:none;appearance:none}
 <div class="snack" id="snack" role="status"><span id="snackTxt"></span><button id="snackUndo">UNDO</button></div>
 <div class="toast" id="toast"></div>
 <div id="ov" hidden></div>
+<div class="hus" id="hus" hidden role="dialog" aria-label="Husband view">
+  <div class="pTop"><div class="pT"><small>Husband view · read only</small><b id="husT">Hourglass</b></div><button class="btn ghost sm" id="husExit">Close</button></div>
+  <div class="pBody"><div class="wrapin" id="husBody"></div></div>
+</div>
 <canvas id="confetti"></canvas>
 
 <nav><div class="dock" role="tablist">
@@ -922,7 +944,7 @@ $('#amenBtn').onclick=e=>{$('#prayCard').open=false;if(!S.daily.prayed){S.daily.
 $('#snackUndo').onclick=doUndo;
 $('#startBtn').onclick=openPlayer;$('#pClose').onclick=closePlayer;$('#pPrev').onclick=()=>{showEx(pIdx-1);sfx('pop')};
 $('#pNext').onclick=()=>{const L=activeEx();if(pIdx<L.length-1){showEx(pIdx+1);sfx('pop');return}if(S.done.includes(sid())){closePlayer();return}const b=S.done.length;$('#finishBtn').click();if(S.done.length>b)closePlayer()};
-window.hgBack=()=>{const o=$('#ov');if(o&&!o.hidden){nextOv();return 1}if(playerOpen()){closePlayer();return 1}return 0};document.addEventListener('pointerdown',e=>{if(e.target.closest('#snackUndo'))pendSnap=null},true);
+window.hgBack=()=>{const o=$('#ov');if(o&&!o.hidden){nextOv();return 1}if(playerOpen()){closePlayer();return 1}if(!$('#hus').hidden){closeHus();return 1}return 0};document.addEventListener('pointerdown',e=>{if(e.target.closest('#snackUndo'))pendSnap=null},true);
 $('#rsShow').onclick=()=>{$('#rsBox').hidden=false};$('#rsNo').onclick=()=>{$('#rsBox').hidden=true};
 $('#rsYes').onclick=async()=>{try{localStorage.removeItem(KEY)}catch(e){}await idbClear();
   try{if(typeof CLOUD!=='undefined'&&CLOUD)await CLOUD.set({json:'{}',ts:Date.now()})}catch(e){}
@@ -1403,7 +1425,7 @@ function checkBadges(){let nw=0;BADGES.forEach(b=>{if(!S.badges.includes(b.id)&&
 const TIPS=['Glutes grow on rest days. Sleep counts as training.','Squeeze a full second at the top of every bridge.','Protein at breakfast makes the daily goal way easier.','Slow lowering means more muscle from the same bodyweight.','Stroller hills are free glute work.','Waist-to-hip ratio beats the scale for this goal.','Progress photos every 4 weeks, same light, same spot.','Shaky last reps mean it is working.','Exhale on the hard part of every rep.','Knees out over the toes on every squat.'];
 function openLoot(items){items=items||[];enqueue(ov=>{
   const pool=[25,25,50,50,50,75,100,150],vals=[0,1,2].map(()=>pool[Math.random()*pool.length|0]);
-  ov.innerHTML=`<div class="ovc"><div class="eyebrow">Workout complete</div>${unlockRows(items)}<h2>Pick a mystery card</h2><div class="loot">${vals.map((v,i)=>`<button class="lc" data-i="${i}"><div class="fr">🍑</div><div class="bk">+${v}<small>pts</small></div></button>`).join('')}</div><p class="muted" id="lootTip">One of them hides a big bonus.</p><button class="btn wide" id="lootGo" hidden>Collect</button></div>`;
+  ov.innerHTML=`<div class="ovc"><div class="eyebrow">Workout complete</div>${unlockRows(items)}<h2>Pick a mystery card</h2><div class="loot">${vals.map((v,i)=>`<button class="lc" data-i="${i}"><div class="fr">🍑</div><div class="bk">+${v}<small>pts</small></div></button>`).join('')}</div><p class="muted" id="lootTip">One of them hides a big bonus.</p><button class="linkbtn" type="button" onclick="sendToHusband()" style="justify-self:center">💌 Send update to husband</button><button class="btn wide" id="lootGo" hidden>Collect</button></div>`;
   if(items.some(i=>i.lv))sfx('level');
   let picked=-1;
   ov.querySelectorAll('.lc').forEach(c=>c.onclick=()=>{if(picked>=0)return;picked=+c.dataset.i;c.classList.add('flip');sfx('flip');buzz(30);
@@ -1540,7 +1562,7 @@ function setFX(e,big){
 let goldT=null,goldLast=0;
 function maybeGolden(){
   clearTimeout(goldT);if(Date.now()-goldLast<6*6e4)return;
-  goldT=setTimeout(()=>{if(!$('#v-today').classList.contains('on')||playerOpen()||ovOpen||document.hidden||Math.random()>.45)return;
+  goldT=setTimeout(()=>{if(!$('#v-today').classList.contains('on')||playerOpen()||!$('#hus').hidden||ovOpen||document.hidden||Math.random()>.45)return;
     goldLast=Date.now();const g=document.createElement('button');g.className='goldpeach';g.innerHTML='<span class="goldf">🍑</span>';g.setAttribute('aria-label','Catch the golden peach');
     g.style.top=(140+Math.random()*(innerHeight-360))+'px';document.body.appendChild(g);sfx('flip');
     g.onclick=e=>{const pts=[50,75,100,150][Math.random()*4|0];g.classList.add('caught');toast(`Golden peach caught! +${pts} pts 🍑✨`);confetti();sfx('chest');buzz([40,30,90]);
@@ -1609,17 +1631,66 @@ function shopBuy(code,ov){const i=code.indexOf(':'),k=code.slice(0,i),id=code.sl
     S.spent+=t.c;S.ownedThemes.push(id);S.theme=id;applyTheme();save();sfx('win');confetti();renderShop(ov,`<b>${t.n}</b> colors unlocked!`)}
 }
 
+
+// ===== Husband view: her phone sends a read-only snapshot link; his phone shows it. Never touches her saved progress.
+const HKEY='hourglass-husband',HBASE='https://vyd02.github.io/Hourglass/';
+const b64u=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const unb64u=t=>{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';return JSON.parse(decodeURIComponent(escape(atob(t))))};
+function husbandSnap(){shopInit();return{v:1,t:Date.now(),n:S.name||'',w:S.week,dn:S.done.length,
+  wd:[0,1,2,3].map(d=>S.done.includes(`w${S.week}d${d}`)?1:0),st:weekStreak(),pt:coins(),
+  dd:S.doneDates.slice(-10).map(o=>[o.id,o.d]),lg:realLog().slice(-20).map(x=>[x.date,x.w||0,x.wa,x.h]),
+  bd:S.badges.length,fd:Object.keys(S.finds||{}).length,ls:Object.keys(S.lessons||{}).length,
+  rd:(S.redeemed||[]).slice(-8).map(r=>[r.n,r.d]),pp:S.tank&&S.tank.d===today()?[S.tank.p,S.pTarget||0,S.tank.w,S.wTarget||0]:null}}
+const husLink=()=>HBASE+'#h='+b64u(husbandSnap());
+async function sendToHusband(){const url=husLink(),nm=S.name||'My';
+  try{if(navigator.share){await navigator.share({title:'Hourglass progress',text:`${nm==='My'?'My':nm+'’s'} Hourglass progress 🍑`,url});toast('Sent 💌');return}}catch(e){if(e&&e.name==='AbortError')return}
+  try{await navigator.clipboard.writeText(url);toast('Link copied. Text it to your husband 💌');return}catch(e){}
+  $('#husOut').hidden=false;$('#husOutTxt').value=url;$('#husOutTxt').select();toast('Copy this link and text it to him')}
+function loadHus(){try{return JSON.parse(localStorage.getItem(HKEY)||'null')}catch(e){return null}}
+function keepHus(d){try{const old=loadHus();if(!old||(d.t||0)>=(old.t||0))localStorage.setItem(HKEY,JSON.stringify(d))}catch(e){}}
+function readHusLink(txt){const m=String(txt||'').match(/[#&]h=([A-Za-z0-9_-]+)/);if(!m)return null;try{const d=unb64u(m[1]);return d&&d.v===1?d:null}catch(e){return null}}
+function ago(t){const m=Math.round((Date.now()-t)/6e4);if(m<2)return 'just now';if(m<60)return m+' min ago';const h=Math.round(m/60);if(h<24)return h+(h===1?' hour ago':' hours ago');const d=Math.round(h/24);return d+(d===1?' day ago':' days ago')}
+function husTrend(L){if(L.length<2)return '<p class="muted" style="font-size:13px;margin:0">Her trend line shows up after 2 check-ins.</p>';
+  const W=340,H=150,pl=34,pr=10,pt=10,pb=24,v=L.flatMap(x=>[x[2],x[3]]),lo=Math.floor(Math.min(...v)-1),hi=Math.ceil(Math.max(...v)+1);
+  const X=i=>pl+i*(W-pl-pr)/(L.length-1),Y=y=>pt+(hi-y)*(H-pt-pb)/(hi-lo);
+  const ln=(k,c)=>`<polyline points="${L.map((x,i)=>X(i)+','+Y(x[k])).join(' ')}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${X(L.length-1)}" cy="${Y(L[L.length-1][k])}" r="4.5" fill="${c}"/>`;
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">${[lo,hi].map(y=>`<text x="${pl-6}" y="${Y(y)+4}" text-anchor="end" font-size="10" fill="var(--muted)">${y}"</text>`).join('')}${ln(3,'#ff8f6b')}${ln(2,'#5ee6b5')}<text x="${X(0)}" y="${H-5}" font-size="10" fill="var(--muted)">${L[0][0].slice(5)}</text><text x="${X(L.length-1)}" y="${H-5}" font-size="10" text-anchor="end" fill="var(--muted)">${L[L.length-1][0].slice(5)}</text></svg>`}
+function openHus(){const d=loadHus();if(!d)return;const nm=d.n?esc(d.n):'Your wife';
+  let L=0;while(L<19&&d.dn>=LV[L+1])L++;const toNext=L<19?LV[L+1]-d.dn:0,s=seasonOf(d.w),lastC=d.lg[d.lg.length-1],firstC=d.lg[0];
+  const lastW=d.dd[d.dd.length-1],dayLbl=id=>{const w=+id.slice(1,id.indexOf('d')),k=+id.slice(id.indexOf('d')+1);return `Week ${w} · Day ${DAYS[k].k} · ${DAYS[k].t}`};
+  $('#husBody').innerHTML=`
+   <div class="hc hHero"><div class="eyebrow">${nm}'s progress</div><h2>${titleOf(L)}</h2><div class="muted">Level ${L+1} of 20${toNext?` · ${toNext} workout${toNext===1?'':'s'} to level ${L+2}`:' · Year complete 👑'}</div>
+     <div class="yearbar tall still" style="margin-top:10px"><i style="width:${Math.max(d.dn?2:0,d.dn/208*100)}%"></i></div><div class="muted" style="font-size:12.5px;margin-top:6px">${d.dn} of 208 workouts · Season ${s+1}: ${SEASONS[s].n}</div></div>
+   <div class="hGrid"><div class="hc hs"><b>🔥 ${d.st}</b><small>week streak</small></div><div class="hc hs"><b>🍑 ${d.pt.toLocaleString()}</b><small>points</small></div><div class="hc hs"><b>🏆 ${d.bd}</b><small>trophies</small></div><div class="hc hs"><b>📚 ${d.ls}/52</b><small>lessons</small></div></div>
+   <div class="hc"><div class="eyebrow">This week · Week ${d.w}</div><div class="hWeek">${d.wd.map((x,k)=>`<div class="${x?'ok':''}"><b>${x?'✓':DAYS[k].k}</b><small>Day ${DAYS[k].k}</small></div>`).join('')}</div>
+     <div class="muted" style="font-size:13px;margin-top:8px">${lastW?`Last workout: ${dayLbl(lastW[0])}, ${lastW[1]}`:'No workouts finished yet.'}</div></div>
+   ${d.pp?`<div class="hc"><div class="eyebrow">Today's fuel</div><div class="muted" style="font-size:14px">Protein ${d.pp[0]}/${d.pp[1]} g · Water ${d.pp[2]}/${d.pp[3]} oz</div></div>`:''}
+   <div class="hc"><div class="row" style="justify-content:space-between"><div class="eyebrow">Measurements</div><div class="legend"><span><i style="background:#ff8f6b"></i>Hips</span><span><i style="background:#5ee6b5"></i>Waist</span></div></div>
+     ${lastC?`<div class="muted" style="font-size:13.5px;margin:4px 0 8px">Latest ${lastC[0]}: waist ${lastC[2]}", hips ${lastC[3]}"${lastC[1]?`, ${lastC[1]} lb`:''}${firstC&&d.lg.length>1?` · waist ${(lastC[2]-firstC[2]<=0?'down ':'up ')+Math.abs(lastC[2]-firstC[2]).toFixed(2)}" since ${firstC[0]}`:''}</div>`:'<p class="muted" style="font-size:13px;margin:4px 0">No check-ins yet.</p>'}
+     ${husTrend(d.lg)}</div>
+   <div class="hc"><div class="eyebrow">Rewards she redeemed</div>${d.rd.length?d.rd.slice().reverse().map(r=>`<div class="hRw">🎁 <b>${esc(r[0])}</b><small>${r[1]}</small></div>`).join(''):'<p class="muted" style="font-size:13px;margin:4px 0 0">None yet. When she redeems one, it shows up here.</p>'}</div>
+   <p class="muted" style="font-size:12.5px;text-align:center;margin:4px 0 0">Updated ${ago(d.t)}. For fresh numbers, ask her to tap <b>Send progress to husband</b>.</p>`;
+  $('#husT').textContent=`${nm}'s Hourglass`;$('#hus').hidden=false;document.body.classList.add('noscroll')}
+function closeHus(){$('#hus').hidden=true;document.body.classList.remove('noscroll')}
+
 $('#coinBtn').onclick=openShop;
+$('#husSend').onclick=sendToHusband;$('#husExit').onclick=closeHus;
+$('#husMine').onclick=()=>{$('#husIn').hidden=!$('#husIn').hidden};
+$('#husInGo').onclick=()=>{const d=readHusLink($('#husInTxt').value);if(!d){toast('That link didn\'t work. Copy the whole link she sent.');return}keepHus(d);$('#husIn').hidden=true;$('#husInTxt').value='';$('#husAgain').hidden=false;openHus()};
+$('#husAgain').onclick=openHus;
+window.addEventListener('hashchange',()=>{const d=readHusLink(location.hash);if(!d)return;keepHus(d);try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}$('#husAgain').hidden=false;openHus()});$('#husAgain').hidden=!loadHus();
 function rerenderAll(){applyTheme();loadFuelInputs();calcFuel();renderMotive();renderToday();renderPlan();renderProgress();renderLearn();renderFaq();if(SAMPLE)renderChat();$('#sndBtn').textContent=S.sound?'🔊':'🔇';renderGame()}
 window.gameReady=true;
 rerenderAll();
 maybeGolden();
 const hasHistory=()=>!!(S.onboarded||S.done.length||S.xp>0||S.name||Object.keys(S.sets||{}).length||S.log.length||Object.keys(S.lessons||{}).length);
 async function boot(){
+  {const d=readHusLink(location.hash);if(d){keepHus(d);try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}window._husNow=1}}
   try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
   const saved=await idbLoad();
   if(saved&&(saved.ts||0)>(S.ts||0)){S=Object.assign(S,saved);dayRoll();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};rerenderAll()}
   try{await Promise.race([initCaps(),new Promise(r=>setTimeout(r,4000))])}catch(e){}
+  if(window._husNow||(!hasHistory()&&loadHus())){openHus();return}
   if(hasHistory()){if(!S.onboarded){S.onboarded=1;save()}}else onboard();
 }
 boot();
@@ -1628,7 +1699,7 @@ boot();
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='28';
+const APP_VERSION='29';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
