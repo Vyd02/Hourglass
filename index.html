@@ -1685,7 +1685,7 @@ function husTrend(L){if(L.length<2)return '<p class="muted" style="font-size:13p
   const X=i=>pl+i*(W-pl-pr)/(L.length-1),Y=y=>pt+(hi-y)*(H-pt-pb)/(hi-lo);
   const ln=(k,c)=>`<polyline points="${L.map((x,i)=>X(i)+','+Y(x[k])).join(' ')}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${X(L.length-1)}" cy="${Y(L[L.length-1][k])}" r="4.5" fill="${c}"/>`;
   return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">${[lo,hi].map(y=>`<text x="${pl-6}" y="${Y(y)+4}" text-anchor="end" font-size="10" fill="var(--muted)">${y}"</text>`).join('')}${ln(3,'#ff8f6b')}${ln(2,'#5ee6b5')}<text x="${X(0)}" y="${H-5}" font-size="10" fill="var(--muted)">${L[0][0].slice(5)}</text><text x="${X(L.length-1)}" y="${H-5}" font-size="10" text-anchor="end" fill="var(--muted)">${L[L.length-1][0].slice(5)}</text></svg>`}
-function openHus(refresh){const d=loadHus();if(!d)return;if(!refresh)husLiveStart();const isLive=LIVE&&!!(()=>{try{return localStorage.getItem(PKEY)}catch(e){return null}})();const nm=d.n?esc(d.n):'Your wife';
+function openHus(refresh){const d=loadHus();if(!d)return;if(!refresh)husLiveStart();const isLive=LIVE&&!!(()=>{try{return localStorage.getItem(PKEY)}catch(e){return null}})();const nm=d.n?esc(d.n):'Katelyn';
   let L=0;while(L<19&&d.dn>=LV[L+1])L++;const toNext=L<19?LV[L+1]-d.dn:0,s=seasonOf(d.w),lastC=d.lg[d.lg.length-1],firstC=d.lg[0];
   const lastW=d.dd[d.dd.length-1],dayLbl=id=>{const w=+id.slice(1,id.indexOf('d')),k=+id.slice(id.indexOf('d')+1);return `Week ${w} · Day ${DAYS[k].k} · ${DAYS[k].t}`};
   $('#husBody').innerHTML=`
@@ -1729,7 +1729,7 @@ boot();
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='30';
+const APP_VERSION='31';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
