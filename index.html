@@ -426,6 +426,10 @@ body.noscroll{overflow:hidden}
 .hWeek div b{font-size:18px}.hWeek div small{color:var(--muted);font-size:11px}
 .hWeek div.ok{border-color:var(--mint);background:color-mix(in srgb,var(--mint) 14%,var(--surface2))}.hWeek div.ok b{color:var(--mint)}
 .hRw{display:flex;align-items:baseline;gap:6px;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}.hRw:last-child{border-bottom:0}.hRw small{margin-left:auto;color:var(--muted);font-size:12px;white-space:nowrap}
+.liveDot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 0 var(--mint);animation:livep 1.8s infinite;vertical-align:middle;margin-right:4px}
+@keyframes livep{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--mint) 70%,transparent)}100%{box-shadow:0 0 0 8px transparent}}
+.liveTag{font-family:var(--body);font-size:10.5px;font-weight:800;letter-spacing:.1em;color:var(--mint);margin-left:6px;vertical-align:middle}
+.pairSt{font-size:13px}
 .husSet{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px;margin-top:4px}.husSet small{font-size:13px}
 .linkbtn{border:0;background:none;padding:0;color:var(--muted);font-size:12px;text-decoration:underline}
 textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--fg);border-radius:12px;padding:10px;font:inherit;font-size:14px;resize:vertical}
@@ -627,8 +631,9 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <div class="muted" style="font-size:13.5px" id="syncState">Progress is saved inside the app on this phone. Copy a backup code every few weeks and keep it in Notes.</div>
     <div class="row"><button class="btn ghost" id="bkCopy">Copy backup code</button><button class="btn ghost" id="bkShow">Restore from code</button></div>
     <div id="bkBox" hidden style="display:grid;gap:8px"><textarea id="bkText" rows="3" placeholder="Paste a backup code here"></textarea><button class="btn" id="bkRestore">Restore progress</button></div>
-    <div class="husSet"><b>💌 Husband view</b><small class="muted">Send your husband a link so he can see your progress. It only shows him a copy. Nothing on your phone changes.</small>
-      <button class="btn ghost" id="husSend">Send progress to husband</button>
+    <div class="husSet"><b>💌 Husband view</b><small class="muted">Send your husband a link once. His phone then shows your progress and updates by itself. He can only look. Nothing on your phone changes.</small>
+      <button class="btn ghost" id="husSend">Send link to husband</button>
+      <div class="muted pairSt" id="pairState" hidden></div>
       <div id="husOut" hidden style="display:grid;gap:6px"><textarea id="husOutTxt" rows="3" readonly></textarea></div>
       <button class="linkbtn" id="husMine" style="justify-self:start">I'm the husband: open her link</button>
       <div id="husIn" hidden style="display:grid;gap:6px"><textarea id="husInTxt" rows="3" placeholder="Paste the link she sent you"></textarea><button class="btn" id="husInGo">Open her progress</button></div>
@@ -725,7 +730,7 @@ function idbOpen(){return new Promise((res,rej)=>{try{const r=indexedDB.open('ho
 async function idbLoad(){try{const db=await idbOpen();return await new Promise(res=>{const t=db.transaction('kv').objectStore('kv').get('state');t.onsuccess=()=>{try{res(t.result?JSON.parse(t.result):null)}catch(e){res(null)}};t.onerror=()=>res(null)})}catch(e){return null}}
 let idbT;function idbSave(){clearTimeout(idbT);idbT=setTimeout(async()=>{try{const db=await idbOpen();db.transaction('kv','readwrite').objectStore('kv').put(JSON.stringify(S),'state')}catch(e){}},300)}
 async function idbClear(){clearTimeout(idbT);try{const db=await idbOpen();await new Promise(r=>{const t=db.transaction('kv','readwrite');t.objectStore('kv').delete('state');t.oncomplete=r;t.onerror=r})}catch(e){}}
-const save=()=>{trackUndo();S.ts=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};idbSave();cloudPush();if(window.gameReady)renderGame()};
+const save=()=>{trackUndo();S.ts=Date.now();if(S.pair&&typeof livePush==='function')livePush();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};idbSave();cloudPush();if(window.gameReady)renderGame()};
 
 // ===== season helpers
 const seasonOf=w=>Math.min(3,Math.floor((w-1)/13));
@@ -1633,7 +1638,31 @@ function shopBuy(code,ov){const i=code.indexOf(':'),k=code.slice(0,i),id=code.sl
 
 
 // ===== Husband view: her phone sends a read-only snapshot link; his phone shows it. Never touches her saved progress.
-const HKEY='hourglass-husband',HBASE='https://vyd02.github.io/Hourglass/';
+const HKEY='hourglass-husband',HBASE='https://vyd02.github.io/Hourglass/',PKEY='hourglass-pair';
+const FB_URL=(window.HG_FB_URL||'https://hourglass-6232a-default-rtdb.firebaseio.com').replace(/\/+$/,'');const LIVE=/^https?:\/\/[^_]/.test(FB_URL);
+const newCode=()=>{const a=new Uint8Array(24);crypto.getRandomValues(a);return Array.from(a,b=>'abcdefghijkmnpqrstuvwxyz23456789'[b%32]).join('')};
+const fbPath=c=>`${FB_URL}/couples/${c}/snap.json`;
+let pushT2=null,lastPush=0;
+function livePush(now){if(!LIVE||!S.pair)return;clearTimeout(pushT2);pushT2=setTimeout(async()=>{
+  try{const r=await fetch(fbPath(S.pair),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(husbandSnap())});if(r.ok){lastPush=Date.now();S.pairSync=lastPush;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}renderPairState()}}catch(e){}},now?0:2500)}
+window.addEventListener('online',()=>livePush(true));
+function renderPairState(){const el=$('#pairState');if(!el)return;
+  if(!LIVE){el.hidden=true;return}el.hidden=false;
+  el.innerHTML=S.pair?`<span class="liveDot"></span> Live sharing is on${S.pairSync?` · synced ${ago(S.pairSync)}`:''} <button class="linkbtn" id="pairStop" type="button">Stop sharing</button>`:'Live sharing is off. Tap the button above to connect your husband.'}
+document.addEventListener('click',async e=>{if(!e.target.closest('#pairStop'))return;const c=S.pair;S.pair=null;S.pairSync=0;save();renderPairState();toast('Live sharing stopped');
+  if(LIVE&&c){try{await fetch(fbPath(c),{method:'DELETE'})}catch(e){}}});
+// his phone: watch her progress live
+let husES=null,husPoll=null;
+function husLiveStart(){const c=(()=>{try{return localStorage.getItem(PKEY)}catch(e){return null}})();if(!LIVE||!c)return;husLiveStop();
+  const got=d=>{if(d&&d.v===1){keepHus(d);if(!$('#hus').hidden)openHus(true)}};
+  fetch(fbPath(c)).then(r=>r.json()).then(got).catch(()=>{});
+  try{husES=new EventSource(fbPath(c));
+    husES.addEventListener('put',ev=>{try{const m=JSON.parse(ev.data);if(m.path==='/')got(m.data)}catch(e){}});
+    husES.addEventListener('patch',()=>{fetch(fbPath(c)).then(r=>r.json()).then(got).catch(()=>{})});
+  }catch(e){}
+  husPoll=setInterval(()=>{if(!document.hidden)fetch(fbPath(c)).then(r=>r.json()).then(got).catch(()=>{})},30000)}
+function husLiveStop(){try{husES&&husES.close()}catch(e){}husES=null;clearInterval(husPoll)}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!$('#hus').hidden)husLiveStart()});
 const b64u=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 const unb64u=t=>{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';return JSON.parse(decodeURIComponent(escape(atob(t))))};
 function husbandSnap(){shopInit();return{v:1,t:Date.now(),n:S.name||'',w:S.week,dn:S.done.length,
@@ -1641,13 +1670,14 @@ function husbandSnap(){shopInit();return{v:1,t:Date.now(),n:S.name||'',w:S.week,
   dd:S.doneDates.slice(-10).map(o=>[o.id,o.d]),lg:realLog().slice(-20).map(x=>[x.date,x.w||0,x.wa,x.h]),
   bd:S.badges.length,fd:Object.keys(S.finds||{}).length,ls:Object.keys(S.lessons||{}).length,
   rd:(S.redeemed||[]).slice(-8).map(r=>[r.n,r.d]),pp:S.tank&&S.tank.d===today()?[S.tank.p,S.pTarget||0,S.tank.w,S.wTarget||0]:null}}
-const husLink=()=>HBASE+'#h='+b64u(husbandSnap());
-async function sendToHusband(){const url=husLink(),nm=S.name||'My';
+const husLink=()=>HBASE+'#h='+b64u(husbandSnap())+(LIVE&&S.pair?'&pair='+S.pair:'');
+async function sendToHusband(){if(LIVE&&!S.pair){S.pair=newCode();save()}livePush(true);const url=husLink(),nm=S.name||'My';
   try{if(navigator.share){await navigator.share({title:'Hourglass progress',text:`${nm==='My'?'My':nm+'’s'} Hourglass progress 🍑`,url});toast('Sent 💌');return}}catch(e){if(e&&e.name==='AbortError')return}
   try{await navigator.clipboard.writeText(url);toast('Link copied. Text it to your husband 💌');return}catch(e){}
   $('#husOut').hidden=false;$('#husOutTxt').value=url;$('#husOutTxt').select();toast('Copy this link and text it to him')}
 function loadHus(){try{return JSON.parse(localStorage.getItem(HKEY)||'null')}catch(e){return null}}
 function keepHus(d){try{const old=loadHus();if(!old||(d.t||0)>=(old.t||0))localStorage.setItem(HKEY,JSON.stringify(d))}catch(e){}}
+function readPair(txt){const m=String(txt||'').match(/[#&]pair=([a-z0-9]{24,})/);return m?m[1]:null}
 function readHusLink(txt){const m=String(txt||'').match(/[#&]h=([A-Za-z0-9_-]+)/);if(!m)return null;try{const d=unb64u(m[1]);return d&&d.v===1?d:null}catch(e){return null}}
 function ago(t){const m=Math.round((Date.now()-t)/6e4);if(m<2)return 'just now';if(m<60)return m+' min ago';const h=Math.round(m/60);if(h<24)return h+(h===1?' hour ago':' hours ago');const d=Math.round(h/24);return d+(d===1?' day ago':' days ago')}
 function husTrend(L){if(L.length<2)return '<p class="muted" style="font-size:13px;margin:0">Her trend line shows up after 2 check-ins.</p>';
@@ -1655,7 +1685,7 @@ function husTrend(L){if(L.length<2)return '<p class="muted" style="font-size:13p
   const X=i=>pl+i*(W-pl-pr)/(L.length-1),Y=y=>pt+(hi-y)*(H-pt-pb)/(hi-lo);
   const ln=(k,c)=>`<polyline points="${L.map((x,i)=>X(i)+','+Y(x[k])).join(' ')}" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${X(L.length-1)}" cy="${Y(L[L.length-1][k])}" r="4.5" fill="${c}"/>`;
   return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">${[lo,hi].map(y=>`<text x="${pl-6}" y="${Y(y)+4}" text-anchor="end" font-size="10" fill="var(--muted)">${y}"</text>`).join('')}${ln(3,'#ff8f6b')}${ln(2,'#5ee6b5')}<text x="${X(0)}" y="${H-5}" font-size="10" fill="var(--muted)">${L[0][0].slice(5)}</text><text x="${X(L.length-1)}" y="${H-5}" font-size="10" text-anchor="end" fill="var(--muted)">${L[L.length-1][0].slice(5)}</text></svg>`}
-function openHus(){const d=loadHus();if(!d)return;const nm=d.n?esc(d.n):'Your wife';
+function openHus(refresh){const d=loadHus();if(!d)return;if(!refresh)husLiveStart();const isLive=LIVE&&!!(()=>{try{return localStorage.getItem(PKEY)}catch(e){return null}})();const nm=d.n?esc(d.n):'Your wife';
   let L=0;while(L<19&&d.dn>=LV[L+1])L++;const toNext=L<19?LV[L+1]-d.dn:0,s=seasonOf(d.w),lastC=d.lg[d.lg.length-1],firstC=d.lg[0];
   const lastW=d.dd[d.dd.length-1],dayLbl=id=>{const w=+id.slice(1,id.indexOf('d')),k=+id.slice(id.indexOf('d')+1);return `Week ${w} · Day ${DAYS[k].k} · ${DAYS[k].t}`};
   $('#husBody').innerHTML=`
@@ -1669,23 +1699,23 @@ function openHus(){const d=loadHus();if(!d)return;const nm=d.n?esc(d.n):'Your wi
      ${lastC?`<div class="muted" style="font-size:13.5px;margin:4px 0 8px">Latest ${lastC[0]}: waist ${lastC[2]}", hips ${lastC[3]}"${lastC[1]?`, ${lastC[1]} lb`:''}${firstC&&d.lg.length>1?` · waist ${(lastC[2]-firstC[2]<=0?'down ':'up ')+Math.abs(lastC[2]-firstC[2]).toFixed(2)}" since ${firstC[0]}`:''}</div>`:'<p class="muted" style="font-size:13px;margin:4px 0">No check-ins yet.</p>'}
      ${husTrend(d.lg)}</div>
    <div class="hc"><div class="eyebrow">Rewards she redeemed</div>${d.rd.length?d.rd.slice().reverse().map(r=>`<div class="hRw">🎁 <b>${esc(r[0])}</b><small>${r[1]}</small></div>`).join(''):'<p class="muted" style="font-size:13px;margin:4px 0 0">None yet. When she redeems one, it shows up here.</p>'}</div>
-   <p class="muted" style="font-size:12.5px;text-align:center;margin:4px 0 0">Updated ${ago(d.t)}. For fresh numbers, ask her to tap <b>Send progress to husband</b>.</p>`;
-  $('#husT').textContent=`${nm}'s Hourglass`;$('#hus').hidden=false;document.body.classList.add('noscroll')}
-function closeHus(){$('#hus').hidden=true;document.body.classList.remove('noscroll')}
+   <p class="muted" style="font-size:12.5px;text-align:center;margin:4px 0 0">${isLive?`<span class="liveDot"></span> Live · her last change was ${ago(d.t)}. This screen updates by itself.`:`Updated ${ago(d.t)}. For fresh numbers, ask her to tap <b>Send link to husband</b>.`}</p>`;
+  $('#husT').innerHTML=`${nm}'s Hourglass${isLive?' <span class="liveTag"><span class="liveDot"></span>LIVE</span>':''}`;if(!refresh){$('#hus').hidden=false;$('#hus .pBody').scrollTop=0}document.body.classList.add('noscroll')}
+function closeHus(){husLiveStop();$('#hus').hidden=true;document.body.classList.remove('noscroll')}
 
 $('#coinBtn').onclick=openShop;
 $('#husSend').onclick=sendToHusband;$('#husExit').onclick=closeHus;
 $('#husMine').onclick=()=>{$('#husIn').hidden=!$('#husIn').hidden};
-$('#husInGo').onclick=()=>{const d=readHusLink($('#husInTxt').value);if(!d){toast('That link didn\'t work. Copy the whole link she sent.');return}keepHus(d);$('#husIn').hidden=true;$('#husInTxt').value='';$('#husAgain').hidden=false;openHus()};
-$('#husAgain').onclick=openHus;
-window.addEventListener('hashchange',()=>{const d=readHusLink(location.hash);if(!d)return;keepHus(d);try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}$('#husAgain').hidden=false;openHus()});$('#husAgain').hidden=!loadHus();
+$('#husInGo').onclick=()=>{const pc=readPair($('#husInTxt').value);if(pc){try{localStorage.setItem(PKEY,pc)}catch(e){}}const d=readHusLink($('#husInTxt').value);if(!d){toast('That link didn\'t work. Copy the whole link she sent.');return}keepHus(d);$('#husIn').hidden=true;$('#husInTxt').value='';$('#husAgain').hidden=false;openHus()};
+$('#husAgain').onclick=()=>openHus();renderPairState();setInterval(renderPairState,60000);
+window.addEventListener('hashchange',()=>{const pc=readPair(location.hash);if(pc){try{localStorage.setItem(PKEY,pc)}catch(e){}}const d=readHusLink(location.hash);if(!d)return;keepHus(d);try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}$('#husAgain').hidden=false;openHus()});$('#husAgain').hidden=!loadHus();
 function rerenderAll(){applyTheme();loadFuelInputs();calcFuel();renderMotive();renderToday();renderPlan();renderProgress();renderLearn();renderFaq();if(SAMPLE)renderChat();$('#sndBtn').textContent=S.sound?'🔊':'🔇';renderGame()}
 window.gameReady=true;
 rerenderAll();
 maybeGolden();
 const hasHistory=()=>!!(S.onboarded||S.done.length||S.xp>0||S.name||Object.keys(S.sets||{}).length||S.log.length||Object.keys(S.lessons||{}).length);
 async function boot(){
-  {const d=readHusLink(location.hash);if(d){keepHus(d);try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}window._husNow=1}}
+  {const pc=readPair(location.hash);if(pc){try{localStorage.setItem(PKEY,pc)}catch(e){}}const d=readHusLink(location.hash);if(d){keepHus(d);try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}window._husNow=1}}
   try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
   const saved=await idbLoad();
   if(saved&&(saved.ts||0)>(S.ts||0)){S=Object.assign(S,saved);dayRoll();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};rerenderAll()}
@@ -1699,7 +1729,7 @@ boot();
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:50;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='29';
+const APP_VERSION='30';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
