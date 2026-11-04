@@ -1646,15 +1646,18 @@ function renderShop(ov,msg){shopInit();const bal=coins(),re=!!ov.querySelector('
 }
 function shopBuy(code,ov){const i=code.indexOf(':'),k=code.slice(0,i),id=code.slice(i+1),bal=coins();shopInit();
   const short=c=>{toast(`${(c-bal).toLocaleString()} more points to go. Keep training!`);buzz(40)};
+  // every purchase asks first
+  const ask=(what,cost)=>{if(ov.dataset.confirm===code){delete ov.dataset.confirm;return true}
+    ov.dataset.confirm=code;renderShop(ov,`Spend <b>${cost.toLocaleString()} pts</b> on ${what}?<div class="row" style="justify-content:center"><button class="btn sm" data-buy="${code}">Yes, buy it</button><button class="btn sm off" data-tab="${shopTab}">Cancel</button></div>`);sfx('pop');return false};
   if(k==='r'){const r=S.rewards.find(x=>x.id===id);if(!r)return;if(bal<r.c)return short(r.c);
     if(ov.dataset.confirm!==code){ov.dataset.confirm=code;renderShop(ov,`Redeem <b>${esc(r.n)}</b> for ${r.c.toLocaleString()} pts?<div class="row" style="justify-content:center"><button class="btn sm" data-buy="${code}">Yes, redeem</button><button class="btn sm off" data-tab="rewards">Cancel</button></div>`);return}
     delete ov.dataset.confirm;S.spent+=r.c;S.redeemed.push({n:r.n,c:r.c,d:today()});save();confetti();sfx('level');buzz([60,40,120]);
     renderShop(ov,`<span style="font-size:56px;line-height:1">${r.e}</span><b style="font-size:17px">${esc(r.n)}: unlocked!</b><span>Show this screen to your husband. You earned it 💗</span>`);return}
-  if(k==='c'){const cost=id==='shopE'?1200:300;if(bal<cost)return short(cost);S.spent+=cost;save();nextOv();rollDrop(id);return}
+  if(k==='c'){const cost=id==='shopE'?1200:300;if(bal<cost)return short(cost);if(!ask(id==='shopE'?'a Golden crate':'a Mystery crate',cost))return;S.spent+=cost;save();nextOv();rollDrop(id);return}
   if(k==='a'){if(id==='none'){S.wear=null;save();renderShop(ov);return}const a=SHOP_ACC.find(x=>x.id===id);
-    if(S.ownedAcc.includes(id)){S.wear=id;save();renderShop(ov);return}if(bal<a.c)return short(a.c);
+    if(S.ownedAcc.includes(id)){S.wear=id;save();renderShop(ov);return}if(bal<a.c)return short(a.c);if(!ask(`the ${a.e} accessory`,a.c))return;
     S.spent+=a.c;S.ownedAcc.push(id);S.wear=id;save();sfx('win');confetti();renderShop(ov,`<span style="font-size:44px">${a.e}</span>Your peach is wearing it!`);return}
-  if(k==='t'){const t=THEMES.find(x=>x.id===id);if(S.ownedThemes.includes(id)){S.theme=id;applyTheme();save();renderShop(ov);return}if(bal<t.c)return short(t.c);
+  if(k==='t'){const t=THEMES.find(x=>x.id===id);if(S.ownedThemes.includes(id)){S.theme=id;applyTheme();save();renderShop(ov);return}if(bal<t.c)return short(t.c);if(!ask(`${t.n} app colors`,t.c))return;
     S.spent+=t.c;S.ownedThemes.push(id);S.theme=id;applyTheme();save();sfx('win');confetti();renderShop(ov,`<b>${t.n}</b> colors unlocked!`)}
 }
 
@@ -1817,7 +1820,7 @@ boot().catch(e=>{console.error(e);if(window.HUSBAND_ONLY)try{openHus()}catch(_){
 <div class="upd" id="updBar" hidden><span>✨ New update ready</span><button id="updGo">Update now</button></div>
 <style>.upd{position:fixed;z-index:70;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));margin:0 auto;max-width:440px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--mint);color:var(--bg);font-weight:800;border-radius:16px;padding:8px 8px 8px 16px;box-shadow:0 12px 30px -10px #000;animation:rise .4s}.upd button{border:0;background:var(--bg);color:var(--mint);font-weight:900;padding:10px 14px;border-radius:12px}</style>
 <script>
-const APP_VERSION='37';
+const APP_VERSION='38';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Date.now(),{cache:'no-store'})).text()).trim();if(v&&v!==APP_VERSION)document.getElementById('updBar').hidden=false}catch(e){}}
