@@ -414,7 +414,7 @@ body.noscroll{overflow:hidden}
 .accI.on,.thI.on{border-color:var(--mint);box-shadow:0 0 0 1px var(--mint) inset}
 .thI{padding:8px!important;gap:5px!important;text-align:center}.thI b{font-size:13.5px}.thI .thD{color:var(--muted)!important;font-weight:500!important;font-size:11px!important;line-height:1.25}
 .thI.pv{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
-.mini{position:relative;width:100%;height:96px;border-radius:12px;overflow:hidden;background:var(--bg);display:grid;align-content:start;gap:6px;padding:8px;box-sizing:border-box;border:1px solid var(--line)}
+.mini{position:relative;width:100%;height:118px;border-radius:12px;overflow:hidden;background:var(--bg);display:grid;align-content:start;gap:6px;padding:8px;box-sizing:border-box;border:1px solid var(--line)}
 .mini>*{position:relative}.mini .tfx{position:absolute!important;inset:0;z-index:0}
 .mHead{display:flex;justify-content:space-between}.mHead i{display:block;height:6px;border-radius:4px;background:var(--surface2)}.mHead i:first-child{width:40%}.mHead i:last-child{width:22%;background:var(--gold);opacity:.8}
 .mCard{display:grid;grid-template-columns:auto 1fr;gap:6px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px}
@@ -422,23 +422,147 @@ body.noscroll{overflow:hidden}
 .mCard b{display:block;height:5px;border-radius:3px;background:var(--fg);opacity:.7;margin:3px 0}.mCard b:last-child{width:60%;opacity:.35}
 .mBtn{height:14px;border-radius:7px;background:linear-gradient(90deg,var(--pink),var(--peach),var(--pink));background-size:200% 100%;animation:mGlide 2.4s linear infinite}
 @keyframes mGlide{to{background-position:200% 0}}
+/* ===== Theme scenes ===== */
 .tfx{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-.tfx span{position:absolute;line-height:1}
-.tfx-float span,.tfx-bubbles span{bottom:-40px;animation-name:tfUp;animation-timing-function:linear;animation-iteration-count:infinite;opacity:.42}
-.mini .tfx-float span,.mini .tfx-bubbles span{bottom:-20px;animation-name:tfUpMini}
-@keyframes tfUp{to{transform:translateY(-115vh) rotate(30deg)}}@keyframes tfUpMini{to{transform:translateY(-130px) rotate(30deg)}}
-.tfx-bubbles span{border-radius:50%;border:1.5px solid color-mix(in srgb,var(--mint) 70%,transparent);background:color-mix(in srgb,var(--mint) 8%,transparent)}
-.tfx-sparkle span{color:var(--gold);animation:tfTw ease-in-out infinite}
-.tfx-stars span{width:2px;height:2px;border-radius:50%;background:#fff;box-shadow:0 0 6px #fff;animation:tfTw ease-in-out infinite}
-@keyframes tfTw{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:.95;transform:scale(1.15)}}
-.tfx-grid::after{content:"";position:absolute;left:-60%;right:-60%;bottom:0;height:42%;background-image:linear-gradient(var(--pink) 1px,transparent 1px),linear-gradient(90deg,var(--pink) 1px,transparent 1px);background-size:36px 36px;transform:perspective(260px) rotateX(62deg);transform-origin:bottom;opacity:.3;animation:tfGrid 1.4s linear infinite}
-.mini .tfx-grid::after{background-size:14px 14px;animation-name:tfGridMini}
-.tfx-grid::before{content:"";position:absolute;left:50%;bottom:36%;width:44vmin;height:44vmin;transform:translateX(-50%);border-radius:50%;background:linear-gradient(var(--gold),var(--pink));opacity:.2}
-@keyframes tfGrid{to{background-position:0 36px}}@keyframes tfGridMini{to{background-position:0 14px}}
-.tfx-scan::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,color-mix(in srgb,var(--mint) 10%,transparent) 0 2px,transparent 2px 7px);animation:tfScan 5s linear infinite}
-@keyframes tfScan{to{background-position:0 140px}}
-.tfx-shimmer::after{content:"";position:absolute;inset:-50%;background:linear-gradient(115deg,transparent 42%,color-mix(in srgb,var(--gold) 18%,transparent) 50%,transparent 58%);animation:tfSh 5s ease-in-out infinite alternate}
-@keyframes tfSh{from{transform:translateX(-35%)}to{transform:translateX(35%)}}
+.mini .tfx{position:absolute!important;inset:0;z-index:0}
+.th-scene>*{position:absolute}
+.sbg{inset:0}
+.p{top:auto;bottom:-40px;animation-iteration-count:infinite;animation-timing-function:linear;will-change:transform}
+.p>span{display:inline-block;animation-iteration-count:infinite;animation-timing-function:ease-in-out;animation-direction:alternate}
+.p-float,.p-bubbles{animation-name:pUp}.mini .p-float,.mini .p-bubbles{animation-name:pUpMini;bottom:-20px}
+.p-float>span{animation-name:pSway;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25));opacity:.85}
+@keyframes pUp{to{transform:translateY(-120vh)}}@keyframes pUpMini{to{transform:translateY(-140px)}}
+@keyframes pSway{from{transform:translateX(-14px) rotate(-14deg)}to{transform:translateX(14px) rotate(14deg)}}
+.p-bubbles>span{border-radius:50%;border:1.5px solid rgba(255,255,255,.55);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.7) 0 12%,rgba(124,245,255,.15) 40%,transparent 70%);animation-name:pSway}
+.p-petal{top:-20px;bottom:auto;animation-name:pDown}.mini .p-petal{animation-name:pDownMini}
+.p-petal>span{background:linear-gradient(135deg,#ffd1e6,#ff8fc2);border-radius:150% 0 150% 0;animation-name:pSpin;box-shadow:0 0 6px rgba(255,143,194,.4)}
+@keyframes pDown{to{transform:translateY(120vh) translateX(60px)}}@keyframes pDownMini{to{transform:translateY(140px) translateX(20px)}}
+@keyframes pSpin{from{transform:rotate(0) translateX(-10px) scaleX(1)}to{transform:rotate(300deg) translateX(10px) scaleX(.5)}}
+.p-sparkle,.p-stars,.p-glow{bottom:auto;animation-name:none}
+.p-sparkle>span{color:var(--gold);animation-name:pTw;text-shadow:0 0 8px currentColor}
+.p-stars>span{border-radius:50%;background:#fff;box-shadow:0 0 6px #fff;animation-name:pTw}
+@keyframes pTw{from{opacity:.05;transform:scale(.4) rotate(0)}to{opacity:1;transform:scale(1.2) rotate(45deg)}}
+.p-glow{animation:pDrift 9s ease-in-out infinite alternate}
+.p-glow>span{border-radius:50%;background:#fff9a8;box-shadow:0 0 8px 3px #fff27a,0 0 20px 6px rgba(124,255,196,.5);animation-name:pTw}
+@keyframes pDrift{0%{transform:translate(0,0)}50%{transform:translate(30px,-40px)}100%{transform:translate(-20px,-10px)}}
+.p-fly{bottom:auto;left:-10%!important;animation-name:pFly}.mini .p-fly{animation-name:pFlyMini}
+.p-fly>span{animation-name:pFlap;animation-duration:.5s!important}
+@keyframes pFly{0%{transform:translate(0,0)}25%{transform:translate(30vw,-40px)}50%{transform:translate(60vw,20px)}75%{transform:translate(90vw,-30px)}100%{transform:translate(125vw,0)}}
+@keyframes pFlyMini{0%{transform:translate(0,0)}50%{transform:translate(90px,-12px)}100%{transform:translate(200px,0)}}
+@keyframes pFlap{from{transform:scaleX(1)}to{transform:scaleX(.55)}}
+.p-rain{top:-60%;bottom:auto;animation-name:pRain}.mini .p-rain{animation-name:pRainMini}
+.p-rain>span{white-space:pre;font:700 12px/1.1 ui-monospace,monospace;color:#39ff14;text-shadow:0 0 6px #39ff14;opacity:.55}
+@keyframes pRain{to{transform:translateY(170vh)}}@keyframes pRainMini{to{transform:translateY(200px)}}
+.sBigE{font-size:120px;opacity:.13;animation:pSway 7s ease-in-out infinite alternate}.mini .sBigE{font-size:34px}
+/* coquette */
+.sc-coquette .sbg{background:radial-gradient(circle at 20% 10%,#5a2140 0,transparent 45%),radial-gradient(circle at 85% 70%,#4d1a3a 0,transparent 50%),linear-gradient(160deg,#2b1220,#3d1630 60%,#2b1220);background-size:140% 140%;animation:bgMove 14s ease-in-out infinite alternate}
+.sLace{left:0;right:0;top:0;height:26px;background:radial-gradient(circle at 50% 0,rgba(255,240,246,.22) 10px,transparent 11px) 0 0/22px 22px repeat-x,radial-gradient(circle,rgba(255,240,246,.25) 2px,transparent 2.5px) 0 14px/22px 22px repeat-x}
+.mini .sLace{height:10px;background-size:9px 9px,9px 9px;background-position:0 0,0 6px}
+.sPearl{left:0;top:0;width:100%;height:22%;fill:#fff6fa;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));opacity:.75;transform-origin:50% 0;animation:sSwing 6s ease-in-out infinite alternate}
+@keyframes sSwing{from{transform:rotate(-1.5deg)}to{transform:rotate(1.5deg)}}
+/* strawberry milk */
+.sc-strawberry .sbg{background:linear-gradient(170deg,#ffe0eb,#fff5f8 50%,#ffd6e5);background-size:100% 160%;animation:bgMove 12s ease-in-out infinite alternate}
+.sDots{inset:0;background:radial-gradient(#ffb3cd 3px,transparent 3.5px) 0 0/34px 34px,radial-gradient(#ffc9db 3px,transparent 3.5px) 17px 17px/34px 34px;opacity:.6;animation:dotsMove 20s linear infinite}
+.mini .sDots{background-size:12px 12px,12px 12px;background-position:0 0,6px 6px}
+@keyframes dotsMove{to{background-position:0 340px,17px 357px}}
+.sDrip{left:0;top:0;width:100%;height:9%;filter:drop-shadow(0 3px 4px rgba(255,61,127,.25));animation:sDripA 4s ease-in-out infinite alternate;transform-origin:top}
+@keyframes sDripA{to{transform:scaleY(1.15)}}
+/* cherry blossom */
+.sc-sakura .sbg{background:radial-gradient(circle at 80% 0,#6b3a5e 0,transparent 55%),linear-gradient(180deg,#3a2240,#2a1a2e 60%,#24162a);background-size:100% 140%;animation:bgMove 16s ease-in-out infinite alternate}
+.sBranch{right:-4%;top:-2%;width:78%;max-width:520px;transform-origin:100% 0;animation:sSwing 8s ease-in-out infinite alternate;filter:drop-shadow(0 4px 10px rgba(255,127,191,.35))}
+/* cottagecore */
+.sc-cottage .sbg{background:linear-gradient(180deg,#3d4a1f,#26331a 45%,#18200f)}
+.sRays{left:-40%;top:-40%;width:100%;padding-top:100%;border-radius:50%;background:repeating-conic-gradient(from 0deg,rgba(247,224,138,.16) 0 8deg,transparent 8deg 22deg);animation:spin 40s linear infinite;-webkit-mask:radial-gradient(circle,#000 20%,transparent 70%);mask:radial-gradient(circle,#000 20%,transparent 70%)}
+.sRays::after{content:"";position:absolute;left:40%;top:40%;width:20%;height:20%;border-radius:50%;background:radial-gradient(#fff3b0,#f2c14e 60%,transparent 70%)}
+.sHills{left:0;bottom:0;width:100%;height:28%}
+/* y2k */
+.sc-y2k .sbg{background:linear-gradient(120deg,#2a1260,#140f30 40%,#0f2a4a 70%,#3a1060);background-size:200% 200%;animation:bgMove 10s ease-in-out infinite alternate}
+.sHolo{inset:-20%;background:conic-gradient(from 0deg,rgba(255,79,216,.18),rgba(110,231,255,.18),rgba(184,255,110,.14),rgba(255,243,110,.14),rgba(255,79,216,.18));filter:blur(40px);animation:spin 18s linear infinite}
+.sChrome{display:block;aspect-ratio:1;max-width:100%;border-radius:50%;background:radial-gradient(circle at 32% 28%,#fff 0 8%,rgba(255,255,255,.4) 14%,transparent 30%),radial-gradient(circle at 60% 70%,rgba(255,79,216,.55),transparent 55%),radial-gradient(circle at 40% 60%,rgba(110,231,255,.6),transparent 60%),rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.35);box-shadow:inset -6px -8px 16px rgba(0,0,0,.25),0 0 24px rgba(110,231,255,.25);animation:chromeF 9s ease-in-out infinite alternate}
+@keyframes chromeF{from{transform:translateY(0) rotate(0)}to{transform:translateY(-18px) rotate(20deg)}}
+/* mermaid + beach waves */
+.sc-mermaid .sbg{background:linear-gradient(180deg,#0e4a5a,#083040 40%,#062430 70%,#1a1240);background-size:100% 150%;animation:bgMove 12s ease-in-out infinite alternate}
+.sBeams{inset:0}.sBeams i{position:absolute;top:-10%;width:18%;height:90%;background:linear-gradient(180deg,rgba(200,255,250,.22),transparent);transform:skewX(-18deg);transform-origin:top;animation:beam 7s ease-in-out infinite alternate;filter:blur(2px)}
+.sBeams i:nth-child(1){left:12%}.sBeams i:nth-child(2){left:42%;width:10%;animation-delay:-2s}.sBeams i:nth-child(3){left:68%;animation-delay:-4s}
+@keyframes beam{from{opacity:.35;transform:skewX(-22deg)}to{opacity:.9;transform:skewX(-10deg)}}
+.sWave{left:0;bottom:0;width:200%;height:16%;animation:waveA 9s linear infinite}.sWave.w2{height:12%;animation-duration:6s;animation-direction:reverse}
+@keyframes waveA{to{transform:translateX(-50%)}}
+.sc-malibu .sbg{background:linear-gradient(180deg,#3b1450 0,#8a2a6a 30%,#ff6f6f 58%,#ffb35c 72%,#2a1030 73%,#1a0c2a)}
+.sSun{left:50%;top:44%;width:34%;max-width:240px;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#fff2b0,#ffd36e 45%,#ff8a5c 70%,transparent 72%);box-shadow:0 0 60px 20px rgba(255,179,92,.35);animation:sunBob 8s ease-in-out infinite alternate}
+@keyframes sunBob{to{transform:translate(-50%,-44%)}}
+.sc-malibu .sWave{height:28%}.sc-malibu .sWave.w2{height:22%}
+/* pilates */
+.sc-pilates .sbg{background:radial-gradient(circle at 30% 20%,#5a3a52,transparent 50%),radial-gradient(circle at 80% 80%,#4a2f48,transparent 50%),#2a1c2a;background-size:150% 150%;animation:bgMove 14s ease-in-out infinite alternate}
+.sRibbon{inset:0;width:100%;height:100%}
+.sRibbon path{fill:none;stroke:url(#none);stroke:#f79ac2;stroke-width:1.6;opacity:.45;stroke-linecap:round;stroke-dasharray:6 4;animation:ribbon 6s linear infinite}
+.sRibbon .r2{stroke:#fde2e4;opacity:.3;animation-duration:9s}
+@keyframes ribbon{to{stroke-dashoffset:-100}}
+.sOrb{display:block;width:30%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(253,226,228,.35),transparent 70%);animation:chromeF 8s ease-in-out infinite alternate}.sOrb.o2{width:22%;animation-delay:-3s}
+/* unicorn */
+.sPastel{inset:0;background:linear-gradient(120deg,#ffe3f3,#e9e0ff,#dff6ff,#e8ffe9,#fff7d6,#ffe3f3);background-size:300% 300%;animation:bgMove 12s ease-in-out infinite alternate}
+.sRainbow{left:8%;right:8%;width:84%;bottom:6%;opacity:.7;animation:sunBob2 7s ease-in-out infinite alternate}
+@keyframes sunBob2{to{transform:translateY(-8px)}}
+.sCloud{display:block;width:26%;height:7%;border-radius:999px;background:#fff;box-shadow:12px -10px 0 4px #fff,28px 0 0 2px #fff;opacity:.9;animation:cloud 26s linear infinite}.sCloud.c2{animation-duration:34s;animation-delay:-12s;transform:scale(.8)}
+@keyframes cloud{from{transform:translateX(-30%)}to{transform:translateX(320%)}}
+/* fairy */
+.sc-fairy .sbg{background:radial-gradient(circle at 50% 110%,#1f4a3a,transparent 60%),radial-gradient(circle at 20% 20%,#2a1f4a,transparent 50%),#0e1a16}
+.sMist{left:-20%;right:-20%;bottom:0;height:40%;background:radial-gradient(ellipse at 30% 100%,rgba(124,255,196,.18),transparent 60%),radial-gradient(ellipse at 70% 100%,rgba(197,140,255,.18),transparent 60%);animation:bgMove 10s ease-in-out infinite alternate}
+.sShrooms{left:0;right:0;bottom:-6px;display:flex;justify-content:space-around;font-size:46px;filter:drop-shadow(0 0 10px rgba(124,255,196,.5))}.mini .sShrooms{font-size:14px;bottom:-2px}
+.sShrooms span{display:inline-block;animation:pSway 5s ease-in-out infinite alternate}.sShrooms span:nth-child(even){animation-delay:-2s;font-size:.7em}
+/* vaporwave */
+.sc-vapor .sbg{background:linear-gradient(180deg,#1a0b32 0,#4a1260 40%,#ff71ce 62%,#1a0b32 63%)}
+.sVSun{left:50%;top:36%;width:40%;max-width:280px;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:linear-gradient(#fffb96,#ff71ce 70%);-webkit-mask:repeating-linear-gradient(180deg,#000 0 10%,transparent 10% 12%);mask:repeating-linear-gradient(180deg,#000 0 55%,transparent 55% 58%,#000 58% 66%,transparent 66% 70%,#000 70% 76%,transparent 76% 81%,#000 81% 86%,transparent 86% 92%,#000 92%);box-shadow:0 0 50px rgba(255,113,206,.5);animation:sunBob 9s ease-in-out infinite alternate}
+.sGrid{left:-60%;right:-60%;bottom:0;height:38%;background-image:linear-gradient(var(--pink) 1.5px,transparent 1.5px),linear-gradient(90deg,var(--pink) 1.5px,transparent 1.5px);background-size:40px 40px;transform:perspective(240px) rotateX(62deg);transform-origin:bottom;opacity:.55;animation:gridA 1.2s linear infinite}
+.mini .sGrid{background-size:12px 12px;animation-name:gridAMini}
+@keyframes gridA{to{background-position:0 40px}}@keyframes gridAMini{to{background-position:0 12px}}
+.sPalms{left:0;right:0;bottom:34%;display:flex;justify-content:space-between;font-size:90px;filter:brightness(0) drop-shadow(0 0 8px #ff71ce);opacity:.75}.mini .sPalms{font-size:24px}
+.sPalms span{display:inline-block;animation:pSway 6s ease-in-out infinite alternate}.sPalms span:last-child{transform:scaleX(-1)}
+/* disco */
+.sc-disco .sbg{background:radial-gradient(circle at 50% 0,#5a1660,transparent 60%),#1e0a24}
+.sBall{left:50%;top:-2%;font-size:110px;transform:translateX(-50%);filter:drop-shadow(0 0 20px rgba(255,210,63,.6));animation:ballSpin 4s linear infinite}.mini .sBall{font-size:30px}
+@keyframes ballSpin{0%{transform:translateX(-50%) rotate(0)}100%{transform:translateX(-50%) rotate(360deg)}}
+.sSpots{inset:0}.sSpots i{position:absolute;width:26%;aspect-ratio:1;border-radius:50%;filter:blur(10px);opacity:.45;animation:spot 8s ease-in-out infinite}
+.sSpots i:nth-child(3n){background:#ff2fb3}.sSpots i:nth-child(3n+1){background:#3ff2ff}.sSpots i:nth-child(3n+2){background:#ffd23f}
+@keyframes spot{0%{left:10%;top:20%}25%{left:60%;top:10%}50%{left:70%;top:60%}75%{left:15%;top:70%}100%{left:10%;top:20%}}
+/* galaxy */
+.sNebula{inset:-20%;background:radial-gradient(circle at 30% 30%,rgba(139,92,246,.45),transparent 40%),radial-gradient(circle at 70% 60%,rgba(34,211,238,.32),transparent 45%),radial-gradient(circle at 50% 90%,rgba(236,72,153,.28),transparent 40%);filter:blur(20px);animation:bgMove 18s ease-in-out infinite alternate;background-size:130% 130%}
+.sShoot{display:block;left:70%;top:6%;width:140px;height:2px;background:linear-gradient(90deg,#fff,transparent);transform:rotate(-30deg);opacity:0;animation:shoot 7s ease-in infinite}.sShoot.s2{left:30%;top:20%;animation-delay:-3.5s}
+.mini .sShoot{width:40px}
+@keyframes shoot{0%,80%{opacity:0;transform:rotate(-30deg) translateX(0)}84%{opacity:1}100%{opacity:0;transform:rotate(-30deg) translateX(-260px)}}
+/* cyber */
+.sc-cyber .sbg{background:radial-gradient(circle at 50% 100%,#08332a,transparent 60%),#050b0b}
+.sc-cyber .sGrid{background-image:linear-gradient(#22e35a 1px,transparent 1px),linear-gradient(90deg,#22e35a 1px,transparent 1px);opacity:.35}
+.sScan{inset:0;background:repeating-linear-gradient(0deg,rgba(57,255,20,.07) 0 2px,transparent 2px 6px);animation:scanA 4s linear infinite}
+@keyframes scanA{to{background-position:0 120px}}
+.sGlitch{display:block;left:0;right:0;height:3px;background:#00e5ff;opacity:0;box-shadow:0 0 10px #00e5ff;animation:glitch 5s steps(1) infinite}
+@keyframes glitch{0%,92%{opacity:0;top:20%}93%{opacity:.8;top:34%}95%{opacity:.6;top:62%}97%{opacity:.8;top:48%}100%{opacity:0}}
+@keyframes bgMove{from{background-position:0% 0%}to{background-position:100% 100%}}
+/* themed cards: pattern layer + tinted borders */
+.card,.mCard{position:relative;isolation:isolate}
+.card::before,.mCard::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1}
+.themed .card{border-color:color-mix(in srgb,var(--pink) 32%,var(--line));background:color-mix(in srgb,var(--surface) 58%,transparent)!important;-webkit-backdrop-filter:blur(5px) saturate(1.25);backdrop-filter:blur(5px) saturate(1.25)}
+.themed header{background:color-mix(in srgb,var(--bg) 55%,transparent)!important;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.themed .dock{background:color-mix(in srgb,var(--surface2) 70%,transparent)!important}
+.themed .blob{opacity:.18}
+body.themed{background:transparent!important}
+.themed .tdTop h2,.themed .hi,.themed #lvlTitle,.themed .hHero h2{background:linear-gradient(90deg,var(--pink),var(--peach));-webkit-background-clip:text;background-clip:text;color:transparent}
+.th-coquette .card::before,.th-coquette .mCard::before{background:radial-gradient(rgba(255,179,207,.16) 1.4px,transparent 1.8px) 0 0/12px 12px}
+.th-strawberry .card::before,.th-strawberry .mCard::before{background:radial-gradient(rgba(255,61,127,.10) 3px,transparent 3.5px) 0 0/22px 22px,radial-gradient(rgba(255,61,127,.07) 3px,transparent 3.5px) 11px 11px/22px 22px}
+.th-strawberry .card{box-shadow:0 6px 18px -10px rgba(255,61,127,.35)}
+.th-sakura .card::before,.th-sakura .mCard::before{background:radial-gradient(circle at 100% 0,rgba(255,127,191,.18),transparent 45%)}
+.th-cottage .card::before,.th-cottage .mCard::before{background:linear-gradient(0deg,rgba(242,193,78,.07) 50%,transparent 50%) 0 0/16px 16px,linear-gradient(90deg,rgba(242,193,78,.07) 50%,transparent 50%) 0 0/16px 16px}
+.th-y2k .card::before,.th-y2k .mCard::before,.th-unicorn .card::before,.th-unicorn .mCard::before{background:linear-gradient(115deg,transparent 25%,rgba(255,79,216,.14),rgba(110,231,255,.14),rgba(184,255,110,.12),transparent 75%) 0 0/250% 100%;animation:holoSheen 6s ease-in-out infinite alternate}
+@keyframes holoSheen{to{background-position:100% 0}}
+.th-mermaid .card::before,.th-mermaid .mCard::before{background:radial-gradient(circle at 50% 0,transparent 6px,rgba(124,245,255,.09) 7px,transparent 8.5px) 0 0/16px 10px}
+.th-malibu .card::before,.th-malibu .mCard::before{background:linear-gradient(160deg,rgba(255,179,92,.14),transparent 50%,rgba(255,94,126,.12))}
+.th-pilates .card::before,.th-pilates .mCard::before{background:repeating-linear-gradient(90deg,rgba(253,226,228,.05) 0 2px,transparent 2px 9px)}
+.th-fairy .card::before,.th-fairy .mCard::before{background:radial-gradient(circle at 0 100%,rgba(124,255,196,.14),transparent 50%),radial-gradient(circle at 100% 0,rgba(197,140,255,.14),transparent 50%)}
+.th-vapor .card::before,.th-vapor .mCard::before{background:repeating-linear-gradient(135deg,rgba(255,113,206,.07) 0 2px,transparent 2px 14px)}
+.th-disco .card::before,.th-disco .mCard::before{background:radial-gradient(rgba(255,210,63,.18) 1.2px,transparent 1.8px) 0 0/10px 10px,radial-gradient(rgba(63,242,255,.14) 1.2px,transparent 1.8px) 5px 5px/10px 10px;animation:sequin 2s steps(2) infinite}
+@keyframes sequin{50%{opacity:.4}}
+.th-galaxy .card::before,.th-galaxy .mCard::before{background:radial-gradient(rgba(255,255,255,.35) .8px,transparent 1.2px) 0 0/23px 19px,radial-gradient(rgba(255,255,255,.2) .8px,transparent 1.2px) 9px 7px/31px 27px}
+.th-cyber .card::before,.th-cyber .mCard::before{background:linear-gradient(rgba(34,227,90,.06) 1px,transparent 1px) 0 0/14px 14px,linear-gradient(90deg,rgba(34,227,90,.06) 1px,transparent 1px) 0 0/14px 14px}
+.th-cyber .card{box-shadow:0 0 0 1px rgba(34,227,90,.15),0 0 18px -8px rgba(34,227,90,.6)}
 .btn:not(.ghost):not(.off){color:var(--onAccent,#fff)}
 .yearbar.still i{transition:none!important;animation:none!important}
 .hus{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -1642,38 +1766,68 @@ const DEF_REWARDS=[
  {id:'v9',e:'✨',n:'Whatever I want (within reason)',c:30000}];
 const SHOP_ACC=[{id:'flower',e:'🌸',c:200},{id:'bow2',e:'🎀',c:300},{id:'head',e:'🎧',c:500},{id:'shades',e:'🕶️',c:700},{id:'halo',e:'😇',c:1000},{id:'crown2',e:'👑',c:1500}];
 const THEMES=[
- {id:'peach',n:'Peach',e:'🍑',c:0,d:'The original',v:null,fx:{t:'none'}},
- {id:'coquette',n:'Coquette',e:'🎀',c:150,d:'Bows, blush and hearts',v:{bg:'#26121d',surface:'#341a28',surface2:'#432335',line:'#5e3149',fg:'#fff0f5',muted:'#d9a9bf',pink:'#ff6f9f',peach:'#ffb3cb',mint:'#ffd6e7',gold:'#ffe3a3'},fx:{t:'float',ch:['🎀','💗','🤍'],n:12}},
- {id:'cottage',n:'Cottagecore',e:'🌼',c:150,d:'Wildflowers and sunshine',v:{bg:'#161c13',surface:'#20291c',surface2:'#2b3625',line:'#3e4d35',fg:'#f6f3e8',muted:'#b9c2a5',pink:'#f08a4b',peach:'#e9c46a',mint:'#a7c957',gold:'#f6e7a1'},fx:{t:'float',ch:['🌼','🍃','🌸'],n:12}},
- {id:'y2k',n:'Y2K',e:'💿',c:200,d:'Chrome, glitter, flip phones',v:{bg:'#120e2a',surface:'#1d1840',surface2:'#29225a',line:'#3d3580',fg:'#f4f0ff',muted:'#b3a8e8',pink:'#ff4fd8',peach:'#6ee7ff',mint:'#b8ff6e',gold:'#fff36e'},fx:{t:'sparkle',ch:['✦','✧','⋆','✦'],n:18}},
- {id:'mermaid',n:'Mermaidcore',e:'🧜‍♀️',c:200,d:'Deep sea shimmer and bubbles',v:{bg:'#062029',surface:'#0b2f3a',surface2:'#103d4b',line:'#1c5666',fg:'#e9fffb',muted:'#8fcfc6',pink:'#14d1b5',peach:'#b388ff',mint:'#7cf5ff',gold:'#ffd6a5'},fx:{t:'bubbles',n:14}},
- {id:'pilates',n:'Pilates Princess',e:'🩰',c:250,d:'Soft pink, matching sets',v:{bg:'#241a24',surface:'#302330',surface2:'#3d2d3d',line:'#57425a',fg:'#fff5f8',muted:'#d6b8c6',pink:'#f7a8c8',peach:'#fde2e4',mint:'#cdeac0',gold:'#f9dcc4',on:'#3a1f2e'},fx:{t:'float',ch:['🩰','✨','🤍'],n:10}},
- {id:'vapor',n:'Vaporwave',e:'🌴',c:250,d:'Neon sunset, retro grid',v:{bg:'#1a0b32',surface:'#26124a',surface2:'#33195f',line:'#4a2a80',fg:'#fff0fd',muted:'#c9a3e8',pink:'#ff71ce',peach:'#01cdfe',mint:'#05ffa1',gold:'#fffb96'},fx:{t:'grid'}},
- {id:'galaxy',n:'Galaxy',e:'🌌',c:300,d:'Twinkling stars',v:{bg:'#0a0a1f',surface:'#13132e',surface2:'#1c1c40',line:'#2d2d5e',fg:'#eef0ff',muted:'#a3a8d9',pink:'#8b5cf6',peach:'#22d3ee',mint:'#a7f3d0',gold:'#fde68a'},fx:{t:'stars',n:34}},
- {id:'cyber',n:'Cyber Neon',e:'⚡',c:300,d:'Glowing green, hacker scanlines',v:{bg:'#050b0b',surface:'#0b1616',surface2:'#102121',line:'#1d3a3a',fg:'#e6fff7',muted:'#86b8ab',pink:'#22e35a',peach:'#00e5ff',mint:'#39ff14',gold:'#f4ff61',on:'#02140a'},fx:{t:'scan'}},
- {id:'oldmoney',n:'Old Money',e:'🥂',c:400,d:'Champagne, gold and cream',v:{bg:'#15130f',surface:'#211e18',surface2:'#2c2820',line:'#433c2e',fg:'#f5efe2',muted:'#bfb39a',pink:'#c9a96e',peach:'#e8dcc0',mint:'#a8c3a0',gold:'#e2c47e',on:'#1d170b'},fx:{t:'shimmer'}}];
+ {id:'peach',n:'Peach',e:'🍑',c:0,d:'The original',v:null,fx:[]},
+ {id:'coquette',n:'Coquette',e:'🎀',c:150,d:'Lace, pearls and bows',v:{bg:'#2b1220',surface:'#3a1a2c',surface2:'#4a2238',line:'#6b3352',fg:'#fff0f6',muted:'#e0aac3',pink:'#ff5c95',peach:'#ffb3cf',mint:'#7ee8b5',gold:'#ffd9a0'},fx:[{t:'float',ch:['🎀','💗','🤍','💕'],n:10}]},
+ {id:'strawberry',n:'Strawberry Milk',e:'🍓',c:150,d:'Pink milk drips and polka dots',v:{bg:'#fff0f5',surface:'#ffffff',surface2:'#ffe2ec',line:'#f6bfd2',fg:'#4a1d2c',muted:'#a8687e',pink:'#ff3d7f',peach:'#ff8fb3',mint:'#22a874',gold:'#d4860b'},fx:[{t:'float',ch:['🍓','🤍','🍓','🩷'],n:10}]},
+ {id:'sakura',n:'Cherry Blossom',e:'🌸',c:150,d:'Blossom branches and falling petals',v:{bg:'#2a1a2e',surface:'#382341',surface2:'#462c52',line:'#634172',fg:'#fff3fa',muted:'#d8b4d6',pink:'#ff7fbf',peach:'#ffc9e4',mint:'#9ff0c3',gold:'#ffe08a'},fx:[{t:'petal',n:22}]},
+ {id:'cottage',n:'Cottagecore',e:'🌼',c:150,d:'Sun rays, hills and butterflies',v:{bg:'#18200f',surface:'#222d18',surface2:'#2d3a20',line:'#43552f',fg:'#fbf7e8',muted:'#c4cc9f',pink:'#f2855a',peach:'#f2c14e',mint:'#9bd25a',gold:'#f7e08a'},fx:[{t:'petal',n:10,c:'#fff3b0'},{t:'fly',ch:['🦋','🦋','🐝'],n:3}]},
+ {id:'y2k',n:'Y2K',e:'💿',c:200,d:'Holographic chrome and glitter',v:{bg:'#140f30',surface:'#1f1846',surface2:'#2a2260',line:'#41388a',fg:'#f6f2ff',muted:'#b9adf0',pink:'#ff4fd8',peach:'#6ee7ff',mint:'#b8ff6e',gold:'#fff36e'},fx:[{t:'sparkle',ch:['✦','✧','✦','⋆'],n:18},{t:'fly',ch:['🦋','💿'],n:2}]},
+ {id:'mermaid',n:'Mermaidcore',e:'🧜‍♀️',c:200,d:'Sun rays, waves and bubbles',v:{bg:'#062430',surface:'#0b3341',surface2:'#104252',line:'#1c5c6e',fg:'#eafffc',muted:'#93d3ca',pink:'#14d1b5',peach:'#b388ff',mint:'#7cf5ff',gold:'#ffd6a5'},fx:[{t:'bubbles',n:16},{t:'sparkle',ch:['✨'],n:5}]},
+ {id:'malibu',n:'Sunset Beach',e:'🌺',c:200,d:'Golden-hour sky and ocean waves',v:{bg:'#2a1030',surface:'#3a1840',surface2:'#4a2050',line:'#6b3070',fg:'#fff4ec',muted:'#f0b8c0',pink:'#ff5e7e',peach:'#ffb35c',mint:'#5ee6d0',gold:'#ffd36e'},fx:[{t:'float',ch:['🌺','🐚','🌸'],n:7},{t:'sparkle',ch:['✦'],n:8}]},
+ {id:'pilates',n:'Pilates Princess',e:'🩰',c:200,d:'Blush ribbons and soft sparkle',v:{bg:'#2a1c2a',surface:'#372737',surface2:'#453245',line:'#644a66',fg:'#fff5f8',muted:'#dcbccc',pink:'#f79ac2',peach:'#fde2e4',mint:'#bfe8b0',gold:'#f9dcc4',on:'#3a1f2e'},fx:[{t:'float',ch:['🩰','🤍','🎀'],n:8},{t:'sparkle',ch:['✨'],n:8}]},
+ {id:'unicorn',n:'Unicorn Dream',e:'🦄',c:250,d:'Pastel rainbows and clouds',v:{bg:'#f6efff',surface:'#ffffff',surface2:'#efe4ff',line:'#d9c6f5',fg:'#3b2a5c',muted:'#8a76ad',pink:'#b85cf5',peach:'#ff7fc6',mint:'#26b48c',gold:'#cf8d00'},fx:[{t:'sparkle',ch:['✨','⭐','✦'],n:14},{t:'float',ch:['🦄','🌈','💜'],n:6}]},
+ {id:'fairy',n:'Fairy Garden',e:'🧚',c:250,d:'Glowing fireflies and mushrooms',v:{bg:'#0e1a16',surface:'#152520',surface2:'#1c3029',line:'#2c4a3f',fg:'#f0fff8',muted:'#9fc9b8',pink:'#c58cff',peach:'#7cffc4',mint:'#7cffc4',gold:'#fff27a',on:'#10241b'},fx:[{t:'glow',n:22},{t:'sparkle',ch:['✨'],n:6}]},
+ {id:'vapor',n:'Vaporwave',e:'🌴',c:250,d:'Striped sunset, palms and neon grid',v:{bg:'#1a0b32',surface:'#26124a',surface2:'#33195f',line:'#4a2a80',fg:'#fff0fd',muted:'#c9a3e8',pink:'#ff71ce',peach:'#01cdfe',mint:'#05ffa1',gold:'#fffb96'},fx:[{t:'sparkle',ch:['✦'],n:8}]},
+ {id:'disco',n:'Disco Diva',e:'🪩',c:250,d:'Mirror ball lights and glitter',v:{bg:'#1e0a24',surface:'#2b1033',surface2:'#381543',line:'#56205f',fg:'#fff0ff',muted:'#e2a6e6',pink:'#ff2fb3',peach:'#ffd23f',mint:'#3ff2ff',gold:'#ffd23f'},fx:[{t:'sparkle',ch:['✦','✧','⋆'],n:22}]},
+ {id:'galaxy',n:'Galaxy',e:'🌌',c:300,d:'Nebulas and shooting stars',v:{bg:'#0a0a1f',surface:'#13132e',surface2:'#1c1c40',line:'#2d2d5e',fg:'#eef0ff',muted:'#a3a8d9',pink:'#8b5cf6',peach:'#22d3ee',mint:'#a7f3d0',gold:'#fde68a'},fx:[{t:'stars',n:40}]},
+ {id:'cyber',n:'Cyber Neon',e:'⚡',c:300,d:'Neon grid and falling code',v:{bg:'#050b0b',surface:'#0b1616',surface2:'#102121',line:'#1d3a3a',fg:'#e6fff7',muted:'#86b8ab',pink:'#22e35a',peach:'#00e5ff',mint:'#39ff14',gold:'#f4ff61',on:'#02140a'},fx:[{t:'rain',n:16}]}];
 const LEGACY_THEMES={lilac:800,ocean:800,matcha:800,sunset:1000,gold:1500};
 const themeVars=t=>t.v?Object.entries({'--bg':t.v.bg,'--surface':t.v.surface,'--surface2':t.v.surface2,'--line':t.v.line,'--fg':t.v.fg,'--muted':t.v.muted,'--pink':t.v.pink,'--peach':t.v.peach,'--mint':t.v.mint,'--gold':t.v.gold,'--onAccent':t.v.on||'#fff'}):[];
-function buildFx(el,t,mini){el.className='tfx tfx-'+t.fx.t;el.innerHTML='';const n=Math.ceil((t.fx.n||0)*(mini?.45:1)),R=Math.random;
-  for(let i=0;i<n;i++){const s=document.createElement('span');
-    if(t.fx.t==='float'||t.fx.t==='sparkle'){s.textContent=t.fx.ch[i%t.fx.ch.length];s.style.fontSize=(mini?9:14)+R()*(mini?6:14)+'px'}
-    if(t.fx.t==='bubbles'){const z=(mini?4:8)+R()*(mini?8:22);s.style.width=s.style.height=z+'px'}
-    s.style.left=(R()*100)+'%';if(t.fx.t==='sparkle'||t.fx.t==='stars')s.style.top=(R()*100)+'%';
-    s.style.animationDelay=(-R()*12)+'s';s.style.animationDuration=(t.fx.t==='float'||t.fx.t==='bubbles'?(mini?4:9)+R()*(mini?3:9):2+R()*3)+'s';el.appendChild(s)}}
+// scenery for each theme (sizes in %, so the same art works full screen and in the small preview)
+function sceneArt(id){
+  const pearls=()=>{let h='';for(let i=0;i<=24;i++){const x=i*100/24,y=10+Math.sin(i/24*Math.PI)*26;h+=`<circle cx="${x}" cy="${y}" r="1.5"/>`}return `<svg class="sPearl" viewBox="0 0 100 40" preserveAspectRatio="none">${h}</svg>`};
+  const waves=(c1,c2)=>`<svg class="sWave w1" viewBox="0 0 200 40" preserveAspectRatio="none"><path fill="${c1}" d="M0 20 Q25 8 50 20 T100 20 T150 20 T200 20 V40 H0Z"/></svg><svg class="sWave w2" viewBox="0 0 200 40" preserveAspectRatio="none"><path fill="${c2}" d="M0 24 Q25 34 50 24 T100 24 T150 24 T200 24 V40 H0Z"/></svg>`;
+  return ({
+   coquette:`<div class="sLace"></div>${pearls()}<div class="sBigE" style="right:-4%;top:14%">🎀</div><div class="sBigE b2" style="left:-6%;bottom:12%">💗</div>`,
+   strawberry:`<div class="sDots"></div><svg class="sDrip" viewBox="0 0 100 20" preserveAspectRatio="none"><path fill="#ffffff" d="M0 0H100V6 C96 6 96 14 93 14 C90 14 90 6 86 6 C82 6 83 18 79 18 C75 18 76 6 70 6 C65 6 66 11 62 11 C58 11 59 6 53 6 C48 6 49 16 45 16 C41 16 42 6 36 6 C31 6 32 12 28 12 C24 12 25 6 19 6 C14 6 15 17 11 17 C7 17 8 6 4 6 C2 6 1 9 0 9Z"/></svg><div class="sBigE" style="right:-5%;bottom:10%">🍓</div>`,
+   sakura:`<svg class="sBranch" viewBox="0 0 100 60"><path d="M100 4 C80 8 70 14 58 22 C50 27 40 30 28 31 M70 13 C68 20 66 26 60 30 M50 26 C52 33 50 38 46 42" stroke="#5b3a3f" stroke-width="2.2" fill="none" stroke-linecap="round"/>${[[96,6],[86,7],[76,11],[66,17],[58,22],[48,27],[38,30],[30,31],[69,21],[63,28],[51,33],[47,40],[80,9],[72,15],[56,24]].map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="${2.2+(i%3)}" fill="${['#ffb7d5','#ff8fc2','#ffd6e8'][i%3]}"/>`).join('')}</svg>`,
+   cottage:`<div class="sRays"></div><svg class="sHills" viewBox="0 0 200 60" preserveAspectRatio="none"><path fill="#2f4a1d" d="M0 30 Q40 6 90 26 T200 22 V60 H0Z"/><path fill="#3f6224" d="M0 44 Q60 22 120 40 T200 36 V60 H0Z"/><g fill="#fff3b0">${[[20,48],[42,42],[70,50],[96,46],[130,50],[160,44],[186,50]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.4"/>`).join('')}</g></svg>`,
+   y2k:`<div class="sHolo"></div>${[[12,18,18],[78,12,12],[64,62,22],[18,70,10],[88,44,8]].map(([x,y,s],i)=>`<i class="sChrome" style="left:${x}%;top:${y}%;width:${s}%;animation-delay:${-i*2}s"></i>`).join('')}`,
+   mermaid:`<div class="sBeams"><i></i><i></i><i></i></div>${waves('rgba(124,245,255,.16)','rgba(179,136,255,.18)')}<div class="sBigE" style="left:4%;bottom:6%;font-size:38px">🐚</div>`,
+   malibu:`<div class="sSky"></div><i class="sSun"></i>${waves('rgba(255,179,92,.28)','rgba(94,230,208,.22)')}`,
+   pilates:`<svg class="sRibbon" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M-5 30 C20 10 35 50 55 30 S90 10 105 35" /><path class="r2" d="M-5 70 C20 55 40 90 60 70 S90 55 105 75"/></svg><i class="sOrb" style="left:70%;top:18%"></i><i class="sOrb o2" style="left:8%;top:58%"></i>`,
+   unicorn:`<div class="sPastel"></div><svg class="sRainbow" viewBox="0 0 100 50">${['#ff9ecf','#ffc58f','#fff08f','#a8f0a8','#9fd8ff','#c9a8ff'].map((c,i)=>`<path d="M${8+i*3} 50 A${42-i*3} ${42-i*3} 0 0 1 ${92-i*3} 50" stroke="${c}" stroke-width="3" fill="none"/>`).join('')}</svg><i class="sCloud" style="top:12%;left:6%"></i><i class="sCloud c2" style="top:26%;left:58%"></i>`,
+   fairy:`<div class="sMist"></div><div class="sShrooms"><span>🍄</span><span>🌿</span><span>🍄</span><span>🌱</span><span>🍄</span></div>`,
+   vapor:`<i class="sVSun"></i><div class="sGrid"></div><div class="sPalms"><span>🌴</span><span>🌴</span></div>`,
+   disco:`<div class="sBall">🪩</div><div class="sSpots">${[0,1,2,3,4,5].map(i=>`<i style="animation-delay:${-i*1.3}s"></i>`).join('')}</div>`,
+   galaxy:`<div class="sNebula"></div><i class="sShoot"></i><i class="sShoot s2"></i>`,
+   cyber:`<div class="sGrid"></div><div class="sScan"></div><i class="sGlitch"></i>`
+  })[id]||''}
+function buildFx(el,t,mini){el.className='tfx th-scene sc-'+t.id;el.innerHTML='<div class="sbg"></div>'+sceneArt(t.id);const R=Math.random;
+  (t.fx||[]).forEach(f=>{const n=Math.ceil((f.n||0)*(mini?.4:1));for(let i=0;i<n;i++){const w=document.createElement('span');w.className='p p-'+f.t;const s=document.createElement('span');w.appendChild(s);
+    if(f.ch)s.textContent=f.ch[i%f.ch.length];
+    const sz=f.t==='bubbles'?(mini?4:8)+R()*(mini?8:22):f.t==='glow'?(mini?3:4)+R()*4:f.t==='petal'?(mini?5:9)+R()*(mini?4:9):f.t==='stars'?1+R()*2.2:(mini?9:14)+R()*(mini?6:16);
+    if(f.t==='bubbles'||f.t==='glow'||f.t==='petal'||f.t==='stars'){s.style.width=sz+'px';s.style.height=(f.t==='petal'?sz*.8:sz)+'px'}else s.style.fontSize=sz+'px';
+    if(f.c)s.style.background=f.c;
+    w.style.left=(R()*100)+'%';if(['sparkle','stars','glow'].includes(f.t))w.style.top=(R()*100)+'%';if(f.t==='fly')w.style.top=(10+R()*60)+'%';
+    if(f.t==='rain')s.textContent=Array.from({length:8},()=>R()<.5?'0':'1').join('\n');
+    const dur=f.t==='float'||f.t==='bubbles'?(mini?5:10)+R()*(mini?3:10):f.t==='petal'?(mini?4:8)+R()*(mini?3:8):f.t==='fly'?(mini?7:16)+R()*8:f.t==='rain'?(mini?3:5)+R()*5:2+R()*4;
+    w.style.animationDuration=dur+'s';w.style.animationDelay=(-R()*dur)+'s';s.style.animationDuration=(2.5+R()*3)+'s';s.style.animationDelay=(-R()*3)+'s';el.appendChild(w)}})}
 function applyTheme(id){const t=THEMES.find(x=>x.id===(id||S.theme||'peach'))||THEMES[0],r=document.documentElement.style;
   ['--bg','--surface','--surface2','--line','--fg','--muted','--pink','--peach','--mint','--gold','--onAccent'].forEach(k=>r.removeProperty(k));
   themeVars(t).forEach(([k,v])=>r.setProperty(k,v));
+  document.body.className=document.body.className.replace(/\bth-\S+/g,'').replace(/\bthemed\b/g,'').trim();document.body.classList.add('th-'+t.id);if(t.id!=='peach')document.body.classList.add('themed');
   let fx=document.getElementById('themeFx');if(!fx){fx=document.createElement('div');fx.id='themeFx';fx.setAttribute('aria-hidden','true');document.body.prepend(fx)}
-  if(fx.dataset.t!==t.id){fx.dataset.t=t.id;buildFx(fx,t,false)}}
+  if(fx.dataset.t!==t.id){fx.dataset.t=t.id;if(t.id==='peach'){fx.className='tfx';fx.innerHTML=''}else buildFx(fx,t,false)}}
 function themeTile(t){const own=S.ownedThemes.includes(t.id),on=(S.theme||'peach')===t.id,pv=S._pv===t.id;
   const style=themeVars(t).map(([k,v])=>`${k}:${v}`).join(';');
-  return `<button class="thI ${on?'on':''} ${pv?'pv':''}" data-buy="t:${t.id}"><div class="mini" style="${style}" data-fx="${t.id}"><div class="mHead"><i></i><i></i></div><div class="mCard"><div class="mRing"></div><div><b></b><b></b></div></div><div class="mBtn"></div></div>
+  return `<button class="thI ${on?'on':''} ${pv?'pv':''}" data-buy="t:${t.id}"><div class="mini th-${t.id}" style="${style}" data-fx="${t.id}"><div class="mHead"><i></i><i></i></div><div class="mCard"><div class="mRing"></div><div><b></b><b></b></div></div><div class="mBtn"></div></div>
     <b>${t.e} ${t.n}</b><small class="thD">${t.d}</small><small>${on?'Using':own?'Tap to use':pv?'Previewing':t.c.toLocaleString()+' pts · tap to preview'}</small></button>`}
-function fillMiniFx(root){root.querySelectorAll('.mini[data-fx]').forEach(m=>{const t=THEMES.find(x=>x.id===m.dataset.fx);if(!t||t.fx.t==='none')return;const d=document.createElement('div');m.prepend(d);buildFx(d,t,true)})}
+function fillMiniFx(root){root.querySelectorAll('.mini[data-fx]').forEach(m=>{const t=THEMES.find(x=>x.id===m.dataset.fx);if(!t||t.id==='peach')return;const d=document.createElement('div');m.prepend(d);buildFx(d,t,true)})}
 function endPreview(){if(S._pv){delete S._pv;applyTheme()}}
 ODDS.shopR={C:0,R:80,E:17,L:3};ODDS.shopE={C:0,R:0,E:85,L:15};
 const coins=()=>Math.max(0,(S.xp||0)-(S.spent||0));
-function shopInit(){if(!S.rewards||S.rewVer!==5){S.rewards=DEF_REWARDS.map(x=>({...x})).concat((S.rewards||[]).filter(r=>String(r.id).startsWith('c')));S.rewards.sort((a,b)=>a.c-b.c);S.rewVer=5}S.ownedAcc=S.ownedAcc||[];S.ownedThemes=S.ownedThemes||['peach'];if((S.themeVer||1)<2){Object.keys(LEGACY_THEMES).forEach(k=>{if(S.ownedThemes.includes(k)){S.spent=Math.max(0,(S.spent||0)-LEGACY_THEMES[k]);S.ownedThemes=S.ownedThemes.filter(x=>x!==k)}});if(LEGACY_THEMES[S.theme])S.theme='peach';S.themeVer=2}if((S.themeVer||1)<3){const OLDP={"coquette": 800, "cottage": 800, "y2k": 1000, "mermaid": 1000, "pilates": 1200, "vapor": 1200, "galaxy": 1500, "cyber": 1500, "oldmoney": 2000},NEWP={"coquette": 150, "cottage": 150, "y2k": 200, "mermaid": 200, "pilates": 250, "vapor": 250, "galaxy": 300, "cyber": 300, "oldmoney": 400};(S.ownedThemes||[]).forEach(k=>{if(OLDP[k])S.spent=Math.max(0,(S.spent||0)-(OLDP[k]-NEWP[k]))});S.themeVer=3}S.spent=S.spent||0;S.redeemed=S.redeemed||[]}
+function shopInit(){if(!S.rewards||S.rewVer!==5){S.rewards=DEF_REWARDS.map(x=>({...x})).concat((S.rewards||[]).filter(r=>String(r.id).startsWith('c')));S.rewards.sort((a,b)=>a.c-b.c);S.rewVer=5}S.ownedAcc=S.ownedAcc||[];S.ownedThemes=S.ownedThemes||['peach'];if((S.themeVer||1)<2){Object.keys(LEGACY_THEMES).forEach(k=>{if(S.ownedThemes.includes(k)){S.spent=Math.max(0,(S.spent||0)-LEGACY_THEMES[k]);S.ownedThemes=S.ownedThemes.filter(x=>x!==k)}});if(LEGACY_THEMES[S.theme])S.theme='peach';S.themeVer=2}if((S.themeVer||1)<3){const OLDP={"coquette": 800, "cottage": 800, "y2k": 1000, "mermaid": 1000, "pilates": 1200, "vapor": 1200, "galaxy": 1500, "cyber": 1500, "oldmoney": 2000},NEWP={"coquette": 150, "cottage": 150, "y2k": 200, "mermaid": 200, "pilates": 250, "vapor": 250, "galaxy": 300, "cyber": 300, "oldmoney": 400};(S.ownedThemes||[]).forEach(k=>{if(OLDP[k])S.spent=Math.max(0,(S.spent||0)-(OLDP[k]-NEWP[k]))});S.themeVer=3}if((S.themeVer||1)<5){if((S.ownedThemes||[]).includes('oldmoney')){S.spent=Math.max(0,(S.spent||0)-400);S.ownedThemes=S.ownedThemes.filter(x=>x!=='oldmoney')}if(S.theme==='oldmoney')S.theme='peach';S.themeVer=5}S.spent=S.spent||0;S.redeemed=S.redeemed||[]}
 let shopTab='rewards';
 function openShop(){enqueue(ov=>renderShop(ov),true)}
 function renderShop(ov,msg){shopInit();const bal=coins(),re=!!ov.querySelector('.shop');
@@ -1879,7 +2033,7 @@ boot().catch(e=>{console.error(e);if(window.HUSBAND_ONLY)try{openHus()}catch(_){
 <div class="upd" id="updBar" hidden><span>✨ Update ready. It installs after this workout.</span></div>
 <style>.upd{position:fixed;z-index:30;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:440px;background:var(--surface2);border:1px solid var(--mint);color:var(--fg);font-weight:700;font-size:13px;border-radius:14px;padding:10px 14px;text-align:center;box-shadow:0 10px 24px -12px #000}</style>
 <script>
-const APP_VERSION='42';
+const APP_VERSION='43';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 // Updates install by themselves: quietly reload with the new version, but never in the middle of a workout or pop-up.
