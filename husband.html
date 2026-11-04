@@ -1879,7 +1879,7 @@ boot().catch(e=>{console.error(e);if(window.HUSBAND_ONLY)try{openHus()}catch(_){
 <div class="upd" id="updBar" hidden><span>✨ Update ready. It installs after this workout.</span></div>
 <style>.upd{position:fixed;z-index:30;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:440px;background:var(--surface2);border:1px solid var(--mint);color:var(--fg);font-weight:700;font-size:13px;border-radius:14px;padding:10px 14px;text-align:center;box-shadow:0 10px 24px -12px #000}</style>
 <script>
-const APP_VERSION='40';
+const APP_VERSION='41';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 // Updates install by themselves: quietly reload with the new version, but never in the middle of a workout or pop-up.
