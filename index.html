@@ -1026,7 +1026,8 @@ $('#weeks').addEventListener('click',e=>{const b=e.target.closest('.wk');if(b){s
 $('#seasonChips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(b){S.viewSeason=+b.dataset.s;renderPlan()}});
 
 // ===== Fuel
-function loadFuelInputs(){const F=S.fuel;$('#fWeight').value=F.w;$('#fHeight').value=F.h;$('#fAge').value=F.a;$('#fAct').value=F.act;$('#fBF').checked=F.bf;
+function syncWeight(){const L=(S.log||[]).filter(x=>!x.ex&&x.w>0).sort((a,b)=>a.date.localeCompare(b.date)),l=L[L.length-1];if(l&&S.fuel&&S.fuel.w!==l.w){S.fuel.w=l.w;return true}return false}
+function loadFuelInputs(){const sw=syncWeight();const F=S.fuel;if(sw)setTimeout(()=>calcFuel(true),0);$('#fWeight').value=F.w;$('#fHeight').value=F.h;$('#fAge').value=F.a;$('#fAct').value=F.act;$('#fBF').checked=F.bf;
   $$('#goalSeg button').forEach(b=>b.classList.toggle('on',b.dataset.g===F.g))}
 function calcFuel(persist){
   const F=S.fuel;
@@ -1099,7 +1100,7 @@ $('#lDate').value=today();
 $('#addLog').onclick=e=>{
   const wa=+$('#lWa').value,h=+$('#lH').value;if(!wa||!h){toast('Add waist and hips first');return}
   const d=$('#lDate').value||today();S.log=S.log.filter(x=>!x.ex&&x.date!==d);
-  ACT='Check-in saved';S.log.push({date:d,w:+$('#lW').value||0,wa,h});['#lW','#lWa','#lH'].forEach(s=>$(s).value='');
+  ACT='Check-in saved';S.log.push({date:d,w:+$('#lW').value||0,wa,h});['#lW','#lWa','#lH'].forEach(s=>$(s).value='');if(syncWeight()){loadFuelInputs();calcFuel(true)}
   confetti();sfx('win');toast('Check-in saved 📏');gainXP(75,e);renderProgress();
 };
 $('#logRows').addEventListener('click',e=>{const b=e.target.closest('[data-del]');if(!b)return;S.log=S.log.filter(x=>x.date!==b.dataset.del);save();renderProgress()});
@@ -1174,7 +1175,7 @@ $$('.dock button').forEach(b=>b.onclick=()=>{
   window.scrollTo({top:0,behavior:'smooth'});sfx('pop');flushOv();
 });
 let tT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2000)}
-function confetti(){
+function confetti(){return;
   const c=$('#confetti'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
   const cols=['#ff4f8b','#ff8f6b','#ffd166','#5ee6b5','#fbeff4'];
   const P=Array.from({length:120},()=>({x:c.width/2,y:c.height*.4,vx:(Math.random()-.5)*14,vy:Math.random()*-14-4,s:Math.random()*7+4,r:Math.random()*6,c:cols[Math.random()*5|0],pe:Math.random()<.15}));
@@ -2033,7 +2034,7 @@ boot().catch(e=>{console.error(e);if(window.HUSBAND_ONLY)try{openHus()}catch(_){
 <div class="upd" id="updBar" hidden><span>✨ Update ready. It installs after this workout.</span></div>
 <style>.upd{position:fixed;z-index:30;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:440px;background:var(--surface2);border:1px solid var(--mint);color:var(--fg);font-weight:700;font-size:13px;border-radius:14px;padding:10px 14px;text-align:center;box-shadow:0 10px 24px -12px #000}</style>
 <script>
-const APP_VERSION='43';
+const APP_VERSION='44';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 // Updates install by themselves: quietly reload with the new version, but never in the middle of a workout or pop-up.
