@@ -1037,7 +1037,7 @@ function calcFuel(persist){
   let kcal=Math.round((tdee+adj)/10)*10;
   let note={lean:'Gentle deficit: about 0.5–1 lb a week while keeping strength.',recomp:'Maintenance: lose fat and add glute muscle slowly at the same time.',build:'Small surplus: fastest glute growth. The waist may hold steady for a while.'}[F.g];
   if(F.bf){kcal=Math.max(kcal,1800);note+=' Breastfeeding: kept at 1,800 or higher to protect milk supply.'}
-  const p=Math.round(F.w*0.85),f=Math.round(kcal*0.27/9),c=Math.max(0,Math.round((kcal-p*4-f*9)/4));
+  const p=Math.round(F.w*1),f=Math.round(kcal*0.27/9),c=Math.max(0,Math.round((kcal-p*4-f*9)/4));
   animNum($('#kcal'),kcal,'');$('#kcalNote').textContent=note+` Maintenance is about ${Math.round(tdee).toLocaleString()} kcal.`;
   const tot=p*4+c*4+f*9;
   [[p*4,'#mP',p],[c*4,'#mC',c],[f*9,'#mF',f]].forEach(([cal,id,g],i)=>{$$('.mr')[i].style.strokeDashoffset=201*(1-cal/tot);animNum($(id),g,'g')});
@@ -2034,7 +2034,7 @@ boot().catch(e=>{console.error(e);if(window.HUSBAND_ONLY)try{openHus()}catch(_){
 <div class="upd" id="updBar" hidden><span>✨ Update ready. It installs after this workout.</span></div>
 <style>.upd{position:fixed;z-index:30;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:440px;background:var(--surface2);border:1px solid var(--mint);color:var(--fg);font-weight:700;font-size:13px;border-radius:14px;padding:10px 14px;text-align:center;box-shadow:0 10px 24px -12px #000}</style>
 <script>
-const APP_VERSION='44';
+const APP_VERSION='45';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 // Updates install by themselves: quietly reload with the new version, but never in the middle of a workout or pop-up.
