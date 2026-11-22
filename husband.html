@@ -898,7 +898,11 @@ const seasonOf=w=>Math.min(3,Math.floor((w-1)/13));
 const wkIn=w=>(w-1)%13+1;
 const isRecovery=w=>wkIn(w)===13;
 const blockOf=w=>{const k=wkIn(w);return k===13?'🌙 Recovery week':k<=4?'Learn block':k<=8?'Push block':'Peak block'};
-const setsFor=(e,w)=>{const n=e.sets[seasonOf(w)];return n?Math.max(1,n-(isRecovery(w)?1:0)):0};
+// boost: lower body + core run ahead of the calendar; arms stay on the gentle season schedule
+const armEx=e=>/Arms/.test(e.tag);
+const stgRaw=(e,w)=>seasonOf(w)+(armEx(e)?0:(S.boost||0));
+const stg=(e,w)=>Math.min(3,stgRaw(e,w));
+const setsFor=(e,w)=>{let n=e.sets[stg(e,w)];if(!n)return 0;if(stgRaw(e,w)>3&&e.tag!=='Cardio')n++;return Math.max(1,n-(isRecovery(w)?1:0))};
 const sid=()=>`w${S.week}d${S.day}`;
 const activeEx=()=>DAYS[S.day].ex.map((e,i)=>({e,i})).filter(o=>setsFor(o.e,S.week)>0);
 const dayNum=()=>Math.max(1,Math.round((new Date(today())-new Date(S.start))/864e5)+1);
@@ -923,8 +927,8 @@ function renderToday(){
     const n=setsFor(e,S.week), got=st[i]||0;
     return `<div class="card ex ${got>=n?'complete':''}" style="animation-delay:${k*60}ms">
       <div class="figwrap"><svg class="fig" viewBox="0 -6 200 132" data-x="${i}" role="img" aria-label="Animated demo of ${e.n}"></svg><span class="vchip">${e.anim.view||'Side view'}</span></div>
-      <div class="ex-top"><h3>${e.n}</h3><span class="target">${n} × ${e.reps[s]}</span></div>
-      <div class="sv"><b>Season ${s+1} version:</b> ${e.sv[s]}</div>
+      <div class="ex-top"><h3>${e.n}</h3><span class="target">${n} × ${e.reps[stg(e,S.week)]}</span></div>
+      <div class="sv"><b>Level ${stg(e,S.week)+1} version:</b> ${e.sv[stg(e,S.week)]}</div>
       <div><span class="tag">${e.tag}</span>${e.rest?`<span class="tag">Rest ${e.rest}s</span>`:''}</div>
       <details class="how"><summary>How to do it</summary><ol>${e.steps.map(x=>`<li>${x}</li>`).join('')}</ol><p class="avoid"><b>Avoid:</b> ${e.avoid}</p></details>
       <a class="vid" href="https://www.youtube.com/results?search_query=${encodeURIComponent(e.yt)}" target="_blank" rel="noopener noreferrer"><span>▶</span> Watch a video demo</a>
@@ -939,8 +943,8 @@ function renderToday(){
 let pIdx=0;
 const playerOpen=()=>!$('#player').hidden;
 function renderExPrev(){const s=seasonOf(S.week),st=S.sets[sid()]||{},L=activeEx();let tot=0,got=0,secs=0;
-  $('#exPrev').innerHTML=L.map(({e,i})=>{const n=setsFor(e,S.week),g=Math.min(st[i]||0,n);tot+=n;got+=g;secs+=e.tag==='Cardio'?parseInt(e.reps[s])*60:n*(40+e.rest);
-    return `<li class="${g>=n?'ok':''}"><span class="exn">${e.n}</span><span class="exr">${n} × ${e.reps[s]}</span></li>`}).join('');
+  $('#exPrev').innerHTML=L.map(({e,i})=>{const n=setsFor(e,S.week),g=Math.min(st[i]||0,n);tot+=n;got+=g;secs+=e.tag==='Cardio'?parseInt(e.reps[stg(e,S.week)])*60:n*(40+e.rest);
+    return `<li class="${g>=n?'ok':''}"><span class="exn">${e.n}</span><span class="exr">${n} × ${e.reps[stg(e,S.week)]}</span></li>`}).join('');
   const done=S.done.includes(sid()),mins=Math.max(10,Math.round(secs/300)*5);
   $('#startBtn').innerHTML=done?'Workout done ✓<small>Tap to review</small>':got?`Continue workout<small>${got} of ${tot} sets done</small>`:`Start workout<small>About ${mins} minutes · ${L.length} exercises</small>`;
   $('#startBtn').classList.toggle('done',done)}
@@ -1936,7 +1940,7 @@ function husbandSnap(full){shopInit();
   const wid=S.daily&&S.daily.wid||sid();
   return Object.assign(base,{full:1,la:S.ts||Date.now(),dy:S.day,start:S.start,why:S.why||'',
     dd:S.doneDates.map(o=>[o.id,o.d]),lg:realLog().map(x=>[x.date,x.w||0,x.wa,x.h]),
-    cw:{id:sid(),done:S.done.includes(sid())?1:0,ex:activeEx().map(({e,i})=>{const n=setsFor(e,S.week);return [e.n,Math.min(st[i]||0,n),n,e.reps[seasonOf(S.week)]]})},
+    cw:{id:sid(),done:S.done.includes(sid())?1:0,ex:activeEx().map(({e,i})=>{const n=setsFor(e,S.week);return [e.n,Math.min(st[i]||0,n),n,e.reps[stg(e,S.week)]]})},
     q:[S.done.includes(wid)?1:0,S.daily&&S.daily.prayed?1:0,S.daily&&S.daily.walked?1:0],
     ss:S.stats.sets||0,pd:S.stats.pDays||0,wdy:S.stats.wDays||0,ch:S.stats.chests||0,gp:S.stats.golden||0,
     fu:Object.assign({g:S.fuel.g,bf:S.fuel.bf?1:0,wt:S.fuel.w},S.fuelOut||{}),
@@ -2009,6 +2013,7 @@ function rerenderAll(){applyTheme();loadFuelInputs();calcFuel();renderMotive();r
   const ns={};Object.keys(S.sets||{}).forEach(k=>{const m={};Object.keys(S.sets[k]).forEach(i=>{const j=mapIdx(k,+i);if(j>=0)m[j]=S.sets[k][i]});ns[k]=m});S.sets=ns;
   const na={};Object.keys(S.awarded||{}).forEach(key=>{const c=key.lastIndexOf('-'),k=key.slice(0,c),j=mapIdx(k,+key.slice(c+1));if(j>=0)na[k+'-'+j]=S.awarded[key]});S.awarded=na;
   S.progVer=2;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}})();
+(function(){if(window.HUSBAND_ONLY||(S.boostVer||0)>=1)return;S.boost=1;S.boostVer=1;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}})();
 window.gameReady=true;
 try{rerenderAll()}catch(e){console.error(e)}
 try{if(!window.HUSBAND_ONLY)maybeGolden()}catch(e){}
@@ -2034,7 +2039,7 @@ boot().catch(e=>{console.error(e);if(window.HUSBAND_ONLY)try{openHus()}catch(_){
 <div class="upd" id="updBar" hidden><span>✨ Update ready. It installs after this workout.</span></div>
 <style>.upd{position:fixed;z-index:30;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:440px;background:var(--surface2);border:1px solid var(--mint);color:var(--fg);font-weight:700;font-size:13px;border-radius:14px;padding:10px 14px;text-align:center;box-shadow:0 10px 24px -12px #000}</style>
 <script>
-const APP_VERSION='45';
+const APP_VERSION='46';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 // Updates install by themselves: quietly reload with the new version, but never in the middle of a workout or pop-up.
