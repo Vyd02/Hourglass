@@ -638,6 +638,23 @@ textarea{width:100%;background:var(--surface2);border:1px solid var(--line);colo
 .obl .qchips{flex-wrap:wrap;overflow:visible}
 .warnp{background:color-mix(in srgb,var(--gold) 15%,transparent);color:var(--gold);border-radius:12px;padding:10px;font-size:13px;text-align:left}
 input[type=search]{-webkit-appearance:none;appearance:none}
+
+.stretchCard{display:grid;gap:10px;border-color:var(--mint);background:linear-gradient(160deg,color-mix(in srgb,var(--mint) 16%,var(--surface)),var(--surface))}
+.stTop{display:flex;gap:12px;align-items:center}.stTop .stI{font-size:34px;animation:breathe 4s ease-in-out infinite}
+.stTop h3{margin:0;font-size:17px}.stTop small{color:var(--muted)}
+.stList{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.stList li{font-size:12.5px;background:var(--surface2);border:1px solid var(--line);border-radius:999px;padding:5px 10px}
+.stDone{font-size:13px;color:var(--mint);font-weight:700}
+@keyframes breathe{50%{transform:scale(1.12)}}
+.stP .stBody{flex:1;display:grid;place-items:center;align-content:center;gap:14px;padding:20px;text-align:center}
+.stBig{font-size:84px;line-height:1;animation:breathe 5s ease-in-out infinite}
+.stP h2{margin:0;font-size:24px}.stVer{color:var(--mint);font-weight:700;font-size:14px}
+.stHow{color:var(--muted);font-size:14.5px;line-height:1.5;max-width:420px;margin:0}
+.stSide{display:inline-block;background:var(--surface2);border:1px solid var(--line);border-radius:999px;padding:5px 14px;font-weight:800;font-size:13px}
+.stRing{position:relative;width:150px;height:150px}.stRing svg{transform:rotate(-90deg)}
+.stRing circle{fill:none;stroke-width:10}.stRing .tr{stroke:var(--surface2)}.stRing .br{stroke:var(--mint);stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+.stRing b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-size:42px;font-variant-numeric:tabular-nums}
+.stP .vid{justify-self:center}
 </style>
 </head><body>
 <script>window.HUSBAND_ONLY=1</script>
@@ -672,6 +689,13 @@ input[type=search]{-webkit-appearance:none;appearance:none}
   </div>
   <details class="card pray" id="prayCard"><summary><span>🙏 Pray before you train</span></summary><p id="prayTxt"></p><button class="btn ghost wide" id="amenBtn">Amen 🙏</button></details>
   <div class="card quests"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><div><div class="eyebrow">Workout-day quests</div><small class="muted" id="chestTxt"></small></div><button class="chest" id="chest" aria-label="Open reward chest">🎁</button></div><div id="qlist"></div></div>
+  <div class="card stretchCard" id="stretchCard"></div>
+  <div class="player stP" id="stretchP" hidden role="dialog" aria-label="Stretch">
+    <div class="pTop"><button class="pX" id="stClose" aria-label="Close stretch">✕</button><div class="pT"><small id="stSub">Day-off stretch</small><b id="stCount"></b></div><span class="pPct" id="stPct"></span></div>
+    <div class="pBar"><i id="stBar"></i></div>
+    <div class="stBody" id="stBody"></div>
+    <div class="pNav"><button class="btn ghost" id="stPause">Pause</button><button class="btn" id="stSkip">Next ›</button></div>
+  </div>
   <button class="card lessonPing" id="lessonPing" hidden></button>
   <div class="player" id="player" hidden role="dialog" aria-label="Workout">
     <div class="pTop"><button class="pX" id="pClose" aria-label="Close workout">✕</button><div class="pT"><small id="pSub"></small><b id="pCount"></b></div><span class="pPct" id="pPct"></span></div>
@@ -701,10 +725,10 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <table><tbody>
       <tr><td><b>Mon</b></td><td>A · Glute Strength</td></tr>
       <tr><td><b>Tue</b></td><td>B · Thighs + Abs</td></tr>
-      <tr><td><b>Wed</b></td><td class="muted">Rest</td></tr>
+      <tr><td><b>Wed</b></td><td class="muted">🧘‍♀️ Stretch</td></tr>
       <tr><td><b>Thu</b></td><td>C · Glute Volume</td></tr>
       <tr><td><b>Sat</b></td><td>D · Glute Pump</td></tr>
-      <tr><td><b>Fri / Sun</b></td><td class="muted">Rest, 8k+ steps</td></tr>
+      <tr><td><b>Fri / Sun</b></td><td class="muted">🧘‍♀️ Stretch</td></tr>
     </tbody></table>
     <p class="muted" style="font-size:13px;margin:8px 0 0">Any days work. Just leave a day between A and C when possible.</p>
   </div>
@@ -1115,7 +1139,7 @@ $('#amenBtn').onclick=e=>{$('#prayCard').open=false;if(!S.daily.prayed){S.daily.
 $('#snackUndo').onclick=doUndo;
 $('#startBtn').onclick=openPlayer;$('#pClose').onclick=closePlayer;$('#pPrev').onclick=()=>{showEx(pIdx-1);sfx('pop')};
 $('#pNext').onclick=()=>{const L=activeEx();if(pIdx<L.length-1){showEx(pIdx+1);sfx('pop');return}if(S.done.includes(sid())){closePlayer();return}const b=S.done.length;$('#finishBtn').click();if(S.done.length>b)closePlayer()};
-window.hgBack=()=>{const o=$('#ov');if(o&&!o.hidden){nextOv();return 1}if(playerOpen()){closePlayer();return 1}if(!$('#hus').hidden){closeHus();return 1}return 0};document.addEventListener('pointerdown',e=>{if(e.target.closest('#snackUndo'))pendSnap=null},true);
+window.hgBack=()=>{const o=$('#ov');if(o&&!o.hidden){nextOv();return 1}if(typeof stretchOpen==='function'&&stretchOpen()){closeStretch();return 1}if(playerOpen()){closePlayer();return 1}if(!$('#hus').hidden){closeHus();return 1}return 0};document.addEventListener('pointerdown',e=>{if(e.target.closest('#snackUndo'))pendSnap=null},true);
 $('#rsShow').onclick=()=>{$('#rsBox').hidden=false};$('#rsNo').onclick=()=>{$('#rsBox').hidden=true};
 $('#rsYes').onclick=async()=>{try{localStorage.removeItem(KEY)}catch(e){}await idbClear();
   try{if(typeof CLOUD!=='undefined'&&CLOUD)await CLOUD.set({json:'{}',ts:Date.now()})}catch(e){}
@@ -1634,7 +1658,7 @@ function renderGame(){
   const qs=S.sets[wid]||{},qSets=DAYS[wd].ex.reduce((a,e,i)=>a+Math.min(qs[i]||0,setsFor(e,ww)),0);
   const q=[{i:'🏋️',t:`Finish Week ${ww} · Day ${DAYS[wd].k} workout`,v:fin?1:Math.min(.95,qSets/Math.max(1,DAYS[wd].ex.reduce((a,e)=>a+setsFor(e,ww),0))),x:fin?'Workout done ✓':`${qSets} set${qSets===1?'':'s'} so far`,add:''},
            {i:'🙏',t:'Pray before you train',v:S.daily.prayed?1:0,x:S.daily.prayed?'Amen ✓':'A short prayer, then tap Amen',add:S.daily.prayed?'':'<button class="qa" data-pray="1">Pray now</button>'},
-           {i:'🚶‍♀️',t:'Take a 20-minute walk',v:S.daily.walked?1:0,x:S.daily.walked?'Walked ✓':'Stroller walks count',add:S.daily.walked?'':'<button class="qa" data-walk="1">I walked 20 min</button>'}];
+           {i:'🧘‍♀️',t:'Do the stretch',v:S.daily.walked?1:0,x:S.daily.walked?'Stretched ✓':'Best on a day off. Tap to start',add:S.daily.walked?'':'<button class="qa" data-walk="1">Start stretching</button>'}];
   $('#qlist').innerHTML=q.map(o=>`<div class="qrow"><span class="qic">${o.i}</span><div><b>${o.t}</b><div class="qbar"><i style="width:${o.v*100}%"></i></div><small class="muted">${o.x}</small>${o.add?`<div class="qadd">${o.add}</div>`:''}</div><span class="qck ${o.v>=1?'on':''}">${o.v>=1?'✓':''}</span></div>`).join('');
   const all=q.every(o=>o.v>=1),ch=$('#chest');
   ch.className='chest '+(S.daily.claimed?'claimed':all?'ready':'');ch.textContent=S.daily.claimed?'✨':'🎁';
@@ -1643,7 +1667,7 @@ function renderGame(){
   $('#badgeCount').textContent=`${S.badges.length}/${BADGES.length}`;
   checkBadges();
 }
-$('#qlist').addEventListener('click',e=>{const b=e.target.closest('.qa');if(!b)return;if(b.dataset.walk){ACT='';S.daily.walked=1;sfx('ding');gainXP(30,e)}else if(b.dataset.pray){const pc=$('#prayCard');pc.open=true;pc.scrollIntoView({behavior:'smooth',block:'center'})}});
+$('#qlist').addEventListener('click',e=>{const b=e.target.closest('.qa');if(!b)return;if(b.dataset.walk){openStretch()}else if(b.dataset.pray){const pc=$('#prayCard');pc.open=true;pc.scrollIntoView({behavior:'smooth',block:'center'})}});
 $('#chest').onclick=e=>{if(!$('#chest').classList.contains('ready'))return;ACT='Chest opened';S.stats.chests++;sfx('chest');buzz([40,30,80]);confetti();newRound();rollDrop('chest');toast('Workout day complete! New quests unlocked ✨');gainXP(75,e)};
 $('#sndBtn').onclick=()=>{S.sound=!S.sound;$('#sndBtn').textContent=S.sound?'🔊':'🔇';save();sfx('ding')};
 $('#lvlBtn').onclick=()=>enqueue(ov=>{const {L,w}=levelOf();
@@ -1962,7 +1986,7 @@ function drawHus(refresh){const d=loadHus();
   if(F){const k=+d.cw.id.slice(d.cw.id.indexOf('d')+1);
     h+=sec(`Current workout · ${dayLbl(d.cw.id)}`,`<div class="muted" style="font-size:13px;margin:2px 0 8px">${d.cw.done?'✅ Finished':cwGot?`In progress: ${cwGot} of ${cwTot} sets`:'Not started yet'}</div>`+
       d.cw.ex.map(x=>`<div class="hEx ${x[1]>=x[2]?'ok':''}"><span>${x[1]>=x[2]?'✓ ':''}${esc(x[0])}</span><small>${x[1]}/${x[2]} sets · ${x[3]}</small></div>`).join(''));
-    h+=sec('Workout-day quests',[['🏋️','Finish the workout',d.q[0]],['🙏','Pray before training',d.q[1]],['🚶‍♀️','20-minute walk',d.q[2]]].map(x=>`<div class="hEx ${x[2]?'ok':''}"><span>${x[0]} ${x[1]}</span><small>${x[2]?'✓ Done':'Not yet'}</small></div>`).join('')+`<div class="muted" style="font-size:12.5px;margin-top:6px">Chests opened: ${d.ch} · Golden peaches caught: ${d.gp}</div>`)}
+    h+=sec('Workout-day quests',[['🏋️','Finish the workout',d.q[0]],['🙏','Pray before training',d.q[1]],['🧘‍♀️','Stretch session',d.q[2]]].map(x=>`<div class="hEx ${x[2]?'ok':''}"><span>${x[0]} ${x[1]}</span><small>${x[2]?'✓ Done':'Not yet'}</small></div>`).join('')+`<div class="muted" style="font-size:12.5px;margin-top:6px">Chests opened: ${d.ch} · Golden peaches caught: ${d.gp}</div>`)}
   h+=sec(`This week · Week ${d.w}`,`<div class="hWeek">${d.wd.map((x,k)=>`<div class="${x?'ok':''}"><b>${x?'✓':DAYS[k].k}</b><small>Day ${DAYS[k].k}</small></div>`).join('')}</div><div class="muted" style="font-size:13px;margin-top:8px">${lastW?`Last workout: ${dayLbl(lastW[0])}, ${lastW[1]}`:'No workouts finished yet.'}</div>`);
   if(F){const days=new Set(d.dd.map(x=>x[1])),cells=[],t0=new Date(today()+'T12:00');t0.setDate(t0.getDate()-((t0.getDay()+6)%7)-49);
     for(let i=0;i<56;i++){const dt=new Date(t0);dt.setDate(t0.getDate()+i);const ds=dt.toISOString().slice(0,10);cells.push(`<i class="${days.has(ds)?'on':''} ${ds===today()?'td':''}" title="${ds}"></i>`)}
@@ -2007,6 +2031,61 @@ function rerenderAll(){applyTheme();loadFuelInputs();calcFuel();renderMotive();r
   const ns={};Object.keys(S.sets||{}).forEach(k=>{const m={};Object.keys(S.sets[k]).forEach(i=>{const j=mapIdx(k,+i);if(j>=0)m[j]=S.sets[k][i]});ns[k]=m});S.sets=ns;
   const na={};Object.keys(S.awarded||{}).forEach(key=>{const c=key.lastIndexOf('-'),k=key.slice(0,c),j=mapIdx(k,+key.slice(c+1));if(j>=0)na[k+'-'+j]=S.awarded[key]});S.awarded=na;
   S.progVer=2;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}})();
+
+// ===== Day-off stretch (flexibility), guided with a timer; holds grow each season
+const STRETCH=[
+ ['🐈','Cat-Cow',0,'reps',['Hands and knees. Round your back up like a cat, then let your belly drop and look up. Slow, with your breath.'],'cat cow stretch beginner',['10 slow rounds','12 slow rounds','12 slow rounds','15 slow rounds']],
+ ['🧎‍♀️','Child’s Pose',0,'hold',['Knees wide, sit your butt back toward your heels, arms stretched out in front, forehead down. Breathe into your back.'],'childs pose wide knee',['Arms forward','Walk the hands farther each breath','Walk the hands to each side too','Sink deeper each breath']],
+ ['🦵','Low Lunge (hip front)',1,'hold',['One knee down on a pillow, other foot in front. Squeeze the butt of the down leg and shift your hips forward until you feel the front of that hip stretch.'],'low lunge hip flexor stretch',['Hands on the front knee','Arm on the down-knee side reaches up','Reach up and lean slightly away','Back foot up on the couch behind you']],
+ ['📐','Half Splits (back of thigh)',1,'hold',['From the low lunge, push your hips back and straighten the front leg, toes up. Fold forward with a flat back.'],'half splits hamstring stretch beginner',['Hands on pillows or books','Hands on the floor','Chest closer to the knee','Slide toward a full split if it feels good']],
+ ['🍑','Glute Stretch',1,'hold',['Lie on your back, cross one ankle over the other knee, and pull the bottom leg toward your chest. Feel it deep in the butt.'],'figure 4 glute stretch then pigeon pose',['Figure-4 on your back','Figure-4, pull a little closer','Pigeon: front shin on the floor, hips square','Pigeon, fold your chest down']],
+ ['🦋','Butterfly (inner thigh)',0,'hold',['Sit tall, soles of the feet together, knees out. Hold your feet and gently lean forward from the hips.'],'butterfly stretch inner thigh',['Sit tall, knees drop on their own','Heels closer to the body','Lean forward, flat back','Lean forward, elbows press the knees down gently']],
+ ['🐸','Frog Stretch (hips)',0,'hold',['On hands or forearms, knees out wide, ankles in line with the knees. Slowly rock your hips back. Only as wide as feels OK.'],'frog stretch beginner hips',['On your hands, knees just a bit wide','Knees wider','Down on your forearms','Rock back slowly to go deeper']],
+ ['🙇‍♀️','Forward Fold',0,'hold',['Sit with legs straight together. Reach for your shins, ankles or toes and let your chest fold toward your legs.'],'seated forward fold beginner',['Knees can bend','Hands on your shins','Hands toward your toes','Chest down toward your legs']],
+ ['🐍','Cobra (stomach)',0,'hold',['Lie on your stomach, hands under your shoulders. Press up gently, hips stay on the floor, shoulders down.'],'cobra stretch beginner',['Up on your forearms','Hands, elbows still bent','Arms almost straight','Arms straight, look up']],
+ ['🌀','Lying Twist (back)',1,'hold',['On your back, bring one knee across your body to the floor, arm out to the other side, look away from the knee.'],'supine spinal twist',['Knee toward the floor','Knee to the floor, hand on it','Straighten the top leg','Straight leg, reach for the foot']]];
+const STRETCH_HOLD=[30,40,50,60];
+const stretchOpen=()=>{const e=$('#stretchP');return !!e&&!e.hidden};
+function stretchSteps(){const s=seasonOf(S.week),h=STRETCH_HOLD[s],out=[];
+  STRETCH.forEach((x,i)=>{const sec=x[3]==='reps'?60:h;if(x[2]){out.push({i,side:'Left side',sec});out.push({i,side:'Right side',sec})}else out.push({i,side:'',sec})});return out}
+function renderStretchCard(){const el=$('#stretchCard');if(!el)return;const st=stretchSteps(),mins=Math.round(st.reduce((a,b)=>a+b.sec+5,0)/60),s=seasonOf(S.week);
+  S.stretchDays=S.stretchDays||[];const did=S.stretchDays.includes(today()),wk=S.stretchDays.filter(d=>(new Date(today())-new Date(d))/864e5<7).length;
+  el.innerHTML=`<div class="stTop"><span class="stI">🧘‍♀️</span><div><div class="eyebrow">For your days off</div><h3>Flexibility stretch · ${mins} min</h3><small>${STRETCH_HOLD[s]}-second holds this season. They get longer each season.</small></div></div>
+   <ul class="stList">${STRETCH.map(x=>`<li>${x[0]} ${x[1]}</li>`).join('')}</ul>
+   ${did?`<div class="stDone">✓ Stretched today${wk>1?` · ${wk} times this week`:''}</div>`:wk?`<div class="stDone">${wk} stretch${wk>1?'es':''} this week</div>`:''}
+   <button class="btn wide" id="stStart" style="background:linear-gradient(135deg,var(--mint),var(--peach))">${did?'Stretch again':'Start stretching'}</button>`}
+let stIdx=0,stLeft=0,stT=null,stPaused=false,stList=[];
+function stShow(){const st=stList[stIdx],x=STRETCH[st.i],s=seasonOf(S.week);
+  stLeft=st.sec;$('#stCount').textContent=`${stIdx+1} of ${stList.length}`;$('#stPct').textContent=Math.round(stIdx/stList.length*100)+'%';$('#stBar').style.width=(stIdx/stList.length*100)+'%';
+  $('#stBody').innerHTML=`<span class="stBig">${x[0]}</span><h2>${x[1]}</h2>${st.side?`<span class="stSide">${st.side}</span>`:''}<div class="stVer">${x[6][s]}</div>
+   <div class="stRing"><svg width="150" height="150"><circle class="tr" cx="75" cy="75" r="64"/><circle class="br" id="stArc" cx="75" cy="75" r="64" stroke-dasharray="402.1" stroke-dashoffset="0"/></svg><b id="stSec">${x[3]==='reps'?'⟳':stLeft}</b></div>
+   <p class="stHow">${x[4][0]}${x[3]==='reps'?' Take about a minute.':' Breathe slowly. A stretch should feel strong, never sharp.'}</p>
+   <a class="vid" href="https://www.youtube.com/results?search_query=${encodeURIComponent(x[5])}" target="_blank" rel="noopener noreferrer"><span>▶</span> Watch a video demo</a>`;
+  stPaused=false;$('#stPause').textContent='Pause';$('#stSkip').textContent=stIdx===stList.length-1?'Finish ✓':'Next ›';sfx('pop');stTick(true)}
+function stTick(first){clearTimeout(stT);if(!stretchOpen())return;const st=stList[stIdx];
+  if(!first&&!stPaused)stLeft--;
+  const sec=$('#stSec'),arc=$('#stArc');if(arc)arc.style.strokeDashoffset=(402.1*(1-stLeft/st.sec)).toFixed(1);
+  if(sec&&STRETCH[st.i][3]!=='reps')sec.textContent=Math.max(0,stLeft);
+  if(stLeft===3&&!stPaused)sfx('flip');
+  if(stLeft<=0){sfx('ding');buzz([40,30,40]);if(stIdx<stList.length-1){stIdx++;setTimeout(stShow,600)}else stFinish();return}
+  stT=setTimeout(()=>stTick(false),1000)}
+function openStretch(){stList=stretchSteps();stIdx=0;$('#stretchP').hidden=false;document.body.classList.add('noscroll');stShow()}
+function closeStretch(){clearTimeout(stT);$('#stretchP').hidden=true;document.body.classList.remove('noscroll');renderStretchCard()}
+function stFinish(){clearTimeout(stT);S.stretchDays=S.stretchDays||[];const first=!S.stretchDays.includes(today());
+  const worked=(S.doneDates||[]).some(o=>o.d===today());
+  if(first)S.stretchDays.push(today());if(S.stretchDays.length>400)S.stretchDays=S.stretchDays.slice(-400);
+  S.stats.stretch=(S.stats.stretch||0)+1;ACT='Stretch finished';
+  const quest=!S.daily.walked;S.daily.walked=1;
+  $('#stBar').style.width='100%';$('#stPct').textContent='100%';
+  const pts=first&&!worked?40:0;
+  $('#stBody').innerHTML=`<span class="stBig">🌸</span><h2>Stretch done</h2><p class="stHow">${pts?`+${pts} points for stretching on a day off.`:first?'Nice cool-down. Stretch points count on days off.':'Extra stretch, extra flexible.'}${quest?' Quest checked off ✓':''}</p>`;
+  $('#stPause').textContent='Close';$('#stSkip').textContent='Done ✓';stIdx=stList.length;sfx('win');buzz([60,40,60]);
+  if(pts)gainXP(pts);else save();renderToday()}
+document.addEventListener('click',e=>{if(e.target.closest('#stStart'))openStretch()});
+$('#stClose').onclick=closeStretch;
+$('#stPause').onclick=()=>{if(stIdx>=stList.length){closeStretch();return}stPaused=!stPaused;$('#stPause').textContent=stPaused?'Resume':'Pause';if(!stPaused)stTick(true)};
+$('#stSkip').onclick=()=>{if(stIdx>=stList.length){closeStretch();return}if(stIdx<stList.length-1){stIdx++;stShow()}else stFinish()};
+renderStretchCard();
 (function(){if(window.HUSBAND_ONLY||(S.boostVer||0)>=1)return;S.boost=1;S.boostVer=1;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}})();
 window.gameReady=true;
 try{rerenderAll()}catch(e){console.error(e)}
@@ -2033,7 +2112,7 @@ boot().catch(e=>{console.error(e);if(window.HUSBAND_ONLY)try{openHus()}catch(_){
 <div class="upd" id="updBar" hidden><span>✨ Update ready. It installs after this workout.</span></div>
 <style>.upd{position:fixed;z-index:30;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:440px;background:var(--surface2);border:1px solid var(--mint);color:var(--fg);font-weight:700;font-size:13px;border-radius:14px;padding:10px 14px;text-align:center;box-shadow:0 10px 24px -12px #000}</style>
 <script>
-const APP_VERSION='48';
+const APP_VERSION='49';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 // Updates install by themselves: quietly reload with the new version, but never in the middle of a workout or pop-up.
@@ -2044,12 +2123,12 @@ async function checkUpdate(){try{const v=(await (await fetch('version.txt?t='+Da
   if(!v||v===APP_VERSION){document.getElementById('updBar').hidden=true;return}
   let tried=null;try{tried=sessionStorage.getItem('hgUpd')}catch(e){}
   if(tried===v)return; // already reloaded for this one; GitHub is still catching up, try again later
-  const busyNow=(typeof playerOpen==='function'&&playerOpen())||!document.getElementById('ov').hidden;
+  const busyNow=(typeof playerOpen==='function'&&playerOpen())||(typeof stretchOpen==='function'&&stretchOpen())||!document.getElementById('ov').hidden;
   if(busyNow){pendingV=v;document.getElementById('updBar').hidden=!!window.HUSBAND_ONLY;return}
   installUpdate(v)}catch(e){}}
 window.addEventListener('load',()=>setTimeout(checkUpdate,1500));
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate()});
-setInterval(()=>{if(pendingV){const busyNow=(typeof playerOpen==='function'&&playerOpen())||!document.getElementById('ov').hidden;if(!busyNow)installUpdate(pendingV)}else checkUpdate()},20000);
+setInterval(()=>{if(pendingV){const busyNow=(typeof playerOpen==='function'&&playerOpen())||(typeof stretchOpen==='function'&&stretchOpen())||!document.getElementById('ov').hidden;if(!busyNow)installUpdate(pendingV)}else checkUpdate()},20000);
 setInterval(()=>{try{sessionStorage.removeItem('hgUpd')}catch(e){}},5*60000);
 </script>
 </body></html>
