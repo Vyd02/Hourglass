@@ -701,9 +701,9 @@ input[type=search]{-webkit-appearance:none;appearance:none}
     <table><tbody>
       <tr><td><b>Mon</b></td><td>A · Glute Strength</td></tr>
       <tr><td><b>Tue</b></td><td>B · Thighs + Abs</td></tr>
-      <tr><td><b>Wed</b></td><td class="muted">Rest or stroller walk</td></tr>
+      <tr><td><b>Wed</b></td><td class="muted">Rest</td></tr>
       <tr><td><b>Thu</b></td><td>C · Glute Volume</td></tr>
-      <tr><td><b>Sat</b></td><td>D · Glute Pump + Walk</td></tr>
+      <tr><td><b>Sat</b></td><td>D · Glute Pump</td></tr>
       <tr><td><b>Fri / Sun</b></td><td class="muted">Rest, 8k+ steps</td></tr>
     </tbody></table>
     <p class="muted" style="font-size:13px;margin:8px 0 0">Any days work. Just leave a day between A and C when possible.</p>
@@ -1301,7 +1301,7 @@ const DAYS=[
     ['Stand tall with hands on hips.','Breathe all the air out.','Pull your belly button in toward your spine as far as you can and hold, taking small, shallow breaths.'],
     'Holding your breath completely, or doing it right after eating.',
     {base:'stand',a:'E1:110,60 W1:104,72 E2:90,60 W2:96,72 B:7',b:'B:-5',hi:'M',sp:4200})]},
- {k:'D',t:'Glute Pump + Walk',ex:[
+ {k:'D',t:'Glute Pump',ex:[
   X('Stair Step-up','Glutes',[3,3,3,3],['10/leg','10/leg','10/leg','12/leg'],60,
     ['Bodyweight, first step if the second is too high','Second step, a 10 in each hand','Second step, a 15 in each hand','Second step, a 15 in each hand'],
     'step up exercise glute focus',
@@ -1331,13 +1331,7 @@ const DAYS=[
     'dumbbell lateral raise form women',
     ['Stand tall, arms at your sides, slight bend in the elbows.','Lift the arms out to the sides, leading with the elbows, up to shoulder height. In Season 1, hold them out and make small circles instead.','Lower slowly. Stop before your form breaks down.'],
     'Shrugging the shoulders up to the ears or swinging. Light and slow wins here.',
-    {base:'front',a:'',b:'E1:82,46 W1:66,42 E2:118,46 W2:134,42',dir:0,view:'Front view',hi:'N'}),
-  X('Stroller Walk','Cardio',[1,1,1,1],['20 min','25 min','30 min','30 min'],0,
-    ['Brisk, flat route','Add hills','Hills at a faster pace','Hills plus five 1-minute fast bursts'],
-    'power walking technique tips',
-    ['Brisk pace, fast enough that talking is a little harder than normal.','Pick a route with hills. Uphill walking works the glutes more.','Aim for 8,000+ steps a day on top of the workouts.'],
-    'Leaning on the stroller handle. Stand tall and push from the legs.',
-    {a:'H:96,26 N:96,40 P:94,72 K1:104,96 A1:110,120 K2:86,96 A2:80,118 T2:86,121 E1:108,52 W1:122,60 E2:106,52 W2:120,60',b:'K1:88,96 A1:80,118 T1:86,121 K2:102,96 A2:108,120 T2:115,121',props:[['stroller']],sp:1500})]}
+    {base:'front',a:'',b:'E1:82,46 W1:66,42 E2:118,46 W2:134,42',dir:0,view:'Front view',hi:'N'})]}
 ];
 const SEASONS=[
  {n:'Foundation',i:'🌱',w:'Weeks 1–13',d:'Bodyweight basics. Learn every move, build the habit, wake the glutes up.'},
@@ -1605,7 +1599,7 @@ function checkBadges(){let nw=0;BADGES.forEach(b=>{if(!S.badges.includes(b.id)&&
   if(BATCH||busy()){PEND.push({e:b.e,t:`Trophy: ${b.n}`,s:`${b.d} · +50 pts`});return}
   enqueue(ov=>{ov.innerHTML=`<div class="ovc"><span class="big">${b.e}</span><div class="eyebrow">Trophy unlocked</div><h2>${b.n}</h2><p class="muted">${b.d}</p><p class="gold">+50 pts</p><button class="btn wide" data-close>Nice</button></div>`;sfx('win');buzz(80)})}});if(nw)save()}
 
-const TIPS=['Glutes grow on rest days. Sleep counts as training.','Squeeze a full second at the top of every bridge.','Protein at breakfast makes the daily goal way easier.','Slow lowering means more muscle from the same bodyweight.','Stroller hills are free glute work.','Waist-to-hip ratio beats the scale for this goal.','Progress photos every 4 weeks, same light, same spot.','Shaky last reps mean it is working.','Exhale on the hard part of every rep.','Knees out over the toes on every squat.'];
+const TIPS=['Glutes grow on rest days. Sleep counts as training.','Squeeze a full second at the top of every bridge.','Protein at breakfast makes the daily goal way easier.','Slow lowering means more muscle from the same bodyweight.','Waist-to-hip ratio beats the scale for this goal.','Progress photos every 4 weeks, same light, same spot.','Shaky last reps mean it is working.','Exhale on the hard part of every rep.','Knees out over the toes on every squat.'];
 function openLoot(items){items=items||[];enqueue(ov=>{
   const pool=[25,25,50,50,50,75,100,150],vals=[0,1,2].map(()=>pool[Math.random()*pool.length|0]);
   ov.innerHTML=`<div class="ovc"><div class="eyebrow">Workout complete</div>${unlockRows(items)}<h2>Pick a mystery card</h2><div class="loot">${vals.map((v,i)=>`<button class="lc" data-i="${i}"><div class="fr">🍑</div><div class="bk">+${v}<small>pts</small></div></button>`).join('')}</div><p class="muted" id="lootTip">One of them hides a big bonus.</p><button class="linkbtn" type="button" onclick="sendToHusband()" style="justify-self:center">💌 Send update to husband</button><button class="btn wide" id="lootGo" hidden>Collect</button></div>`;
@@ -2039,7 +2033,7 @@ boot().catch(e=>{console.error(e);if(window.HUSBAND_ONLY)try{openHus()}catch(_){
 <div class="upd" id="updBar" hidden><span>✨ Update ready. It installs after this workout.</span></div>
 <style>.upd{position:fixed;z-index:30;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));margin:0 auto;max-width:440px;background:var(--surface2);border:1px solid var(--mint);color:var(--fg);font-weight:700;font-size:13px;border-radius:14px;padding:10px 14px;text-align:center;box-shadow:0 10px 24px -12px #000}</style>
 <script>
-const APP_VERSION='47';
+const APP_VERSION='48';
 let swReg=null;
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{swReg=r}).catch(()=>{}));
 // Updates install by themselves: quietly reload with the new version, but never in the middle of a workout or pop-up.
